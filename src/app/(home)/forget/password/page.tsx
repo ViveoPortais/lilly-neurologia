@@ -104,7 +104,7 @@ export default function ForgetPasswordPage() {
         )}
       />
 
-      {role !== "medico" && (
+      {role && role !== "medico" && (
         <div className="flex flex-col gap-4 mt-4">
           <Input type="email" {...register("email")} placeholder="Digite seu email" />
           {(errors as any).email && <p className="text-red-500 text-sm">{(errors as any).email.message}</p>}
