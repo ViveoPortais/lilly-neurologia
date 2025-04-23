@@ -5,8 +5,6 @@ import CustomTooltip from "../../../components/custom/CustomToolTip";
 import useSession from "@/hooks/useSession";
 import { useRouter } from "next/navigation";
 import { routes } from "@/helpers/routes";
-import { useProgramColor } from "@/hooks/useProgramColor";
-import { getTextColor } from "@/helpers/helpers";
 
 const colorMap: Record<string, string> = {
     "text-green-rare": "#0aa454",

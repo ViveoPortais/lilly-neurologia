@@ -5,7 +5,6 @@ import { AlterPasswordModal } from "@/components/dashboard/AlterPassword";
 import { Header } from "@/components/dashboard/Header";
 import { Navbar } from "@/components/dashboard/Navbar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getTextColor } from "@/helpers/helpers";
 import { routes } from "@/helpers/routes";
 import { useLateralMenu } from "@/hooks/useMenus";
 import { useModalAlterPassword } from "@/hooks/useModal";
@@ -59,8 +58,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }, [obrigatorioAlterarSenha, alterPasswordModal, hasOpenedModal]);
 
-  const textColor = getTextColor(auth.programCode);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center w-screen h-screen bg-gray-200"
@@ -72,7 +69,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           backgroundAttachment: 'fixed'
         }}
       >
-        <Loading size={60} customClass={`${textColor}`} />
+        <Loading size={60} customClass={"text-mainlilly"} />
       </div>
     );
   }

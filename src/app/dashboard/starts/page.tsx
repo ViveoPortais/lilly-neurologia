@@ -2,7 +2,6 @@
 
 import ContentCard from "@/components/ContentCard";
 import MessageIcon from "@/components/custom/MessageIcon";
-import { getBackgroundColor } from "@/helpers/helpers";
 import { useModalContent } from "@/hooks/useModal";
 import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -15,7 +14,6 @@ import { MdOutlineSupportAgent, MdQuestionAnswer } from "react-icons/md";
 const Page = () => {
   const router = useRouter();
   const auth = useSession();
-  const bgColor = getBackgroundColor(auth.programCode);
   const modal = useModalContent();
   const countMessage = useAppSelector(selectMessageCount);
   const dispatch = useAppDispatch();
@@ -29,7 +27,7 @@ const Page = () => {
       <div className="grid grid-cols-1 md:grid md:grid-cols-2 gap-5 my-5">
         <ContentCard
           title="Abertura de chamados"
-          bgColor={bgColor}
+          bgColor={"bg-mainlilly"}
           hasIcon={true}
           svgIcon={MdOutlineSupportAgent}
           buttonText="Ver Mais"
@@ -37,7 +35,7 @@ const Page = () => {
         />
         <ContentCard
           title="Acompanhamento de chamados"
-          bgColor={bgColor}
+          bgColor={"bg-mainlilly"}
           hasIcon={true}
           svgIcon={() => <MessageIcon count={countMessage} />}
           buttonText="Ver Mais"
@@ -46,7 +44,7 @@ const Page = () => {
         {auth.role === "supervisor" && (
           <ContentCard
             title="Relatório de chamados"
-            bgColor={bgColor}
+            bgColor={"bg-mainlilly"}
             hasIcon={true}
             svgIcon={FaRegChartBar}
             buttonText="Ver Mais"
@@ -55,7 +53,7 @@ const Page = () => {
         )}
         <ContentCard
           title="FAQ"
-          bgColor={bgColor}
+          bgColor={"bg-mainlilly"}
           hasIcon={true}
           svgIcon={MdQuestionAnswer}
           buttonText="Ver Mais"

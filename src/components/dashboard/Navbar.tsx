@@ -12,7 +12,6 @@ import useSession from "@/hooks/useSession";
 
 import { MenuIcon } from "../custom/Icon";
 import { useProgramColor } from "@/hooks/useProgramColor";
-import { getBackgroundColor } from "@/helpers/helpers";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -21,15 +20,13 @@ export function Navbar() {
   const role = auth.role;
   const generalRoutes = routes[role]?.general || [];
   const programRoutes = auth.programCode ? routes[role]?.programs[auth.programCode] || [] : [];
-  const colorClass = useProgramColor(auth.programCode);
-  const bgColor = getBackgroundColor(auth.programCode);
 
   return (
     <nav
       className={`${isMenuOpen ? "w-1/4" : "w-[100px]"
         } hidden lg:flex relative h-full transition-all border-r border-zinc-200 shadow-lg px-4 pb-6  flex-col items-center text-zinc-800`}
     >
-      <div className={`w-full h-28 border-b-2 border-y-${colorClass} flex items-center justify-center gap-2`}>
+      <div className={`w-full h-28 border-b-2 border-y-mainlilly flex items-center justify-center gap-2`}>
         <Image
           src="/images/logo-rare.png"
           width={250}
@@ -47,7 +44,7 @@ export function Navbar() {
           <Link
             key={route.route}
             href={route.route}
-            className={`flex gap-x-2 items-center cursor-pointer hover:bg-zinc-100 rounded-lg p-6 ${pathname === route.route ? `${bgColor} ${colorClass == 'no-program' ? 'text-black' : 'text-white'} hover:text-zinc-800` : ""}`}
+            className={`flex gap-x-2 items-center cursor-pointer hover:bg-zinc-100 rounded-lg p-6 ${pathname === route.route ? `bg-mainlilly text-white hover:text-zinc-800` : ""}`}
           >
             <MenuIcon icon={route.icon} size={24} />
             {isMenuOpen && route.text}
@@ -57,7 +54,7 @@ export function Navbar() {
           <Link
             key={route.route}
             href={route.route}
-            className={`flex gap-x-2 items-center cursor-pointer hover:bg-zinc-100 rounded-lg p-6 ${pathname === route.route ? `${bgColor} ${colorClass == 'no-program' ? 'text-black' : 'text-white'} hover:text-zinc-800` : ""}`}
+            className={`flex gap-x-2 items-center cursor-pointer hover:bg-zinc-100 rounded-lg p-6 ${pathname === route.route ? `bg-mainlilly text-white hover:text-zinc-800` : ""}`}
           >
             <MenuIcon icon={route.icon} size={24} />
             {isMenuOpen && route.text}

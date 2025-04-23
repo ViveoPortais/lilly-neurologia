@@ -5,7 +5,6 @@ import { useModalContent } from "@/hooks/useModal";
 import { Button } from "../../ui/button";
 import { FaFilePdf, FaFileVideo, FaFileAudio } from "react-icons/fa";
 import useSession from "@/hooks/useSession";
-import { getBackgroundColor } from "@/helpers/helpers";
 
 type FileItem = {
     icon: JSX.Element;
@@ -25,7 +24,6 @@ export function DocumentModal({ files }: ModalProps) {
     }));
 
     const session = useSession();
-    const bgColor = getBackgroundColor(session.programCode);
 
     const [currentVideo, setCurrentVideo] = useState<string | null>(null);
     const [currentAudio, setCurrentAudio] = useState<string | null>(null);
@@ -39,7 +37,7 @@ export function DocumentModal({ files }: ModalProps) {
                             window.open(file.link, "_blank")
                             setCurrentVideo(null);
                         }}
-                        className={`flex items-center justify-start p-4 text-left min-w-[560px] ${bgColor} text-white shadow-lg rounded-md hover:bg-gray-100`}
+                        className={`flex items-center justify-start p-4 text-left min-w-[560px] bg-mainlilly text-white shadow-lg rounded-md hover:bg-gray-100`}
                     >
                         <div className="flex items-center">
                             {file.icon}
@@ -54,7 +52,7 @@ export function DocumentModal({ files }: ModalProps) {
                             setCurrentVideo(file.link);
                             openModal(true);
                         }}
-                        className={`flex items-center justify-start p-4 text-left min-w-[560px] ${bgColor} text-white shadow-lg rounded-md hover:bg-gray-100`}
+                        className={`flex items-center justify-start p-4 text-left min-w-[560px] bg-mainlilly text-white shadow-lg rounded-md hover:bg-gray-100`}
                     >
                         <div className="flex items-center">
                             {file.icon}
@@ -69,7 +67,7 @@ export function DocumentModal({ files }: ModalProps) {
                             setCurrentAudio(file.link);
                             openModal(true);
                         }}
-                        className={`flex items-center justify-start p-4 text-left min-w-[560px] ${bgColor} text-white shadow-lg rounded-md hover:bg-gray-100`}
+                        className={`flex items-center justify-start p-4 text-left min-w-[560px] bg-mainlilly text-white shadow-lg rounded-md hover:bg-gray-100`}
                     >
                         <div className="flex items-center">
                             {file.icon}

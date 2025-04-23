@@ -7,7 +7,6 @@ import { PersonalDataSection } from "@/components/profile/PersonalDataSection";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { getBackgroundColor, getTextColor } from "@/helpers/helpers";
 import { passwordCorrect, passwordErr } from "@/hooks/useModal";
 import useSession from "@/hooks/useSession";
 import { doctorProfileSchema, professionalProfileSchema } from "@/lib/utils";
@@ -224,14 +223,11 @@ export default function Profile() {
     setIsDialogOpen(true);
   };
 
-  const bgColor = getBackgroundColor(programCode);
-  const textColor = getTextColor(programCode);
-
   return (
     <div className="h-full w-full">
       <LoadingOverlay isVisible={isLoading} />
 
-      <h1 className={`${bgColor} p-4 rounded-xl w-full text-start text-white font-semibold text-lg md:text-2xl mb-8`}>
+      <h1 className={`bg-mainlilly p-4 rounded-xl w-full text-start text-white font-semibold text-lg md:text-2xl mb-8`}>
         Meus dados
       </h1>
 
@@ -255,7 +251,7 @@ export default function Profile() {
           setValue={setValue}
         />
 
-        <Separator className={bgColor} />
+        <Separator className={"bg-mainlilly"} />
 
         <AdressSection
           control={control}
@@ -294,7 +290,7 @@ export default function Profile() {
                   href="/Regulamento_Programa_Rare 1.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${textColor} underline`}
+                  className={`text-mainlilly underline`}
                 >
                   Visualizar documento
                 </a>
@@ -357,7 +353,7 @@ export default function Profile() {
               </span>
             </div>
             {auth.role == "professional" && !auth.programConsent && (
-              <span className={`ml-2 w-full text-xs ${textColor} mt-2 h-full flex items-center`}>
+              <span className={`ml-2 w-full text-xs text-mainlilly mt-2 h-full flex items-center`}>
                 É necessário aceitar participar do programa para continuar
               </span>
             )}
@@ -372,7 +368,7 @@ export default function Profile() {
         />
 
         <div className="flex justify mt-4">
-          <Button type="submit" size="lg" className={`mt-4 md:mt-3 ${bgColor}`}>
+          <Button type="submit" size="lg" className={`mt-4 md:mt-3 bg-mainlilly`}>
             Salvar alterações
           </Button>
         </div>

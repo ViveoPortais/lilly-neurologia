@@ -21,7 +21,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Separator } from "../ui/separator";
 
 import { useProgramColor } from "@/hooks/useProgramColor";
-import { getBackgroundColor, getTextColor } from "@/helpers/helpers";
 import { AlterPasswordModal } from "./AlterPassword";
 import { useModalAlterPassword } from "@/hooks/useModal";
 import RegisterRepresentativeModal from "../modals/RegisterRepresentativeModal";
@@ -87,20 +86,17 @@ export function Header() {
     }
   }, [auth, pathname]);
 
-  const textColor = getTextColor(auth.programCode);
-  const bgColor = getBackgroundColor(auth.programCode);
-
   return (
     <>
       <header
         id="mobile-header"
-        className={`flex lg:hidden h-28 w-full border-b-2 border-zinc-100 items-center justify-between px-8 bg-white ${textColor}`}
+        className={`flex lg:hidden h-28 w-full border-b-2 border-zinc-100 items-center justify-between px-8 bg-white text-mainlilly`}
       >
         <div>
           <Image src={`/images/logo-rare.png`} width={250} height={50} alt="Programa Rare" className="mt-2" />
         </div>
         <div className="flex items-center justify-center gap-6">
-          <span className={`${textColor} font-semibold text-base`}>
+          <span className={`text-mainlilly font-semibold text-base`}>
             {auth.name.includes(" ") ? auth.name.split(" ")[0] : auth.name}
           </span>
           <div className="hover:opacity-70 cursor-pointer" onClick={() => changeMobileMenu(isMobileMenuOpen)}>
@@ -123,7 +119,7 @@ export function Header() {
                   key={profileRoutes.route}
                   href={`${profileRoutes.route}`}
                   className={`flex gap-x-2 cursor-pointer hover:bg-zinc-100 rounded-lg p-4 ${
-                    pathname === profileRoutes.route && `${textColor} hover:text-zinc-800`
+                    pathname === profileRoutes.route && `text-mainlilly hover:text-zinc-800`
                   }`}
                 >
                   <MenuIcon icon={profileRoutes.icon} size={24} />
@@ -137,7 +133,7 @@ export function Header() {
                     key={programRoute.route}
                     href={`${programRoute.route}`}
                     className={`flex gap-x-2 cursor-pointer hover:bg-zinc-100 rounded-lg p-4 ${
-                      pathname === programRoute.route && `${textColor} hover:text-zinc-800`
+                      pathname === programRoute.route && `text-mainlilly hover:text-zinc-800`
                     }`}
                   >
                     <MenuIcon icon={programRoute.icon} size={24} />
@@ -160,7 +156,7 @@ export function Header() {
           <Link
             href={`/dashboard/program`}
             className={`flex gap-x-2 cursor-pointer hover:bg-zinc-100 rounded-lg p-4 ${
-              pathname === `/dashboard/program` && `${textColor} hover:text-zinc-800`
+              pathname === `/dashboard/program` && `text-mainlilly hover:text-zinc-800`
             }`}
           >
             <LuCheckCircle size={24} />
@@ -199,22 +195,22 @@ export function Header() {
         className="hidden lg:flex h-28 w-full border-b border-zinc-200 items-center justify-between px-12"
       >
         <div>
-          <h1 className={`text-lg lg:text-2xl font-semibold ${textColor} flex mt-5`}>Bem-vindo {auth.name}!</h1>
+          <h1 className={`text-lg lg:text-2xl font-semibold text-mainlilly flex mt-5`}>Bem-vindo {auth.name}!</h1>
         </div>
 
         <Sheet open={isMenuOpen} onOpenChange={changeMenu}>
           <SheetTrigger>
             <div className="hover:opacity-70">
-              <PiDotsThreeVerticalBold size={32} className={`${textColor}`} />
+              <PiDotsThreeVerticalBold size={32} className={"text-mainlilly"} />
             </div>
           </SheetTrigger>
 
           <SheetContent className="m-4 rounded-lg h-auto">
             <SheetHeader>
-              <SheetTitle className={`${textColor} text-xl`}>{auth.name}</SheetTitle>
+              <SheetTitle className={`text-mainlilly text-xl`}>{auth.name}</SheetTitle>
             </SheetHeader>
 
-            <Separator className={`my-4 ${bgColor}`} />
+            <Separator className={`my-4 bg-mainlilly`} />
 
             <div className="text-zinc-700">
               {role === "operation" || role === "supervisor" ? (
@@ -222,7 +218,7 @@ export function Header() {
                   <Link
                     href={`/dashboard/program`}
                     className={`flex gap-x-2 cursor-pointer hover:bg-zinc-100 rounded-lg p-4 ${
-                      pathname === `/dashboard/program` && `${textColor} hover:text-zinc-800`
+                      pathname === `/dashboard/program` && `text-mainlilly hover:text-zinc-800`
                     }`}
                   >
                     <LuCheckCircle size={24} />
@@ -272,7 +268,7 @@ export function Header() {
                   <Link
                     href={`/dashboard/program`}
                     className={`flex gap-x-2 cursor-pointer hover:bg-zinc-100 rounded-lg p-4 ${
-                      pathname === `/dashboard/program` && `${textColor} hover:text-zinc-800`
+                      pathname === `/dashboard/program` && `text-mainlilly hover:text-zinc-800`
                     }`}
                   >
                     <LuCheckCircle size={24} />
