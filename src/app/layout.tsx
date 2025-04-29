@@ -4,32 +4,35 @@ import "./globals.css";
 import ToastProvider from "@/components/ToastProvider";
 import ReduxProvider from "@/components/redux/ReduxProvider";
 import { GenericModalProvider } from "@/contexts/GenericModalContext";
+import { PdfModalProvider } from "@/contexts/PdfModalContext";
 
 const lato = Lato({
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  display: "swap",
+ subsets: ["latin"],
+ weight: ["400", "700", "900"],
+ display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Programa  Lilly",
-  description: "Programa Lilly",
+ title: "Programa  Lilly",
+ description: "Programa Lilly",
 };
 
 export default function RootLayout({
-  children,
+ children,
 }: Readonly<{
-  children: React.ReactNode;
+ children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={lato.className}>
-        <ReduxProvider>
-          <GenericModalProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </GenericModalProvider>
-        </ReduxProvider>
-      </body>
-    </html>
-  );
+ return (
+  <html lang="en">
+   <body className={lato.className}>
+    <ReduxProvider>
+     <PdfModalProvider>
+      <GenericModalProvider>
+       <ToastProvider>{children}</ToastProvider>
+      </GenericModalProvider>
+     </PdfModalProvider>
+    </ReduxProvider>
+   </body>
+  </html>
+ );
 }

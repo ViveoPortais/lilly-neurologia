@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import * as SelectPrimitive from "@radix-ui/react-select";
 
-import { ElementRef, forwardRef } from "react";
+import React, { ElementRef, forwardRef } from "react";
 import { InputLoading } from "./InputLoading";
 
 interface IOption {
@@ -20,7 +20,7 @@ interface IOption {
 interface CustomSelectProps {
   name: string;
   options: IOption[];
-  label?: string;
+  label?: React.ReactNode;
   value?: any;
   onChange?: (value: any) => void;
   onBlur?: (value: any) => void;
