@@ -20,6 +20,7 @@ const config = {
     extend: {
       colors: {
         mainlilly: "#d52b1e",
+        colorcard: "#e1eaf2",
         main: {
           purple: "#7A00E6",
           darkblue: "#1E3A8A",

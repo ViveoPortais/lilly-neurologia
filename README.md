@@ -18,3 +18,15 @@ If you want to learn more about creating good readme files then refer the follow
 - [ASP.NET Core](https://github.com/aspnet/Home)
 - [Visual Studio Code](https://github.com/Microsoft/vscode)
 - [Chakra Core](https://github.com/Microsoft/ChakraCore)
+
+# Versionamento
+Este projeto segue o padrão de Versionamento Semântico:
+MAJOR.MINOR.PATCH → 1.0.0
+
+- MAJOR (1): mudanças incompatíveis com versões anteriores.
+
+- MINOR (0): novas funcionalidades compatíveis.
+
+- PATCH (0): correções de bugs, melhorias pequenas.
+
+As versões são controladas por: Campo "version" no package.json

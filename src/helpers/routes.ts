@@ -1,11 +1,13 @@
-import { HiOutlineDocumentReport } from "react-icons/hi";
-import { MdOutlinePhotoLibrary, MdOutlineSupportAgent, MdQuestionAnswer } from "react-icons/md";
-import { LuClipboardList } from "react-icons/lu";
-import { HiOutlineDocumentAdd } from "react-icons/hi";
-import { TbBuildingHospital } from "react-icons/tb";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import {
+  LuFolderOpen,
+  LuLayoutDashboard,
+  LuMousePointerClick,
+  LuSlidersHorizontal,
+  LuTestTube,
+  LuUserPlus,
+} from "react-icons/lu";
 import { IconType } from "react-icons/lib";
-import { IoHomeOutline, IoStopwatchOutline, IoPeopleCircleOutline } from "react-icons/io5";
-import { FaRegChartBar, FaRegFileAlt } from "react-icons/fa";
 
 interface IProfileProps {
   route: string;
@@ -13,171 +15,28 @@ interface IProfileProps {
   icon: IconType;
 }
 
-interface IProgramRoutes {
-  [programCode: string]: IProfileProps[];
-}
-
 interface IRouteProps {
-  general: IProfileProps[];
-  programs: IProgramRoutes;
+  [key: string]: IProfileProps[];
 }
 
+export const routes: IRouteProps = {
+  doctor: [
+    { route: "/dashboard/starts", text: "Início", icon: LuLayoutDashboard },
+    { route: "/dashboard/doctor/pendings", text: "Minhas Pendências", icon: HiOutlineExclamationCircle },
+    { route: "/dashboard/doctor/requests", text: "Minhas Solicitações", icon: LuMousePointerClick },
+    { route: "/dashboard/doctor/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
+    { route: "/dashboard/doctor/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
+    { route: "/dashboard/doctor/link-management", text: "Gerenciar Vínculo", icon: LuSlidersHorizontal },
+    { route: "/dashboard/doctor/files", text: "Meus Arquivos", icon: LuFolderOpen },
+  ],
 
-export const routes: Record<string, IRouteProps> = {
-  supervisor: {
-    general: [
-      {
-        route: "/dashboard/starts",
-        text: "Início",
-        icon: IoHomeOutline,
-      },
-    ],
-    programs: {
-      "983": [ //Programa de Diagnóstico
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: IoStopwatchOutline,
-        },
-        {
-          route: "/dashboard/incidentReport",
-          text: "Relatório de chamados",
-          icon: FaRegChartBar,
-        },
-      ],
-      "984": [ //Programa de monitoramento
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: IoStopwatchOutline,
-        },
-        {
-          route: "/dashboard/incidentReport",
-          text: "Relatório de chamados",
-          icon: FaRegChartBar,
-        },
-      ],
-      "987": [ //Programa de segurança
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: IoStopwatchOutline,
-        },
-        {
-          route: "/dashboard/incidentReport",
-          text: "Relatório de chamados",
-          icon: FaRegChartBar,
-        },
-      ]
-    }
-  },
-  operation: {
-    general: [
-      {
-        route: "/dashboard/starts",
-        text: "Início",
-        icon: IoHomeOutline,
-      },
-    ],
-    programs: {
-      "983": [ //Programa de Diagnóstico
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: LuClipboardList,
-        },
-      ],
-      "984": [ //Programa de monitoramento
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: LuClipboardList,
-        },
-      ],
-      "987": [ //Programa de segurança
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: LuClipboardList,
-        },
-      ]
-    }
-  },
-  representative: {
-    general: [
-      {
-        route: "/dashboard/starts",
-        text: "Início",
-        icon: IoHomeOutline,
-      },
-    ],
-    programs: {
-      "983": [ //Programa de Diagnóstico
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: FaRegFileAlt,
-        },
-      ],
-      "984": [ //Programa de monitoramento
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: FaRegFileAlt,
-        },
-      ],
-      "987": [ //Programa de segurança
-        {
-          route: "/dashboard/openingCalls",
-          text: "Abertura de chamados",
-          icon: MdOutlineSupportAgent,
-        },
-        {
-          route: "/dashboard/callTracking",
-          text: "Acompanhamento de chamados",
-          icon: FaRegFileAlt,
-        },
-      ]
-    }
-  }
-}
+  professional: [
+    { route: "/dashboard/starts", text: "Início", icon: LuLayoutDashboard },
+    { route: "/dashboard/operation/pendings", text: "Minhas Pendências", icon: HiOutlineExclamationCircle },
+    { route: "/dashboard/operation/requests", text: "Minhas Solicitações", icon: LuMousePointerClick },
+    { route: "/dashboard/operation/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
+    { route: "/dashboard/operation/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
+    { route: "/dashboard/operation/link-management", text: "Meus vínculos", icon: LuSlidersHorizontal },
+    { route: "/dashboard/operation/files", text: "Meus Arquivos", icon: LuFolderOpen },
+  ],
+};

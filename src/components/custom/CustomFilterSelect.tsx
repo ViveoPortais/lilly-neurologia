@@ -8,7 +8,7 @@ import { IStringMap } from '@/types';
 interface CustomFilterSelectProps {
     name: string;
     options: IStringMap[];
-    label?: string;
+    label?: React.ReactNode;
     value?: string;
     onChange?: (value: string) => void;
     onBlur?: () => void;

@@ -27,7 +27,6 @@ export default function RoleSelectionPage() {
           onChange={(value: string) => setRole(value)}
           options={[
             { id: "medico", value: "Médico" },
-            { id: "assistente", value: "Assistente Médico" },
           ]}
           customClass="w-full border rounded mb-10"
         />

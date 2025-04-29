@@ -57,6 +57,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="flex gap-1 mb-1">
           <label className=" text-sm font-semibold uppercase tracking-wide text-[#919191]">
             {props.placeholder}
+            {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
           {tooltip && (
             <div className="flex items-center text-gray-500">
