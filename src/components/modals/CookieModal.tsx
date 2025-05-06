@@ -190,16 +190,21 @@ const CookieModal = ({ onClose }: { onClose: () => void }) => {
       ))}
      </div>
 
-     <div className="border-t border-neutral-200 pt-6 mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Button size={"lg"} onClick={acceptOnlyNecessary} className="py-3 px-6">
-       ACEITAR APENAS COOKIES NECESSÁRIOS
-      </Button>
-      <Button size={"lg"} onClick={saveConsent} className="py-3 px-6">
-       AJUSTAR PREFERÊNCIAS
-      </Button>
-      <Button size={"lg"} onClick={acceptAllCookies} className="py-3 px-6">
-       ACEITAR TODOS COOKIES
-      </Button>
+     <div className="border-t border-neutral-200 pt-6 mt-8">
+      <p className="text-xs text-[#666666] font-medium mb-4">PP-AD-BR-0150 – Abril/2025</p>
+      <div className="flex justify-center">
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Button onClick={acceptOnlyNecessary} className="py-3 px-6 text-xs font-bold">
+         ACEITAR APENAS COOKIES NECESSÁRIOS
+        </Button>
+        <Button onClick={saveConsent} className="py-3 px-6 text-xs font-bold">
+         AJUSTAR PREFERÊNCIAS
+        </Button>
+        <Button onClick={acceptAllCookies} className="py-3 px-6 text-xs font-bold">
+         ACEITAR TODOS COOKIES
+        </Button>
+       </div>
+      </div>
      </div>
     </motion.div>
    </AnimatePresence>
