@@ -64,16 +64,26 @@ export default function ForgetPasswordPage() {
   }
  };
 
- function handleResponse(response: string | any) {
-  modal.showModal(
-   {
-    type: "success",
-    message: response,
-   },
-   () => {
-    router.push("/signin");
-   }
-  );
+ function handleResponse(response: any) {
+  if (response.isValidData) {
+   modal.showModal(
+    {
+     type: "success",
+     message: response.additionalMessage,
+    },
+    () => {
+     router.push("/signin");
+    }
+   );
+  } else {
+   modal.showModal(
+    {
+     type: "warning",
+     message: response.additionalMessage,
+    },
+    () => {}
+   );
+  }
  }
 
  return (
