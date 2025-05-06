@@ -61,7 +61,7 @@ export const Step2 = ({
      control={control}
      render={({ field }) => maskedField("cpf", field.onChange, field.name, "CPF", true, () => {}, field.value)}
     />
-    {errors.cpf && <span className="ml-2 w-full text-xs text-red-400 mt-1">{errors.cpf.message}</span>}
+    {errors.cpf && <span className="ml-2 w-full text-sm text-red-500 mt-1">{errors.cpf.message}</span>}
    </div>
 
    <div>
@@ -89,8 +89,10 @@ export const Step2 = ({
       return maskedField("cellphone", handlePhoneChange, field.name, "Celular", true, () => {}, field.value);
      }}
     />
-    {cellphoneError && <span className="ml-2 w-full text-xs text-red-400 mt-1">{cellphoneError}</span>}
-    {errors.telephoneNumber && <span className="ml-2 w-full text-xs text-red-400 mt-1">{errors.telephoneNumber.message}</span>}
+    <div className="flex flex-col ml-2 mt-1 space-y-1">
+     {cellphoneError && <span className="text-sm text-red-500">{cellphoneError}</span>}
+     {errors.telephoneNumber && <span className="text-sm text-red-500">{errors.telephoneNumber.message}</span>}
+    </div>
    </div>
   </>
  );

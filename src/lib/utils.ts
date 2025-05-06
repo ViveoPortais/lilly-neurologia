@@ -387,3 +387,42 @@ export const getRegisterSignUpSchema = (role: string) =>
     }
    }
   });
+
+export const patientSchema = z
+ .object({
+  cpf: z
+   .string()
+   .min(1, { message: "Insira seu CPF" })
+   .regex(cpfRegex, { message: "CPF inválido" })
+   .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+  name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
+  birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
+  hasResponsible: z.enum(["yes", "no"]),
+  nameCaregiver: z.string().optional(),
+  cpfCaregiver: z.string().optional(),
+  birthDateCaregiver: z.string().optional(),
+  disease: z.string().min(1, { message: "Informe a doença" }),
+  examDefinition: z.string().min(1, { message: "Descreva o exame" }),
+  laboratoryName: z.string().min(1, { message: "Informe o laboratório" }),
+  gender: z.string().min(1, { message: "Informe o gênero" }),
+  addressPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
+  addressName: z.string().min(1, { message: "Endereço é obrigatório" }),
+  addressNumber: z.string().min(1, { message: "Número é obrigatório" }),
+  sector: z.string().min(1, { message: "Bairro/Setor é obrigatório" }),
+  responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
+  contact: z.string().min(1, { message: "Contato é obrigatório" }),
+  consentForm: z.any().optional(),
+  medicalRequest: z.any().optional(),
+ })
+ .refine(
+  (data) => {
+   if (data.hasResponsible === "yes") {
+    return data.nameCaregiver && data.cpfCaregiver && data.birthDateCaregiver;
+   }
+   return true;
+  },
+  {
+   message: "Preencha os dados do responsável.",
+   path: ["nameCaregiver"],
+  }
+ );

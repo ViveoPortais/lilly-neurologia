@@ -5,6 +5,7 @@ import ToastProvider from "@/components/ToastProvider";
 import ReduxProvider from "@/components/redux/ReduxProvider";
 import { GenericModalProvider } from "@/contexts/GenericModalContext";
 import { PdfModalProvider } from "@/contexts/PdfModalContext";
+import { CookieModalProvider } from "@/contexts/CookieModalContext";
 
 const lato = Lato({
  subsets: ["latin"],
@@ -28,7 +29,9 @@ export default function RootLayout({
     <ReduxProvider>
      <PdfModalProvider>
       <GenericModalProvider>
-       <ToastProvider>{children}</ToastProvider>
+       <CookieModalProvider>
+        <ToastProvider>{children}</ToastProvider>
+       </CookieModalProvider>
       </GenericModalProvider>
      </PdfModalProvider>
     </ReduxProvider>

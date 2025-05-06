@@ -17,7 +17,7 @@ import {
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  icon?: "email" | "password" | "login";
+  icon?: React.ReactNode;
   isLoading?: boolean;
   maxLength?: number;
   tooltip?: boolean;

@@ -91,7 +91,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <Footer bgColor="bg-zinc-100" />
      </div>
     ) : (
-     <FooterMobile />
+     <div className="mt-5">
+      <FooterMobile />
+     </div>
     )}
    </div>
    <AlterPasswordModal />

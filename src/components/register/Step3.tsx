@@ -32,7 +32,7 @@ export const Step3 = ({ control, register, errors, maskedField, handleCepBlur, i
      control={control}
      render={({ field }) => maskedField("cep", field.onChange, field.name, "CEP", true, () => handleCepBlur(field.value), field.value)}
     />
-    {errors.addressPostalCode && <span className="ml-2 w-full text-xs text-red-400 mt-1">{errors.addressPostalCode.message}</span>}
+    {errors.addressPostalCode && <span className="ml-2 w-full text-sm text-red-500 mt-1">{errors.addressPostalCode.message}</span>}
    </div>
 
    <div>

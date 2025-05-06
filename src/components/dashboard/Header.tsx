@@ -5,18 +5,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
-import { IoClose } from "react-icons/io5";
 
-import api from "@/services/api";
 import useSession from "@/hooks/useSession";
 import { useLateralRightMenu, useMobilelMenu } from "@/hooks/useMenus";
 import { routes } from "@/helpers/routes";
 
-import { useProgramColor } from "@/hooks/useProgramColor";
-import { useModalAlterPassword } from "@/hooks/useModal";
 import { useAppDispatch } from "@/store/hooks";
-import { addRepresentative } from "@/store/slices/registerRepresentativeSlice";
-import { IRegisterRepresentative } from "@/types/user";
 
 export function Header() {
  const router = useRouter();
@@ -28,6 +22,7 @@ export function Header() {
  const role = auth.role;
  const [isModalOpen, setIsModalOpen] = useState(false);
  const dispatch = useAppDispatch();
+ const [routeSummary, setRouteSummary] = useState("");
 
  useEffect(() => {
   if (isMobileMenuOpen) {
@@ -50,8 +45,10 @@ export function Header() {
 
    if (findRoute) {
     setCurrentRoute(findRoute.text);
+    setRouteSummary(findRoute.summary || "");
    } else {
     setCurrentRoute("");
+    setRouteSummary("");
    }
   }
  }, [auth, pathname]);
@@ -75,17 +72,24 @@ export function Header() {
 
    <header id="desktop-header" className="hidden lg:flex h-28 w-full items-center justify-between">
     <div className="flex flex-col">
-     <span className="text-xs font-semibold text-zinc-800 mb-5">Início</span>
-     <div
-      className={`pl-4 border-l-4 rounded-l-2xl ${pathname.startsWith("/dashboard/starts") ? "border-mainlilly" : "border-transparent"}`}
-     >
-      <h1 className="text-lg lg:text-2xl font-semibold text-black">Bem-vindo, {auth.name}!</h1>
+     <div className="text-xs font-semibold text-zinc-600 mb-5 flex items-center gap-1">
+      <button className="hover:underline hover:text-mainlilly transition" onClick={() => router.push("/dashboard/starts")}>
+       Início
+      </button>
 
-      {pathname.startsWith("/dashboard/starts") && (
-       <span className="text-sm text-zinc-600">
-        Aqui você encontra tudo o que precisa para gerenciar suas solicitações de forma mais rápida e intuitiva.
-       </span>
+      {pathname !== "/dashboard/starts" && currentRoute && (
+       <>
+        <span className="mx-1">›</span>
+        <span className="text-black font-semibold">{currentRoute}</span>
+       </>
       )}
+     </div>
+     <div className={`pl-4 border-l-4 rounded-l-2xl border-mainlilly`}>
+      <h1 className="text-lg lg:text-2xl font-semibold text-black">
+       {pathname.startsWith("/dashboard/starts") ? `Bem-vindo, ${auth.name}!` : currentRoute}
+      </h1>
+
+      {routeSummary && <span className="text-sm text-zinc-600">{routeSummary}</span>}
      </div>
     </div>
    </header>
