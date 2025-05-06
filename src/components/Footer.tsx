@@ -1,8 +1,13 @@
+"use client";
+
+import { useCookieModal } from "@/contexts/CookieModalContext";
+
 interface FooterProps {
  bgColor?: string;
 }
 
 export function Footer({ bgColor }: FooterProps) {
+ const { openCookieModal } = useCookieModal();
  return (
   <footer className={`w-full ${bgColor} text-xs px-4 py-4 text-muted-foreground`}>
    <div className="flex items-center justify-between w-full">
@@ -26,19 +31,36 @@ export function Footer({ bgColor }: FooterProps) {
        </a>
       </span>
 
-      <a href="#" className="underline">
-       Política de Privacidad
+      <a href="https://www.lillyprivacy.com/BR-pt/hcp" target="_blank" rel="noopener noreferrer" className="underline">
+       Política de Privacidade
       </a>
-      <a href="#" className="underline">
+      <a href="/files/Termos_de_uso_do_site.pdf" target="_blank" rel="noopener noreferrer" className="underline">
        Termos de Uso
       </a>
-      <a href="#" className="underline">
+      <a
+       href="https://www.lilly.com/br/declaracao-de-privacidade?redirect-referrer=https%3A%2F%2Fwww.diagnosticocorreto.com.br%2F"
+       target="_blank"
+       rel="noopener noreferrer"
+       className="underline"
+      >
        Declaração de privacidade
       </a>
-      <a href="#" className="underline">
+      <a
+       href="https://www.lilly.com/br/declaracao-de-acessibilidade?redirect-referrer=https%3A%2F%2Fwww.diagnosticocorreto.com.br%2F"
+       target="_blank"
+       rel="noopener noreferrer"
+       className="underline"
+      >
        Declaração de acessibilidade
       </a>
-      <a href="#" className="underline">
+      <a
+       href="#"
+       className="underline cursor-pointer"
+       onClick={(e) => {
+        e.preventDefault();
+        openCookieModal();
+       }}
+      >
        Ajustes de cookies
       </a>
      </div>
