@@ -124,9 +124,9 @@ export default function RegisterDesktop({
           },
          })
         }
-        className="text-sm text-blue-600 underline"
+        className="text-sm underline"
        >
-        Li e aceito o termo de consentimento
+        LI E ACEITO O TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
        </button>
       </div>
      )}
@@ -143,8 +143,8 @@ export default function RegisterDesktop({
         checked={field.value || false}
         onCheckedChange={(checked) => field.onChange(checked === true)}
        />
-       <label htmlFor="programParticipationConsent" className="text-sm">
-        Confirmo que os dados estão corretos
+       <label htmlFor="programParticipationConsent" className="text-sm underline">
+        AFIRMO QUE LI E CONFERI MEUS DADOS PESSOAIS E QUE TODAS AS INFORMAÇÕES AQUI PREENCHIDAS SÃO VERDADEIRAS
        </label>
       </div>
      )}
