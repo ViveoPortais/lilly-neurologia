@@ -1,15 +1,15 @@
 "use client";
 
 import { Loading } from "@/components/custom/Loading";
-import { AlterPasswordModal } from "@/components/dashboard/AlterPassword";
 import { Header } from "@/components/dashboard/Header";
 import { Navbar } from "@/components/dashboard/Navbar";
 import { Footer } from "@/components/Footer";
 import FooterMobile from "@/components/logged/mobile/FooterMobile";
+import AlterPasswordModal from "@/components/modals/AlterPasswordModal";
+import GenericModalForm from "@/components/modals/GenericModalForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useLateralMenu } from "@/hooks/useMenus";
-import { useModalAlterPassword } from "@/hooks/useModal";
 import useSession from "@/hooks/useSession";
 import api from "@/services/api";
 import { useRouter } from "next/navigation";
@@ -21,16 +21,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
  const router = useRouter();
  const auth = useSession();
  const [loading, setLoading] = useState(true);
- const alterPasswordModal = useModalAlterPassword();
  const [hasOpenedModal, setHasOpenedModal] = useState(false);
+ const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const isMobile = useMediaQuery("(max-width: 768px)");
 
  useEffect(() => {
   const checkAuth = async () => {
-   if (!isLogged) {
-    router.push("/");
-    return;
-   }
+   //    if (!isLogged) {
+   //     router.push("/");
+   //     return;
+   //    }
 
    if (token) api.defaults.headers.Authorization = `Bearer ${token}`;
 
@@ -48,11 +48,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
  }, [isLogged, role, hasOpenedModal]);
 
  useEffect(() => {
-  if (obrigatorioAlterarSenha && !hasOpenedModal) {
-   alterPasswordModal.openModal(true);
+  if ((obrigatorioAlterarSenha || primeiroAcesso) && !hasOpenedModal) {
    setHasOpenedModal(true);
+   setIsPasswordModalOpen(true);
   }
- }, [obrigatorioAlterarSenha, alterPasswordModal, hasOpenedModal]);
+ }, [obrigatorioAlterarSenha, primeiroAcesso, hasOpenedModal]);
 
  if (loading) {
   return (
@@ -96,7 +96,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
      </div>
     )}
    </div>
-   <AlterPasswordModal />
+   <GenericModalForm
+    isOpen={isPasswordModalOpen}
+    onClose={() => setIsPasswordModalOpen(false)}
+    title="Atualizar Senha"
+    children={<AlterPasswordModal />}
+   />
   </main>
  );
 }

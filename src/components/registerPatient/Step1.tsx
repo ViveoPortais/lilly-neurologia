@@ -6,6 +6,8 @@ import { IStringMap } from "@/types";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
 import { useAppDispatch } from "@/store/hooks";
 import { searchPatientByCpf } from "@/store/slices/registerPatientSlice";
+import { useGenericModal } from "@/contexts/GenericModalContext";
+import { useRouter } from "next/navigation";
 
 export const Step1 = ({
  setStep,
@@ -27,6 +29,31 @@ export const Step1 = ({
  const { register, watch } = useFormContext();
  const hasResponsible = watch("hasResponsible");
  const dispatch = useAppDispatch();
+ const modal = useGenericModal();
+ const router = useRouter();
+
+ const handleCpfBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+  const onlyDigits = e.target.value.replace(/\D/g, "");
+  if (onlyDigits.length === 11) {
+   try {
+    const res = await dispatch(searchPatientByCpf(e.target.value)).unwrap();
+    if (res.additionalMessage === "Paciente já cadastrado no programa e não está elegível para novos exames") {
+     modal.showModal(
+      {
+       type: "warning",
+       message: res.additionalMessage,
+      },
+      () => {
+       false;
+       router.push("/dashboard/starts");
+      }
+     );
+    }
+   } catch (error) {
+    console.error("CPF não encontrado ou erro ao buscar:", error);
+   }
+  }
+ };
 
  return (
   <div>
@@ -41,24 +68,22 @@ export const Step1 = ({
         field.onChange,
         field.name,
         "CPF",
-        true,
+        false,
         (e) => {
          field.onBlur();
-         const onlyDigits = e.target.value.replace(/\D/g, "");
-         if (onlyDigits.length === 11) {
-          dispatch(searchPatientByCpf(e.target.value));
-         }
+         handleCpfBlur(e);
         },
         field.value,
         false,
-        `w-full`
+        `w-full`,
+        "Digite aqui..."
        )}
        {errors?.cpf && <span className="text-sm text-red-500 mt-1 block">{errors.cpf.message as string}</span>}
       </div>
      )}
     />
     <div className="w-full">
-     <Input {...register("name")} placeholder="Nome Completo" />
+     <Input {...register("name")} placeholder="Nome Completo" inputPlaceholder="Digite aqui..." />
      {errors?.name && <span className="text-sm text-red-500 mt-1 block">{errors.name.message as string}</span>}
     </div>
     <div className="w-full">
@@ -67,12 +92,12 @@ export const Step1 = ({
     </div>
 
     <Controller
-     name="gender"
+     name="genderId"
      control={control}
      render={({ field }) => (
       <div className="w-full">
-       <CustomFilterSelect options={genders} value={field.value} onChange={field.onChange} name="gender" label="Gênero biológico" />
-       {errors?.gender && <span className="text-sm text-red-500 mt-1 block">{errors.gender.message as string}</span>}
+       <CustomFilterSelect options={genders} value={field.value} onChange={field.onChange} name="genderId" label="Gênero biológico" />
+       {errors?.genderId && <span className="text-sm text-red-500 mt-1 block">{errors.genderId.message as string}</span>}
       </div>
      )}
     />
@@ -113,7 +138,7 @@ export const Step1 = ({
       )}
      />
      <div className="w-full">
-      <Input {...register("birthDateCaregiver")} placeholder="Nascimento do Cuidador" />
+      <Input {...register("birthDateCaregiver")} type="date" placeholder="Nascimento do Cuidador" />
       {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
      </div>
     </div>
@@ -140,7 +165,7 @@ export const Step1 = ({
      )}
     />
     <Controller
-     name="laboratoryName"
+     name="laboratoryAnalysis"
      control={control}
      render={({ field }) => (
       <div className="w-full">
@@ -148,10 +173,12 @@ export const Step1 = ({
         options={labs}
         value={field.value}
         onChange={field.onChange}
-        name="laboratoryName"
+        name="laboratoryAnalysis"
         label="Laboratório de Análise"
        />
-       {errors?.laboratoryName && <span className="text-sm text-red-500 mt-1 block">{errors.laboratoryName.message as string}</span>}
+       {errors?.laboratoryAnalysis && (
+        <span className="text-sm text-red-500 mt-1 block">{errors.laboratoryAnalysis.message as string}</span>
+       )}
       </div>
      )}
     />

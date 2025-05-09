@@ -18,17 +18,22 @@ export interface ExamCreateModel {
     cpfCaregiver?: string | null;
     nameCaregiver?: string | null;
     emailAddressCaregiver?: string | null;
-    birthdateCaregiver?: string | null;
+    birthDateCaregiver?: string | null;
     healthProfessional?: HealthProfessionalCreateModel | null;
     consentFormCompleted?: boolean | null;
     programParticipationConsent?: boolean | null;
     medicalRequestAttach?: AttachmentModel | null;
+    termConsentAttach?: AttachmentModel | null;
     centrifugeRequired?: boolean | null;
     name?: string | null;
     birthDate?: string | null;
     cpf?: string | null;
     voucherReceiptType?: string | null;
     healthProfessionalId?: string | null;
+    genderId?: string | null;
+    sector?: string | null;
+    responsibleName?: string | null;
+    contact?: string | null;
 }
 
 export interface LogisticsModel {

@@ -28,7 +28,7 @@ export const routes: IRouteProps = {
     { route: "/dashboard/doctor/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
     { route: "/dashboard/doctor/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
     { route: "/dashboard/doctor/link-management", text: "Gerenciar Vínculo", icon: LuSlidersHorizontal },
-    { route: "/dashboard/doctor/files", text: "Meus Arquivos", icon: LuFolderOpen },
+    { route: "/dashboard/doctor/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
   ],
 
   professional: [
@@ -38,6 +38,6 @@ export const routes: IRouteProps = {
     { route: "/dashboard/professional/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
     { route: "/dashboard/professional/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
     { route: "/dashboard/professional/link-management", text: "Meus vínculos", icon: LuSlidersHorizontal },
-    { route: "/dashboard/professional/files", text: "Meus Arquivos", icon: LuFolderOpen },
+    { route: "/dashboard/professional/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
   ],
 };

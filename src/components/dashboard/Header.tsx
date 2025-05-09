@@ -84,8 +84,8 @@ export function Header() {
        </>
       )}
      </div>
-     <div className={`pl-4 border-l-4 rounded-l-2xl border-mainlilly`}>
-      <h1 className="text-lg lg:text-2xl font-semibold text-black">
+     <div className={`pl-4 ${pathname.startsWith("/dashboard/starts") ? "border-l-4 rounded-l-2xl border-mainlilly" : ""} `}>
+      <h1 className="text-2xl md:text-3xl font-semibold text-black">
        {pathname.startsWith("/dashboard/starts") ? `Bem-vindo, ${auth.name}!` : currentRoute}
       </h1>
 

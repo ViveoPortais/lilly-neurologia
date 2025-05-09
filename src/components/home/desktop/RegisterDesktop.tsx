@@ -106,28 +106,30 @@ export default function RegisterDesktop({
      render={({ field }) => (
       <div className="flex items-center gap-2">
        <Checkbox id="consentLGPD" checked={field.value || false} onCheckedChange={(checked) => field.onChange(checked === true)} disabled />
-       <button
-        type="button"
-        onClick={() =>
-         openPdfModal({
-          pdfUrl: "/files/Termos_de_uso_do_site.pdf",
-          showAgree: true,
-          showDisagree: true,
-          showDownload: true,
-          onAgree: () => {
-           field.onChange(true);
-           closePdfModal();
-          },
-          onDisagree: () => {
-           field.onChange(false);
-           closePdfModal();
-          },
-         })
-        }
-        className="text-sm"
-       >
-        LI E ACEITO O TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
-       </button>
+       <span className="text-sm">
+        LI E ACEITO O{" "}
+        <span
+         onClick={() =>
+          openPdfModal({
+           pdfUrl: "/files/Termos_de_uso_do_site.pdf",
+           showAgree: true,
+           showDisagree: true,
+           showDownload: true,
+           onAgree: () => {
+            field.onChange(true);
+            closePdfModal();
+           },
+           onDisagree: () => {
+            field.onChange(false);
+            closePdfModal();
+           },
+          })
+         }
+         className="underline cursor-pointer text-mainlilly font-medium"
+        >
+         TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
+        </span>
+       </span>
       </div>
      )}
     />

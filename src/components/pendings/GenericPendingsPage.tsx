@@ -4,6 +4,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MdTaskAlt } from "react-icons/md";
 import { PendingsMobilePage } from "./mobile/PendingsMobilePage";
 import PendingsDesktopPage from "./desktop/PendingsDesktop";
+import { Accordion } from "@/components/custom/Accordion";
 
 interface GenericPendingsProps {
  categories: {
@@ -30,28 +31,13 @@ export function GenericPendingsPage({ categories }: GenericPendingsProps) {
     </div>
    ) : (
     categories.map((category) => (
-     <details key={category.title} className="group border border-zinc-200 rounded-xl mb-4 overflow-hidden">
-      <summary className="flex justify-between items-center px-4 py-3 text-sm font-semibold bg-white border-b border-zinc-200 cursor-pointer">
-       <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold">{category.title}</span>
-        {category.count > 0 && (
-         <span className="text-xs bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded-full">
-          {String(category.count).padStart(2, "0")} pendentes
-         </span>
-        )}
-       </div>
-       <svg
-        className="w-4 h-4 text-red-500 transition-transform duration-200 group-open:rotate-180"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-       >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-       </svg>
-      </summary>
-
+     <Accordion
+      key={category.title}
+      title={category.title}
+      badgeText={category.count > 0 ? `${String(category.count).padStart(2, "0")} pendentes` : undefined}
+     >
       {isMobile ? <PendingsMobilePage items={category.items} /> : <PendingsDesktopPage items={category.items} />}
-     </details>
+     </Accordion>
     ))
    )}
   </div>

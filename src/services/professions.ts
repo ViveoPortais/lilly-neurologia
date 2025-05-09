@@ -47,7 +47,7 @@ export const linkDoctor = async (doctorId: string, programCode: string) => {
   return res.data;
 }
 
-export const getNurses = async ( programCode: string, doctorId?: string) => {
+export const getNurses = async ( doctorId?: string) => {
   const res = await api.get(`/healthProfessional/healthProfessionalByProgramDoctorByProgram`, {
     params: {
       programCode: programCode,

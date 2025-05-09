@@ -1,3 +1,6 @@
+import { useState } from "react";
+import RejectedDocModal from "../modals/RejectedDocModal";
+
 interface PendingsDesktopPageProps {
  items: {
   id: string;
@@ -7,6 +10,18 @@ interface PendingsDesktopPageProps {
 }
 
 export default function PendingsDesktopPage({ items }: PendingsDesktopPageProps) {
+ const [isModalOpen, setIsModalOpen] = useState(false);
+ const [selectedItem, setSelectedItem] = useState<{ id: string; reason?: string } | null>(null);
+
+ const handleOpen = (item: { id: string; reason?: string }) => {
+  setSelectedItem(item);
+  setIsModalOpen(true);
+ };
+
+ const handleClose = () => {
+  setIsModalOpen(false);
+  setSelectedItem(null);
+ };
  return (
   <div className="overflow-x-auto px-4 pb-3">
    <table className="min-w-full text-sm text-zinc-700">
@@ -24,7 +39,10 @@ export default function PendingsDesktopPage({ items }: PendingsDesktopPageProps)
      {items.map((item) => (
       <tr key={item.id} className="border-t">
        <td className="px-2 py-2">
-        <button className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition">
+        <button
+         onClick={() => handleOpen(item)}
+         className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
+        >
          Resolver
         </button>
        </td>
@@ -41,6 +59,13 @@ export default function PendingsDesktopPage({ items }: PendingsDesktopPageProps)
      ))}
     </tbody>
    </table>
+   <RejectedDocModal
+    open={isModalOpen}
+    onClose={handleClose}
+    docName="Termo de Consentimento Assinado"
+    fileSize="100 KB"
+    reason={selectedItem?.reason || ""}
+   />
   </div>
  );
 }

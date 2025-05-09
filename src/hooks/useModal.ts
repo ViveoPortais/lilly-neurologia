@@ -59,11 +59,6 @@ export const useModalTotalPartial = create<ModalProps>((set) => ({
   openModal: (action) => set(() => ({ isModalOpen: action })),
 }));
 
-export const useModalAlterPassword = create<ModalProps>((set) => ({
-  isModalOpen: false,
-  openModal: (action) => set(() => ({ isModalOpen: action })),
-}));
-
 export const useModalInvitationRegister = create<ModalProps>((set) => ({
   isModalOpen: false,
   openModal: (action) => set(() => ({ isModalOpen: action })),

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
 import { Download, Upload, AlertCircle } from "lucide-react";
 import { useGenericModal } from "@/contexts/GenericModalContext";
+import { useState } from "react";
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
@@ -10,6 +11,8 @@ const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
 export const Step3 = () => {
  const { register, setValue } = useFormContext();
  const modal = useGenericModal();
+ const [consentFileName, setConsentFileName] = useState("");
+ const [requestFileName, setRequestFileName] = useState("");
 
  const handleFileValidation = (event: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
   const file = event.target.files?.[0];
@@ -29,6 +32,12 @@ export const Step3 = () => {
    });
    setValue(fieldName as any, null);
    event.target.value = "";
+  }
+
+  if (fieldName === "termConsentAttach") {
+   setConsentFileName(file.name);
+  } else if (fieldName === "medicalRequestAttach") {
+   setRequestFileName(file.name);
   }
  };
 
@@ -58,15 +67,20 @@ export const Step3 = () => {
       <Input
        type="file"
        accept={ACCEPTED_FORMATS.join(",")}
-       {...register("consentForm")}
-       onChange={(e) => handleFileValidation(e, "consentForm")}
+       {...register("termConsentAttach")}
+       onChange={(e) => handleFileValidation(e, "termConsentAttach")}
        className="hidden"
       />
-      <Button variant="outlineMainlilly" className="text-sm text-gray-500 w-[280px]" disabled>
+      <Button variant="outlineMainlilly" className="text-sm text-gray-500 w-[280px]" type="button">
        <Upload className="w-4 h-4 mr-2" />
        Upload do Termo assinado
       </Button>
      </label>
+     {consentFileName && (
+      <p className="text-xs text-zinc-600 mt-1 text-center">
+       Arquivo selecionado: <span className="font-medium">{consentFileName}</span>
+      </p>
+     )}
     </div>
    </div>
 
@@ -89,8 +103,8 @@ export const Step3 = () => {
       <Input
        type="file"
        accept={ACCEPTED_FORMATS.join(",")}
-       {...register("medicalRequest")}
-       onChange={(e) => handleFileValidation(e, "medicalRequest")}
+       {...register("medicalRequestAttach")}
+       onChange={(e) => handleFileValidation(e, "medicalRequestAttach")}
        className="hidden"
       />
       <Button variant="outlineMainlilly" className="text-sm text-gray-500 w-[280px]" disabled>
@@ -98,6 +112,11 @@ export const Step3 = () => {
        Upload do Pedido Médico
       </Button>
      </label>
+     {requestFileName && (
+      <p className="text-xs text-zinc-600 mt-1 text-center">
+       Arquivo selecionado: <span className="font-medium">{requestFileName}</span>
+      </p>
+     )}
     </div>
    </div>
   </div>

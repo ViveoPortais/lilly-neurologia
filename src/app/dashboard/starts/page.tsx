@@ -29,11 +29,14 @@ const Page = () => {
     <ContentCard
      key={index}
      title={item.text}
-     bgColor="bg-colorcard"
+     bgColor={item.text === "Minhas Pendências" ? "bg-mainlilly" : "bg-colorcard"}
      hasIcon={true}
      svgIcon={item.icon}
      buttonText="Acessar"
      onButtonClick={() => router.push(item.route)}
+     customIconText={item.text === "Minhas Pendências" ? " " : undefined}
+     customBottomText={item.text === "Minhas Pendências" ? `${countMessage ?? 0} pendentes` : undefined}
+     hideButton={item.text === "Minhas Pendências" ? false : undefined}
     />
    ))}
   </div>

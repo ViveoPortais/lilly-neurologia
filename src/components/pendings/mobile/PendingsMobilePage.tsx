@@ -1,4 +1,6 @@
 import { Pencil } from "lucide-react";
+import RejectedDocModal from "../modals/RejectedDocModal";
+import { useState } from "react";
 
 interface PendingsMobilePageProps {
  items: {
@@ -9,11 +11,23 @@ interface PendingsMobilePageProps {
 }
 
 export function PendingsMobilePage({ items }: PendingsMobilePageProps) {
+ const [isModalOpen, setIsModalOpen] = useState(false);
+ const [selectedItem, setSelectedItem] = useState<{ id: string; reason?: string } | null>(null);
+
+ const handleOpen = (item: { id: string; reason?: string }) => {
+  setSelectedItem(item);
+  setIsModalOpen(true);
+ };
+
+ const handleClose = () => {
+  setIsModalOpen(false);
+  setSelectedItem(null);
+ };
  return (
   <div className="flex flex-col gap-3 px-2 pb-3">
    {items.map((item) => (
     <div key={item.id} className="border border-zinc-200 rounded-xl p-4 bg-white relative shadow-sm mt-2">
-     <button className="absolute top-2 right-2 text-red-500">
+     <button onClick={() => handleOpen(item)} className="absolute top-2 right-2 text-red-500">
       <Pencil size={16} />
      </button>
 
@@ -42,6 +56,13 @@ export function PendingsMobilePage({ items }: PendingsMobilePageProps) {
      </div>
     </div>
    ))}
+   <RejectedDocModal
+    open={isModalOpen}
+    onClose={handleClose}
+    docName="Termo de Consentimento Assinado"
+    fileSize="100 KB"
+    reason={selectedItem?.reason || ""}
+   />
   </div>
  );
 }

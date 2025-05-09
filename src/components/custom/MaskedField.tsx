@@ -28,7 +28,8 @@ export const maskedField = (
   onBlur?: (e: any) => void,
   value?: string,
   disabled?: boolean,
-  className?: string
+  className?: string,
+  inputPlaceholder?: string
 ) => {
   return (
     <ReactInputMask
@@ -40,7 +41,7 @@ export const maskedField = (
       value={value ? value : ""}
       disabled={disabled}
     >
-      <Input placeholder={placeholder} name={name} required={required} className={className} />
+      <Input placeholder={placeholder} name={name} required={required} className={className} inputPlaceholder={inputPlaceholder} />
     </ReactInputMask>
   );
 };

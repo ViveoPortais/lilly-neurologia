@@ -17,7 +17,7 @@ export const forgetPasswordSchema = z.discriminatedUnion("role", [
  }),
  z.object({
   role: z.literal("medico"),
-  licenseNumber: z.string().min(1, "CRM obrigatório"),
+  licenseNumber: z.string().min(1, "CRM obrigatório").regex(/^\d+$/, { message: "Informe apenas números" }),
   licenseState: z.string().min(1, "UF obrigatória"),
   cpf: z
    .string()
@@ -235,27 +235,6 @@ export type teamManagementProfessionalValidationProps = z.infer<typeof teamManag
 
 //------------------------ || --------------------------//
 
-export const alterPasswordSchema = z
- .object({
-  oldPassword: z.string().min(8, "A senha antiga deve ter pelo menos 8 caracteres"),
-  newPassword: z
-   .string()
-   .min(8, "A nova senha deve ter pelo menos 8 caracteres")
-   .regex(/[A-Z]/, { message: "A senha deve conter pelo menos uma letra maiúscula" })
-   .regex(/[a-z]/, { message: "A senha deve conter pelo menos uma letra minúscula" })
-   .regex(/[0-9]/, { message: "A senha deve conter pelo menos um número" })
-   .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "A senha deve conter pelo menos um caractere especial" }),
-  confirmPassword: z.string().min(1, "A confirmação de senha é obrigatória"),
- })
- .refine((data) => data.newPassword === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
- });
-
-export type alterPasswordProps = z.infer<typeof alterPasswordSchema>;
-
-//------------------------ || --------------------------//
-
 export const moritoringExamRequestSchema = z.object({
  crm: z.string().min(1, { message: "CRM é obrigatório" }).optional(),
  uf: z.string().min(1, { message: "UF é obrigatório" }).optional(),
@@ -340,7 +319,13 @@ export type segurancaExamRequestValidationProps = z.infer<typeof segurancaExamRe
 export const getRegisterSignUpSchema = (role: string) =>
  z
   .object({
-   doctorName: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome inválido" }),
+   doctorName: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .regex(nameRegex, { message: "Nome inválido" })
+    .refine((name) => name.trim().split(/\s+/).length >= 2, {
+     message: "Informe o nome completo",
+    }),
    cpf: z
     .string()
     .min(1, { message: "Insira seu CPF" })
@@ -397,22 +382,27 @@ export const patientSchema = z
    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
   name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
   birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
-  hasResponsible: z.enum(["yes", "no"]),
+  hasResponsible: z.enum(["yes", "no"]).optional().nullable(),
   nameCaregiver: z.string().optional(),
   cpfCaregiver: z.string().optional(),
   birthDateCaregiver: z.string().optional(),
   disease: z.string().min(1, { message: "Informe a doença" }),
   examDefinition: z.string().min(1, { message: "Descreva o exame" }),
-  laboratoryName: z.string().min(1, { message: "Informe o laboratório" }),
-  gender: z.string().min(1, { message: "Informe o gênero" }),
+  laboratoryAnalysis: z.string().min(1, { message: "Informe o laboratório" }),
+  genderId: z.string().min(1, { message: "Informe o gênero" }),
   addressPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
   addressName: z.string().min(1, { message: "Endereço é obrigatório" }),
   addressNumber: z.string().min(1, { message: "Número é obrigatório" }),
   sector: z.string().min(1, { message: "Bairro/Setor é obrigatório" }),
   responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
   contact: z.string().min(1, { message: "Contato é obrigatório" }),
-  consentForm: z.any().optional(),
-  medicalRequest: z.any().optional(),
+  termConsentAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
+   message: "O termo de consentimento é obrigatório",
+  }),
+
+  medicalRequestAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
+   message: "O pedido médico é obrigatório",
+  }),
  })
  .refine(
   (data) => {
@@ -426,3 +416,22 @@ export const patientSchema = z
    path: ["nameCaregiver"],
   }
  );
+
+export const passwordSchema = z
+ .object({
+  currentPassword: z.string().min(1, "Preencha a senha atual"),
+  newPassword: z
+   .string()
+   .min(12, "Ao menos um 12 caracteres")
+   .regex(/[a-z]/, "Ao menos um caracter minúsculo")
+   .regex(/[A-Z]/, "Ao menos um caracter maiúsculo")
+   .regex(/[0-9]/, "Ao menos um número")
+   .regex(/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/, "Ao menos um caracter especial"),
+  confirmPassword: z.string(),
+ })
+ .refine((data) => data.newPassword === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+ });
+
+export type PasswordFormData = z.infer<typeof passwordSchema>;

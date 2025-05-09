@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
@@ -43,6 +43,12 @@ export default function SignIn() {
  const [token, setToken] = useState(["", "", "", ""]);
  const modal = useGenericModal();
  const [rememberMe, setRememberMe] = useState(false);
+ const tokenRefs = [
+  useRef<HTMLInputElement>(null),
+  useRef<HTMLInputElement>(null),
+  useRef<HTMLInputElement>(null),
+  useRef<HTMLInputElement>(null),
+ ];
 
  const {
   register,
@@ -173,6 +179,12 @@ export default function SignIn() {
   const updated = [...token];
   updated[index] = value;
   setToken(updated);
+
+  if (value && index < tokenRefs.length - 1) {
+   tokenRefs[index + 1].current?.focus();
+  } else if (!value && index > 0) {
+   tokenRefs[index - 1].current?.focus();
+  }
  };
 
  useEffect(() => {
@@ -257,17 +269,31 @@ export default function SignIn() {
     <>
      {/* ETAPA 3: Inserir token */}
      <label className="w-full text-start mb-1 text-md text-zinc-700">Escolha a forma que deseja receber o Token:</label>
-     <Input className="w-full" value={tokenChannel === "email" ? "E-mail" : "Sms"} disabled></Input>
+     <div className="w-full mb-4">
+      <label className="block mb-1 text-sm text-zinc-700">Enviar Token para:</label>
+      <Input className="w-full" value={tokenChannel === "email" ? "E-mail" : "Sms"} disabled></Input>
+     </div>
 
-     <div className="flex gap-4 mt-2">
+     <div className="w-full flex items-center justify-between gap-2 mt-2">
       {[0, 1, 2, 3].map((index) => (
-       <Input key={index} maxLength={1} className="w-full" onChange={(e) => handleTokenInput(index, e.target.value)} />
+       <div key={index} className="flex items-center gap-2">
+        <Input
+         ref={tokenRefs[index]}
+         maxLength={1}
+         className="w-12 md:w-16 text-center rounded-md"
+         onChange={(e) => handleTokenInput(index, e.target.value)}
+         value={token[index] || ""}
+        />
+        {index < 3 && <span className="text-2xl text-zinc-600 select-none ml-[0.1rem] md:ml-2 -mr-2">-</span>}
+       </div>
       ))}
      </div>
 
-     <span onClick={() => handleResendToken(watch())} className="text-xs underline cursor-pointer mt-2">
-      Enviar Novamente
-     </span>
+     <div className="w-full flex items-start">
+      <span onClick={() => handleResendToken(watch())} className="text-xs underline cursor-pointer mt-2 inline-block">
+       Enviar Novamente
+      </span>
+     </div>
 
      <Button
       size={`lg`}

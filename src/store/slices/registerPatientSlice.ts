@@ -1,26 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IStringMap } from "@/types";
-import { diseases, exams, gender, labs, registerPatient } from "@/services/registerPatient";
+import { diseases, exams, gender, getDoctor, labs, registerPatient, searchPatient } from "@/services/registerPatient";
+import { ExamCreateModel } from "@/types/diagnostic";
 
 interface RegisterPatientState {
  loading: boolean;
+ isSubmitting: boolean;
  error: string | null;
  data: {
   genders: IStringMap[];
   exams: IStringMap[];
   labs: IStringMap[];
   diseases: IStringMap[];
+  foundPatient?: any;
+  doctorId?: string | null;
  };
 }
 
 const initialState: RegisterPatientState = {
  loading: false,
+ isSubmitting: false,
  error: null,
  data: {
   genders: [],
   exams: [],
   labs: [],
   diseases: [],
+  doctorId: null,
  },
 };
 
@@ -74,8 +80,8 @@ export const fetchGenders = createAsyncThunk("registerPatient/fetchGenders", asy
   const result = await gender();
 
   const transformed = result.map((item: any) => ({
-   stringMapId: item.id,
-   optionName: item.name,
+   stringMapId: item.stringMapId,
+   optionName: item.optionName,
   }));
 
   return transformed as IStringMap[];
@@ -86,10 +92,31 @@ export const fetchGenders = createAsyncThunk("registerPatient/fetchGenders", asy
 
 export const searchPatientByCpf = createAsyncThunk("registerPatient/searchPatientByCpf", async (cpf: string, { rejectWithValue }) => {
  try {
-  const result = await registerPatient({ cpf });
+  const result = await searchPatient(cpf);
   return result;
  } catch (error: any) {
   return rejectWithValue(error.response?.data || "Erro ao submeter CPF");
+ }
+});
+
+export const submitPatientRegistration = createAsyncThunk(
+ "registerPatient/submitPatientRegistration",
+ async (data: ExamCreateModel, { rejectWithValue }) => {
+  try {
+   const response = await registerPatient(data);
+   return response;
+  } catch (error: any) {
+   return rejectWithValue(error.response?.data || "Erro ao registrar paciente");
+  }
+ }
+);
+
+export const getDoctorInfo = createAsyncThunk("registerPatient/getDoctorInfo", async (_, thunkAPI) => {
+ try {
+  const result = await getDoctor();
+  return result.doctorId;
+ } catch (error) {
+  return thunkAPI.rejectWithValue("Erro ao carregar patologias");
  }
 });
 
@@ -160,11 +187,39 @@ const registerPatientSlice = createSlice({
     state.loading = true;
     state.error = null;
    })
-   .addCase(searchPatientByCpf.fulfilled, (state) => {
+   .addCase(searchPatientByCpf.fulfilled, (state, action) => {
     state.loading = false;
+    state.data.foundPatient = action.payload;
    })
    .addCase(searchPatientByCpf.rejected, (state, action) => {
     state.loading = false;
+    state.error = action.payload as string;
+    state.data.foundPatient = undefined;
+   })
+
+   .addCase(submitPatientRegistration.pending, (state) => {
+    state.isSubmitting = true;
+    state.error = null;
+   })
+   .addCase(submitPatientRegistration.fulfilled, (state) => {
+    state.isSubmitting = false;
+   })
+   .addCase(submitPatientRegistration.rejected, (state, action) => {
+    state.isSubmitting = false;
+    state.error = action.payload as string;
+   })
+
+   .addCase(getDoctorInfo.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+   })
+   .addCase(getDoctorInfo.fulfilled, (state, action) => {
+    state.loading = false;
+    state.data.doctorId = action.payload;
+   })
+   .addCase(getDoctorInfo.rejected, (state, action) => {
+    state.loading = false;
+    state.data.doctorId = null;
     state.error = action.payload as string;
    });
  },

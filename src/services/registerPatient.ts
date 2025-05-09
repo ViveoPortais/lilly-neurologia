@@ -1,4 +1,6 @@
+import { DiagnosticData } from "@/types";
 import api from "./api";
+import { ExamCreateModel } from "@/types/diagnostic";
 
 const programCode = `${process.env.PROGRAM_CODE}`;
 
@@ -40,10 +42,28 @@ export const gender = async () => {
  return response.data;
 };
 
-export const registerPatient = async (data: any) => {
+export const registerPatient = async (data: ExamCreateModel) => {
  const response = await api.post("/Diagnostic/add", {
-  ...data,
-  programCode,
+  ...data
+ });
+ return response.data;
+};
+
+export const searchPatient = async (cpf: string) => {
+ const response = await api.get("/Diagnostic/by-cpf", {
+  params: {
+   cpf,
+   programCode,
+  },
+ });
+ return response.data;
+};
+
+export const getDoctor = async () => {
+ const response = await api.get("/Doctor/getdoctorinfo", {
+  params: {
+   programCode,
+  },
  });
  return response.data;
 };

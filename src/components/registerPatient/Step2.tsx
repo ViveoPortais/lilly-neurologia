@@ -48,7 +48,7 @@ export const Step2 = ({
         field.onChange,
         field.name,
         "CEP da Coleta",
-        true,
+        false,
         (e) => {
          field.onBlur;
          handleCepBlur(e);
@@ -82,11 +82,17 @@ export const Step2 = ({
      control={control}
      render={({ field }) => (
       <div className="w-full">
-       {maskedField("cellphone", field.onChange, field.name, "Telefone de Contato", true, field.onBlur, field.value, false, `w-full`)}
+       {maskedField("cellphone", field.onChange, field.name, "Telefone de Contato", false, field.onBlur, field.value, false, `w-full`)}
        {errors?.contact && <span className="text-sm text-red-500 mt-1 block">{errors.contact.message as string}</span>}
       </div>
      )}
     />
+   </div>
+   <div className="grid grid-cols-1 mt-4">
+    <label className="flex items-center gap-2 text-sm text-zinc-700">
+     <input type="checkbox" className="accent-mainlilly w-4 h-4" />
+     Salvar endereço
+    </label>
    </div>
   </div>
  );

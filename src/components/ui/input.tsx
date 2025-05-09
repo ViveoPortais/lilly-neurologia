@@ -22,6 +22,7 @@ export interface InputProps
   maxLength?: number;
   tooltip?: boolean;
   textTooltip?: string;
+  inputPlaceholder?: string;
 }
 
 const iconsMap = {
@@ -40,6 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       maxLength,
       tooltip,
       textTooltip,
+      inputPlaceholder,
       ...props
     },
     ref
@@ -94,6 +96,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             ref={ref}
             {...props}
+            placeholder={inputPlaceholder ?? props.placeholder}
             maxLength={type === "text" ? maxLength : undefined}
           />
           {type === "password" && (

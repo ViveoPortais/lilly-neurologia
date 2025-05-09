@@ -28,6 +28,8 @@ interface ContentCardProps {
  onButtonClick?: () => void;
  showImages?: boolean;
  programCode?: string;
+ customBottomText?: string;
+ customIconText?: string;
 }
 
 const ContentCard = ({
@@ -50,6 +52,8 @@ const ContentCard = ({
  programCode,
  hasIcon = false,
  svgIcon: Icon,
+ customBottomText,
+ customIconText,
 }: ContentCardProps) => {
  const sendEmail = () => {
   window.open("mailto:teste@suporteaopaciente.com.br?subject=Subject&body=Body%20goes%20here");
@@ -62,12 +66,13 @@ const ContentCard = ({
  return (
   <div className={`relative w-full h-auto min-h-[150px] md:min-h-[150px] rounded-xl p-4 flex flex-col justify-between ${bgColor}`}>
    {hasIcon && Icon && (
-    <div className="absolute top-4 right-4">
-     <Icon className="w-8 h-8 text-black" />
+    <div className="absolute top-4 right-4 flex flex-col items-center">
+     <Icon className={`w-8 h-8 ${title === "Minhas Pendências" ? "text-white" : "text-black"}`} />
+     {customIconText && <span className="text-xs text-white mt-1">{customIconText}</span>}
     </div>
    )}
 
-   <div className="text-black text-base flex flex-col gap-1 pr-10">
+   <div className={`${title === "Minhas Pendências" ? "text-white" : "text-black"} text-base flex flex-col gap-1 pr-10`}>
     <span className="text-xl font-semibold">{title}</span>
     {subtitle && <span className="text-sm">{subtitle}</span>}
     {subtitleTwo && <span className="text-sm">{subtitleTwo}</span>}
@@ -106,9 +111,24 @@ const ContentCard = ({
     </div>
    )}
 
+   {customBottomText && Icon && (
+    <div className="text-xs font-semibold text-white flex items-center gap-1 md:absolute md:bottom-4 md:right-4 mt-2 md:mt-0">
+     {customBottomText}
+     <Icon className={`w-4 h-4 ${title === "Minhas Pendências" ? "text-white" : "text-black"}`} />
+    </div>
+   )}
+
    {!hideButton && (
     <div className="mt-4">
-     <Button size="sm" className="bg-mainlilly text-white hover:bg-mainlilly/90 font-semibold" onClick={onButtonClick}>
+     <Button
+      size="sm"
+      className={`${
+       title === "Minhas Pendências"
+        ? "bg-white text-black border border-white hover:bg-white/90"
+        : "bg-mainlilly text-white hover:bg-mainlilly/90"
+      } font-semibold`}
+      onClick={onButtonClick}
+     >
       {buttonText}
      </Button>
     </div>

@@ -9,9 +9,18 @@ import { patientSchema } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchDiseases, fetchExams, fetchGenders, fetchLabs } from "@/store/slices/registerPatientSlice";
+import {
+ fetchDiseases,
+ fetchExams,
+ fetchGenders,
+ fetchLabs,
+ getDoctorInfo,
+ submitPatientRegistration,
+} from "@/store/slices/registerPatientSlice";
 import { Step3Doctor } from "./doctor/Step3";
 import useSession from "@/hooks/useSession";
+import { useGenericModal } from "@/contexts/GenericModalContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
  role: string;
@@ -26,6 +35,9 @@ export default function PatientForm({ role, isMobile }: Props) {
  const exams = useAppSelector((state) => state.registerPatient.data.exams);
  const labs = useAppSelector((state) => state.registerPatient.data.labs);
  const diseases = useAppSelector((state) => state.registerPatient.data.diseases);
+ const doctorId = useAppSelector((state) => state.registerPatient.data.doctorId);
+ const isSubmitting = useAppSelector((state) => state.registerPatient.isSubmitting);
+ const router = useRouter();
 
  const methods = useForm({
   resolver: zodResolver(patientSchema),
@@ -33,10 +45,97 @@ export default function PatientForm({ role, isMobile }: Props) {
  });
 
  const handleClearForm = () => {
-  methods.reset();
+  methods.reset({
+   cpf: "",
+   name: "",
+   birthDate: "",
+   hasResponsible: null,
+   nameCaregiver: "",
+   cpfCaregiver: "",
+   birthDateCaregiver: "",
+   disease: "",
+   examDefinition: "",
+   laboratoryAnalysis: "",
+   genderId: "",
+   addressPostalCode: "",
+   addressName: "",
+   addressNumber: "",
+   sector: "",
+   responsibleName: "",
+   contact: "",
+   termConsentAttach: undefined,
+   medicalRequestAttach: undefined,
+  });
  };
 
- const handleNext = () => {
+ const modal = useGenericModal();
+
+ const getStepFields = () => {
+  const hasResponsible = methods.watch("hasResponsible") === "yes";
+
+  if (!isMobile && step === 1) {
+   return [
+    "cpf",
+    "name",
+    "birthDate",
+    "hasResponsible",
+    ...(hasResponsible ? ["nameCaregiver", "cpfCaregiver", "birthDateCaregiver"] : []),
+    "disease",
+    "examDefinition",
+    "laboratoryAnalysis",
+    "genderId",
+    "addressPostalCode",
+    "addressName",
+    "addressNumber",
+    "sector",
+    "responsibleName",
+    "contact",
+   ];
+  }
+
+  if (isMobile && step === 1) {
+   return [
+    "cpf",
+    "name",
+    "birthDate",
+    "hasResponsible",
+    ...(hasResponsible ? ["nameCaregiver", "cpfCaregiver", "birthDateCaregiver"] : []),
+    "disease",
+    "examDefinition",
+    "laboratoryAnalysis",
+    "genderId",
+   ];
+  }
+
+  if (isMobile && step === 2) {
+   return ["addressPostalCode", "addressName", "addressNumber", "sector", "responsibleName", "contact"];
+  }
+
+  return [];
+ };
+
+ const handleNext = async () => {
+  const fields = getStepFields().filter((field) => field !== "hasResponsible");
+  const values = Object.fromEntries(fields.map((field) => [field, methods.getValues(field)]));
+
+  const invalidFields = fields.filter((field: any) => {
+   const value = values[field];
+   return !value || (typeof value === "string" && value.trim() === "") || (value instanceof File === false && typeof value === "object");
+  });
+
+  if (invalidFields.length > 0) {
+   modal.showModal(
+    {
+     type: "warning",
+     title: "Campos obrigatórios",
+     message: "Por favor, preencha todos os campos antes de continuar.",
+     buttonLabel: "Fechar",
+    },
+    () => {}
+   );
+   return;
+  }
+
   if (!isMobile && step === 1) {
    setStep(3);
   } else if (step < 3) {
@@ -52,9 +151,72 @@ export default function PatientForm({ role, isMobile }: Props) {
   }
  };
 
- const handleFinish = () => {
-  methods.handleSubmit((data) => {
-   console.log("Final submitted data:", data);
+ function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+   const reader = new FileReader();
+   reader.onload = () => {
+    const result = reader.result as string;
+    const base64 = result.split(",")[1];
+    resolve(base64);
+   };
+   reader.onerror = reject;
+   reader.readAsDataURL(file);
+  });
+ }
+
+ const handleFinish = async () => {
+  methods.handleSubmit(async (data) => {
+   try {
+    const termFile = data.termConsentAttach as File;
+    const requestFile = data.medicalRequestAttach as File;
+
+    const [termBase64, requestBase64] = await Promise.all([readFileAsBase64(termFile), readFileAsBase64(requestFile)]);
+
+    const { termConsentAttach, medicalRequestAttach, hasResponsible, ...restData } = data;
+
+    const payload = {
+     ...restData,
+     programCode: "1001",
+     doctorId: doctorId,
+     termConsentAttach: {
+      fileName: termConsentAttach.name,
+      documentBody: await readFileAsBase64(termConsentAttach),
+     },
+     medicalRequestAttach: {
+      fileName: medicalRequestAttach.name,
+      documentBody: await readFileAsBase64(medicalRequestAttach),
+     },
+    };
+
+    const response = await dispatch(submitPatientRegistration(payload)).unwrap();
+
+    if (response.isValidData) {
+     modal.showModal(
+      {
+       type: "success",
+       title: "Sua solicitação foi enviada.",
+       message: response.additionalMessage,
+      },
+      () => {
+       handleClearForm();
+       setStep(1);
+      }
+     );
+    } else {
+     modal.showModal(
+      {
+       type: "error",
+       title: "Erro ao cadastrar paciente.",
+       message: response.additionalMessage,
+      },
+      () => {
+       router.push("/dashboard/starts");
+      }
+     );
+    }
+   } catch (error) {
+    console.log("Erro ao registrar paciente:", error);
+   }
   })();
  };
 
@@ -83,10 +245,12 @@ export default function PatientForm({ role, isMobile }: Props) {
 
    {step === 3 && (
     <>
-     <Button variant="outlineMainlilly" onClick={handleBack}>
+     <Button variant="outlineMainlilly" onClick={() => router.push("/dashboard/starts")}>
       Cancelar
      </Button>
-     <Button onClick={handleFinish}>Finalizar</Button>
+     <Button onClick={handleFinish} disabled={isSubmitting} isLoading={isSubmitting}>
+      Finalizar
+     </Button>
     </>
    )}
   </div>
@@ -97,6 +261,7 @@ export default function PatientForm({ role, isMobile }: Props) {
   dispatch(fetchExams());
   dispatch(fetchLabs());
   dispatch(fetchDiseases());
+  dispatch(getDoctorInfo());
  }, [dispatch]);
 
  return (
