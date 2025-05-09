@@ -96,7 +96,13 @@ export default function ForgetPasswordPage() {
    {role === "medico" && (
     <div className="flex flex-col gap-4 mt-4">
      <div>
-      <Input {...register("licenseNumber")} placeholder="Digite seu CRM" />
+      <Input
+       {...register("licenseNumber")}
+       placeholder="CRM"
+       onChange={(e: any) => {
+        e.target.value = e.target.value.replace(/\D/g, "");
+       }}
+      />
       {(errors as any).licenseNumber && <p className="text-red-500 text-sm">{(errors as any).licenseNumber.message}</p>}
      </div>
 
