@@ -1,7 +1,6 @@
 "use client";
 
 import { Loading } from "@/components/custom/Loading";
-import { AlterPasswordModal } from "@/components/dashboard/AlterPassword";
 import { Header } from "@/components/dashboard/Header";
 import { Navbar } from "@/components/dashboard/Navbar";
 import { Footer } from "@/components/Footer";
