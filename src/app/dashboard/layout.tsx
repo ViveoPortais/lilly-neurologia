@@ -93,7 +93,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
      <FooterMobile />
     )}
    </div>
-   <AlterPasswordModal />
   </main>
  );
 }
