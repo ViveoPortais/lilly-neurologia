@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
  const auth = useSession();
  const [loading, setLoading] = useState(true);
  const [hasOpenedModal, setHasOpenedModal] = useState(false);
- const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(true);
+ const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const isMobile = useMediaQuery("(max-width: 768px)");
 
  useEffect(() => {
