@@ -21,6 +21,7 @@ import { Step3Doctor } from "./doctor/Step3";
 import useSession from "@/hooks/useSession";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
+import { ButtonsNavigation } from "./ButtonsNavigation";
 
 type Props = {
  role: string;
@@ -167,6 +168,9 @@ export default function PatientForm({ role, isMobile }: Props) {
  const handleFinish = async () => {
   methods.handleSubmit(async (data) => {
    try {
+    if (data.hasResponsible === "no") {
+     data.birthDateCaregiver = null;
+    }
     const termFile = data.termConsentAttach as File;
     const requestFile = data.medicalRequestAttach as File;
 
@@ -219,42 +223,6 @@ export default function PatientForm({ role, isMobile }: Props) {
    }
   })();
  };
-
- const renderNavigationButtons = () => (
-  <div className={`flex flex-wrap gap-2 mt-6 ${isMobile ? "mb-10 center" : "end"}`}>
-   {step > 1 && (
-    <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={handleBack}>
-     Voltar
-    </Button>
-   )}
-
-   {step === 1 && (
-    <>
-     <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={handleClearForm}>
-      Limpar Tudo
-     </Button>
-     <Button onClick={handleNext} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`}>Avançar</Button>
-    </>
-   )}
-
-   {step === 2 && (
-    <Button onClick={handleNext} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`}>
-     Avançar
-    </Button>
-   )}
-
-   {step === 3 && (
-    <>
-     <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={() => router.push("/dashboard/starts")}>
-      Cancelar
-     </Button>
-     <Button onClick={handleFinish} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} disabled={isSubmitting} isLoading={isSubmitting}>
-      Finalizar
-     </Button>
-    </>
-   )}
-  </div>
- );
 
  useEffect(() => {
   dispatch(fetchGenders());
@@ -327,7 +295,16 @@ export default function PatientForm({ role, isMobile }: Props) {
     )}
    </AnimatePresence>
 
-   <div className="w-full flex justify-end">{renderNavigationButtons()}</div>
+   <ButtonsNavigation
+    isMobile={isMobile}
+    step={step}
+    isSubmitting={isSubmitting}
+    onBack={handleBack}
+    onNext={handleNext}
+    onClear={handleClearForm}
+    onCancel={() => router.push("/dashboard/starts")}
+    onFinish={handleFinish}
+   />
   </FormProvider>
  );
 }

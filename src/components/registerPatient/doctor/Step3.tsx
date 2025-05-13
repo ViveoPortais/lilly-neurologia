@@ -161,7 +161,7 @@ export const Step3Doctor = () => {
  );
 
  return (
-  <div className="p-4 space-y-6 border border-gray-300 rounded-xl">
+  <div className="md:p-4 p-0 space-y-6 border border-gray-300 rounded-xl">
    {renderSection("Termo de Consentimento", "consent", consentType, setConsentType)}
    {renderSection("Pedido Médico", "medicalRequest", requestType, setRequestType)}
   </div>
