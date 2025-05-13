@@ -403,6 +403,7 @@ export const patientSchema = z
   medicalRequestAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
    message: "O pedido médico é obrigatório",
   }),
+  saveAddress: z.boolean().default(false),
  })
  .refine(
   (data) => {
@@ -419,7 +420,7 @@ export const patientSchema = z
 
 export const passwordSchema = z
  .object({
-  currentPassword: z.string().min(1, "Preencha a senha atual"),
+  oldPassword: z.string().min(1, "Preencha a senha atual"),
   newPassword: z
    .string()
    .min(12, "Ao menos um 12 caracteres")

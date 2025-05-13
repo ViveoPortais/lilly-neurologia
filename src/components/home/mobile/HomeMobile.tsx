@@ -12,11 +12,12 @@ export default function HomeMobile({ children }: Props) {
     <main className="min-h-screen w-screen flex flex-col">
       <div className="fixed inset-0 -z-10">
         <Image
-          src="/images/lilly_background.jpg"
+          src="/images/home.png"
           alt="Background institucional"
           fill
           className="object-cover"
           priority
+          quality={100}
         />
         <div className="absolute inset-0 bg-white/50 backdrop-blur-sm" />
       </div>

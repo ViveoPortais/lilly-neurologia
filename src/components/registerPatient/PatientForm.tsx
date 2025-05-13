@@ -115,7 +115,7 @@ export default function PatientForm({ role, isMobile }: Props) {
  };
 
  const handleNext = async () => {
-  const fields = getStepFields().filter((field) => field !== "hasResponsible");
+  const fields = getStepFields();
   const values = Object.fromEntries(fields.map((field) => [field, methods.getValues(field)]));
 
   const invalidFields = fields.filter((field: any) => {
@@ -221,34 +221,34 @@ export default function PatientForm({ role, isMobile }: Props) {
  };
 
  const renderNavigationButtons = () => (
-  <div className={`flex flex-wrap gap-2 end mt-6 ${isMobile ? "mb-10" : ""}`}>
+  <div className={`flex flex-wrap gap-2 mt-6 ${isMobile ? "mb-10 center" : "end"}`}>
    {step > 1 && (
-    <Button variant="outlineMainlilly" onClick={handleBack}>
+    <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={handleBack}>
      Voltar
     </Button>
    )}
 
    {step === 1 && (
     <>
-     <Button variant="outlineMainlilly" onClick={handleClearForm}>
+     <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={handleClearForm}>
       Limpar Tudo
      </Button>
-     <Button onClick={handleNext}>Avançar</Button>
+     <Button onClick={handleNext} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`}>Avançar</Button>
     </>
    )}
 
    {step === 2 && (
-    <Button onClick={handleNext} className="ml-auto">
+    <Button onClick={handleNext} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`}>
      Avançar
     </Button>
    )}
 
    {step === 3 && (
     <>
-     <Button variant="outlineMainlilly" onClick={() => router.push("/dashboard/starts")}>
+     <Button variant="outlineMainlilly" size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} onClick={() => router.push("/dashboard/starts")}>
       Cancelar
      </Button>
-     <Button onClick={handleFinish} disabled={isSubmitting} isLoading={isSubmitting}>
+     <Button onClick={handleFinish} size={`${isMobile ? "default" : "lg"}`} className={`${isMobile ? "" : "min-w-[220px] py-3"} text-base font-semibold`} disabled={isSubmitting} isLoading={isSubmitting}>
       Finalizar
      </Button>
     </>

@@ -5,7 +5,7 @@ import callChatSlice from "./slices/callChatSlice";
 import registerRepresentativeSlice from "./slices/registerRepresentativeSlice";
 import registerPatientSlice from "./slices/registerPatientSlice";
 import linkManagementSlice from "./slices/linkManagementeSlice";
-
+import userSlice from "./slices/userSlice";
 
 export const store = configureStore({
  reducer: {
@@ -14,7 +14,8 @@ export const store = configureStore({
   callChat: callChatSlice,
   registerRepresentative: registerRepresentativeSlice,
   registerPatient: registerPatientSlice,
-  linkManagement : linkManagementSlice
+  linkManagement: linkManagementSlice,
+  user: userSlice,
  },
  devTools: true,
 });

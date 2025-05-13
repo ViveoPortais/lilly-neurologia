@@ -109,6 +109,7 @@ export default function ForgetPasswordPage() {
       <Input
        {...register("licenseNumber")}
        placeholder="CRM"
+       inputPlaceholder="Digite seu CRM..."
        onChange={(e: any) => {
         e.target.value = e.target.value.replace(/\D/g, "");
        }}

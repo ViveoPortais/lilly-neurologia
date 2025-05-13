@@ -66,10 +66,10 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
                     styles={{
                         control: (provided) => ({
                             ...provided,
-                            height: '4rem',
-                            minHeight: '4rem',
+                            height: '52px',
+                            minHeight: '52px',
                             borderRadius: '0.375rem',
-                            borderColor: '#d1d5db',
+                            borderColor: '#c4b9b9',
                             boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
                         }),
                         menu: (provided) => ({

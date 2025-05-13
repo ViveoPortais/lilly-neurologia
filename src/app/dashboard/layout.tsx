@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
  const auth = useSession();
  const [loading, setLoading] = useState(true);
  const [hasOpenedModal, setHasOpenedModal] = useState(false);
- const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+ const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(true);
  const isMobile = useMediaQuery("(max-width: 768px)");
 
  useEffect(() => {
@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     isOpen={isPasswordModalOpen}
     onClose={() => setIsPasswordModalOpen(false)}
     title="Atualizar Senha"
-    children={<AlterPasswordModal />}
+    children={<AlterPasswordModal isOpenExternally={isPasswordModalOpen} onCloseExternally={() => setIsPasswordModalOpen(false)} />}
    />
   </main>
  );

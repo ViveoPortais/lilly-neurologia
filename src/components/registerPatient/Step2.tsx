@@ -90,7 +90,7 @@ export const Step2 = ({
    </div>
    <div className="grid grid-cols-1 mt-4">
     <label className="flex items-center gap-2 text-sm text-zinc-700">
-     <input type="checkbox" className="accent-mainlilly w-4 h-4" />
+     <input type="checkbox" className="accent-mainlilly w-4 h-4" {...register("saveAddress")} />
      Salvar endereço
     </label>
    </div>

@@ -39,7 +39,7 @@ const CustomSelect = forwardRef<ElementRef<typeof SelectPrimitive.Trigger>, Cust
      <SelectTrigger
       ref={ref}
       onBlur={onBlur}
-      className={`md:col-span-3 py-6 md:px-4 md:py-8 ${customClass} focus:outline-none focus:ring-transparent`}
+      className={`md:col-span-3 py-6 md:px-4 ${customClass} focus:outline-none focus:ring-transparent`}
      >
       <SelectValue placeholder="Selecione..." />
      </SelectTrigger>

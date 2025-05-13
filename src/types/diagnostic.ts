@@ -34,6 +34,7 @@ export interface ExamCreateModel {
     sector?: string | null;
     responsibleName?: string | null;
     contact?: string | null;
+    saveAddress?: boolean | null;
 }
 
 export interface LogisticsModel {

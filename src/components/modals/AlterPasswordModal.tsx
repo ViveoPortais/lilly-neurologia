@@ -6,8 +6,21 @@ import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordFormData, passwordSchema } from "@/lib/utils";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { changePasswordSlice } from "@/store/slices/userSlice";
+import { useGenericModal } from "@/contexts/GenericModalContext";
+import { useState } from "react";
 
-export default function AlterPasswordModal() {
+interface AlterPasswordModalProps {
+ isOpenExternally?: boolean;
+ onCloseExternally?: () => void;
+}
+
+export default function AlterPasswordModal({ isOpenExternally, onCloseExternally }: AlterPasswordModalProps) {
+ const [isOpen, setIsOpen] = useState(isOpenExternally ?? true);
+ const dispatch = useAppDispatch();
+ const modal = useGenericModal();
+ const isLoading = useAppSelector((state) => state.user.loading);
  const methods = useForm<PasswordFormData>({
   resolver: zodResolver(passwordSchema),
   mode: "onChange",
@@ -16,11 +29,53 @@ export default function AlterPasswordModal() {
  const {
   handleSubmit,
   register,
+  reset,
   formState: { errors, isValid },
  } = methods;
 
- const onSubmit = (data: PasswordFormData) => {
-  console.log("Submit:", data);
+ const closeModal = () => {
+  if (onCloseExternally) {
+   onCloseExternally();
+  } else {
+   setIsOpen(false);
+  }
+ };
+
+ const onSubmit = async (data: PasswordFormData) => {
+  try {
+   const res = await dispatch(
+    changePasswordSlice({
+     oldPassword: data.oldPassword,
+     newPassword: data.newPassword,
+     confirmPassword: data.confirmPassword,
+    })
+   ).unwrap();
+
+   if (res.isValidData) {
+    modal.showModal(
+     {
+      type: "success",
+      message: res.additionalMessage,
+      buttonLabel: "Fechar",
+     },
+     () => {
+      closeModal();
+      reset();
+     }
+    );
+   } else {
+    modal.showModal(
+     {
+      type: "warning",
+      message: res.additionalMessage,
+      buttonLabel: "Fechar",
+     },
+     () => reset()
+    );
+   }
+  } catch (error) {
+   console.error("Erro ao alterar a senha:", error);
+  }
  };
 
  return (
@@ -31,8 +86,8 @@ export default function AlterPasswordModal() {
       <Input
        type="password"
        placeholder="Digite a senha"
-       {...register("currentPassword")}
-       className={errors.currentPassword ? "border-red-500" : ""}
+       {...register("oldPassword")}
+       className={errors.oldPassword ? "border-red-500" : ""}
       />
      </div>
     </div>
@@ -86,7 +141,7 @@ export default function AlterPasswordModal() {
      </div>
     </div>
 
-    <Button type="submit" disabled={!isValid} className="w-full mt-4">
+    <Button type="submit" disabled={!isValid || isLoading} className="w-full mt-4" isLoading={isLoading}>
      Salvar
     </Button>
    </form>
