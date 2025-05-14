@@ -32,50 +32,37 @@ export type ForgetPasswordSchema = z.infer<typeof forgetPasswordSchema>;
 //------------------------ || --------------------------//
 
 export const doctorProfileSchema = z.object({
- specialtyDoctor: z.string().min(1).optional(),
- email: z.string().email({ message: `Insira um e-mail válido` }).optional(),
- telephoneNumber: z.string().min(1, { message: "Insira um número de celular válido" }).optional(),
- cpf: z
-  .string()
-  .min(1, { message: "Insira seu CPF" })
-  .regex(cpfRegex, { message: "CPF inválido" })
-  .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
- cep: z.string().optional(),
- street: z.string().optional(),
- number: z.string().optional(),
- complement: z.string().optional(),
- neighborhood: z.string().optional(),
- city: z.string().optional(),
- state: z.string().optional(),
- birthDate: z.string().optional(),
- programParticipationConsent: z.boolean().optional(),
- consentToReceiveEmail: z.boolean().optional(),
- consentToReceiveSms: z.boolean().optional(),
- consentToReceivePhonecalls: z.boolean().optional(),
- consentToReceiveWhatsapp: z.boolean().optional(),
+  licenseNumber : z.string(),
+  licenseState : z.string(),
+  medicalSpecialty: z.string(),
+  name : z.string(),
+  cpf: z
+    .string()
+    .min(1, { message: "Insira seu CPF" })
+    .regex(cpfRegex, { message: "CPF inválido" })
+    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+  mobilenumber : z.string(),
+  addressPostalCode : z.string(),
+  addressCity : z.string(),
+  addressState : z.string(),
+  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 
+
 export const professionalProfileSchema = z.object({
- email: z.string().email({ message: "Insira um e-mail válido" }).optional(),
- telephoneNumber: z.string().min(1).optional(),
- cpf: z
-  .string()
-  .min(1, { message: "Insira seu CPF" })
-  .regex(cpfRegex, { message: "CPF inválido" })
-  .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
- cep: z.string().optional(),
- street: z.string().optional(),
- number: z.string().optional(),
- complement: z.string().optional(),
- neighborhood: z.string().optional(),
- city: z.string().optional(),
- state: z.string().optional(),
- birthDate: z.string().optional(),
- programParticipationConsent: z.boolean().optional(),
- consentToReceiveEmail: z.boolean().optional(),
- consentToReceiveSms: z.boolean().optional(),
- consentToReceivePhonecalls: z.boolean().optional(),
- consentToReceiveWhatsapp: z.boolean().optional(),
+  licenseNumber : z.string(),
+  licenseState : z.string(),
+  name : z.string(),
+  cpf: z
+    .string()
+    .min(1, { message: "Insira seu CPF" })
+    .regex(cpfRegex, { message: "CPF inválido" })
+    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+  mobilenumber : z.string(),
+  addressPostalCode : z.string(),
+  addressCity : z.string(),
+  addressState : z.string(),
+  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 
 export type DoctorProfileValidationProps = z.infer<typeof doctorProfileSchema>;
@@ -418,7 +405,21 @@ export const patientSchema = z
   }
  );
 
-export const passwordSchema = z
+ export const healthProfessionalByProgramDoctorByProgramSchema = z
+ .object({
+  licenseNumber: z
+    .string()
+    .min(1, { message: "Insira o CRM" }),
+  licenseState: z
+    .string()
+    .nonempty({message:"Selecione a UF"}),
+  doctorName: z
+    .string().min(1, { message: "Insira o CRM e a UF" })
+ });
+
+ export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof healthProfessionalByProgramDoctorByProgramSchema>;
+
+ export const passwordSchema = z
  .object({
   oldPassword: z.string().min(1, "Preencha a senha atual"),
   newPassword: z
@@ -436,3 +437,6 @@ export const passwordSchema = z
  });
 
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+
+
+

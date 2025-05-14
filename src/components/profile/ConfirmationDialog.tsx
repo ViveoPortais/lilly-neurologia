@@ -19,12 +19,12 @@ export const ConfirmationDialog = ({ open, onClose, onConfirm, userName }: Confi
                 Atenção
             </DialogTitle>
             <p className="my-2 md:my-4">
-                Olá usuário {userName}, você está realizando alterações em seus dados, deseja prosseguir?
+                Olá {userName}, você está realizando alterações em seus dados, deseja prosseguir?
             </p>
-            <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-                <Button onClick={onConfirm}>Confirmar</Button>
+            <DialogFooter className="flex justify-between flex-col sm:flex-row gap-2 mt-4">
+                <Button onClick={onConfirm} variant="default" size="lg" >Confirmar</Button>
                 <DialogClose asChild>
-                    <Button type="button" variant="tertiary" onClick={onClose}>Cancelar</Button>
+                    <Button type="button" variant="outlineMainlilly" size="lg" onClick={onClose}>Cancelar</Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>

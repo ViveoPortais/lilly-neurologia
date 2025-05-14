@@ -103,7 +103,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableCell
                       key={cell.id}
-                      className={`text-start min-w-[150px] max-w-[200px] truncate bg-white whitespace-nowrap border-b border-[rgb(213,43,30)] ${
+                      className={`text-start min-w-[150px] max-w-[200px] truncate bg-white whitespace-nowrap border-b border-gray-400 ${
                         hideOnMobile ? "hidden sm:table-cell" : ""
                       }`}
                     >

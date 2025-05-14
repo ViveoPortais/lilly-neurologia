@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IStringMap } from "@/types";
-import { diseases, exams, gender, getDoctor, labs, registerPatient, searchPatient } from "@/services/registerPatient";
+import { diseases, exams, gender, getDoctor, labs, linkedDoctor, registerPatient, searchPatient } from "@/services/registerPatient";
 import { ExamCreateModel } from "@/types/diagnostic";
 
 interface RegisterPatientState {
@@ -14,6 +14,7 @@ interface RegisterPatientState {
   diseases: IStringMap[];
   foundPatient?: any;
   doctorId?: string | null;
+  linkedDoctor?: IStringMap[];
  };
 }
 
@@ -27,6 +28,7 @@ const initialState: RegisterPatientState = {
   labs: [],
   diseases: [],
   doctorId: null,
+  linkedDoctor: [],
  },
 };
 
@@ -117,6 +119,20 @@ export const getDoctorInfo = createAsyncThunk("registerPatient/getDoctorInfo", a
   return result.doctorId;
  } catch (error) {
   return thunkAPI.rejectWithValue("Erro ao carregar patologias");
+ }
+});
+
+export const getLinkedDoctor = createAsyncThunk("registerPatient/getLinkedDoctor", async (_, thunkAPI) => {
+ try {
+  const res = await linkedDoctor();
+  const mapping = res.data.map((link: any) => ({
+   stringMapId: link.doctorByProgram.doctorId,
+   optionName: link.doctorByProgram.name,
+  }));
+
+  return mapping as IStringMap[];
+ } catch (error) {
+  return thunkAPI.rejectWithValue("Erro ao buscar vínculos.");
  }
 });
 
@@ -220,6 +236,19 @@ const registerPatientSlice = createSlice({
    .addCase(getDoctorInfo.rejected, (state, action) => {
     state.loading = false;
     state.data.doctorId = null;
+    state.error = action.payload as string;
+   })
+
+   .addCase(getLinkedDoctor.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+   })
+   .addCase(getLinkedDoctor.fulfilled, (state, action) => {
+    state.loading = false;
+    state.data.linkedDoctor = action.payload;
+   })
+   .addCase(getLinkedDoctor.rejected, (state, action) => {
+    state.loading = false;
     state.error = action.payload as string;
    });
  },

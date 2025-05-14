@@ -42,25 +42,16 @@ export interface IDoctorData {
 }
 
 export interface IUpdateDoctorData {
-  doctorId : string | undefined
+  id : string | undefined
   emailAddress: string | undefined
   mobileNumber: string | undefined
   medicalSpecialty: string | undefined
   cpf: string | undefined
   birthDate : string | undefined
   AddressPostalCode: string | undefined
-  AddressName:string | undefined
-  AddressNumber:string | undefined
-  AddressComplement:string | undefined
-  AddressDistrict:string | undefined
   AddressCity:string | undefined
   AddressState:string | undefined
   healthProgramCode: string | undefined
-  programParticipationConsent: boolean;
-  consentToReceiveEmail: boolean | undefined;
-  consentToReceiveSms: boolean | undefined;
-  consentToReceivePhonecalls: boolean | undefined;
-  consentToReceiveWhatsapp: boolean | undefined;
 }
 
 export interface IInactiveDoctor {
@@ -138,18 +129,18 @@ export interface IStringMapData {
 
 export interface IStringMap {
   stringMapId: string;
-  entityMetadataId: string;
-  entityMetadataIdName: string;
-  attributeMetadataId: string;
-  attributeMetadataIdName: string;
-  optionValue: number;
+  entityMetadataId?: string;
+  entityMetadataIdName?: string;
+  attributeMetadataId?: string;
+  attributeMetadataIdName?: string;
+  optionValue?: number;
   optionName: string;
-  displayOrder: number;
-  isDisabled: boolean;
-  optionNameLangEn: string;
-  programId: string;
-  isSystemOption: boolean;
-  flag: string;
+  displayOrder?: number;
+  isDisabled?: boolean;
+  optionNameLangEn?: string;
+  programId?: string;
+  isSystemOption?: boolean;
+  flag?: string;
 }
 
 export interface IMedicalSpecialty {

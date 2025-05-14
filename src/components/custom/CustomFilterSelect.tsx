@@ -45,7 +45,7 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
     return (
         <div className={`relative w-full ${customClass}`}>
             {label && (
-                <label className="block mb-1 text-sm font-bold uppercase tracking-wide text-[#919191]">
+                <label className="block mb-1 text-base tracking-wide text-black">
                     {label}
                 </label>
             )}

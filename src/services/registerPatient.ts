@@ -67,3 +67,12 @@ export const getDoctor = async () => {
  });
  return response.data;
 };
+
+export const linkedDoctor = async () => {
+ const response = await api.get("/HealthProfessional/healthProfessionalByProgramDoctorByProgram", {
+  params: {
+   programCode,
+  },
+ });
+ return response.data;
+};

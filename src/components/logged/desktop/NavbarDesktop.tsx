@@ -100,7 +100,7 @@ export default function NavbarDesktop({ isMenuOpen, changeMenu, generalRoutes, r
 
       <DropdownMenuContent side="right" align="end" className="z-[50] bg-white rounded-lg p-2 w-48 shadow-lg border border-zinc-200">
        <DropdownMenuItem
-        onClick={() => router.push("/profile")}
+        onClick={() => router.push("/dashboard/profile")}
         className="cursor-pointer px-3 py-2 rounded-md hover:bg-zinc-100 flex items-center gap-2 text-sm text-zinc-800"
        >
         <LuPencil className="text-lg" /> Editar Cadastro

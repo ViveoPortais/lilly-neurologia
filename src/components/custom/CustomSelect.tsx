@@ -33,13 +33,13 @@ const CustomSelect = forwardRef<ElementRef<typeof SelectPrimitive.Trigger>, Cust
   return (
    <Select name={name} value={value} onValueChange={onChange} {...props}>
     <div className="w-full">
-     <label title={title} className="w-full text-start mb-1 text-sm font-bold uppercase trackin-wide text-[#919191]">
+     <label title={title} className="w-full text-start text-base trackin-wide text-black">
       {label}
      </label>
      <SelectTrigger
       ref={ref}
       onBlur={onBlur}
-      className={`md:col-span-3 py-6 md:px-4 ${customClass} focus:outline-none focus:ring-transparent`}
+      className={`mt-1 md:col-span-3 py-6 md:px-4 ${customClass} border border-[#c4b9b9] focus:outline-none focus:ring-transparent`}
      >
       <SelectValue placeholder="Selecione..." />
      </SelectTrigger>

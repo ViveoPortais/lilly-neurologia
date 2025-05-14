@@ -2,51 +2,97 @@ import { Controller } from "react-hook-form";
 import { Input } from "../ui/input";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
 import { maskedField } from "../custom/MaskedField";
-import { IStringMap } from "@/types";
+import { IMedicalSpecialty, IStringMap } from "@/types";
 import { useEffect, useState } from "react";
 import { DoctorProfileValidationProps, ProfessionalProfileValidationProps } from "@/lib/utils";
-import { isValidPhoneNumber } from "@/helpers/helpers";
+import { cpfRegex, isValidPhoneNumber } from "@/helpers/helpers";
 
-type personalData = {
-    name: string;
-    email: string;
-    specialty: string;
+type PersonalData = {
     licenseNumber: string; // CRM ou NRO de registro
     licenseState: string;
-    telephoneNumber: string;
-    profileType: string;
+    name: string;
+    emailAddress: string;
+    medicalSpecialty: string;
+    mobilenumber: string;
     control: any;
     errors: any;
-    options: IStringMap[];
+    specialties: IMedicalSpecialty[]
     cpf?: string;
+    profileType: string
     setValue: (name: keyof DoctorProfileValidationProps | keyof ProfessionalProfileValidationProps, value: any) => void;
 }
 
 export const PersonalDataSection = ({
-    name,
-    email,
-    specialty,
     licenseNumber,
     licenseState,
-    profileType,
-    telephoneNumber,
+    name,
+    emailAddress,
+    medicalSpecialty,
+    mobilenumber,
     control,
     errors,
-    options,
+    specialties,
     cpf,
-    setValue
-}: personalData) => {
+    profileType,
+    setValue,
+}: PersonalData) => {
+
     useEffect(() => {
-        setValue('email', email);
-        setValue('telephoneNumber', telephoneNumber);
-        setValue('specialtyDoctor', specialty);
+        setValue('emailAddress', emailAddress);
+        setValue('mobilenumber', mobilenumber);
+        setValue('medicalSpecialty', medicalSpecialty);
         setValue('cpf', cpf || '');
-    }, [name, email, specialty, licenseNumber, licenseState, profileType, cpf, options]);
+        setValue('licenseNumber', licenseNumber);
+        setValue('licenseState', licenseState);
+        setValue('name', name);
+    }, [name, emailAddress, medicalSpecialty, licenseNumber, licenseState, cpf, profileType]);
+
+
+    const specialtiesMapped: IStringMap[] = specialties.map((item: IMedicalSpecialty) => ({
+        stringMapId: item.name,
+        optionName: item.name
+    }));
+
+
     const [cellphoneError, setCellphoneError] = useState<string | null>(null);
+
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
+            <div className="flex flex-row justify-start text-xl">
+                <h1 className="">Dados</h1>
+            </div>
+            {profileType === 'doctor' && (
+                <div className="flex w-full flex-col md:flex-row gap-4">
+                    <div className="basis-1/3">
+                        <Input
+                            name="licenseNumber"
+                            value={licenseNumber}
+                            disabled
+                            placeholder={profileType === 'doctor' ? 'CRM' : 'Nro de registro'}
+                        />
+                    </div>
+                    <div className="basis-1/3">
+                        <Input
+                            name="licenseState"
+                            value={licenseState}
+                            disabled
+                            placeholder="UF do CRM"
+                        />
+                    </div>
+
+                    <div className="basis-1/3">
+                        <Input
+                            name="medicalSpecialty"
+                            value={medicalSpecialty}
+                            disabled
+                            placeholder="Especialidade"
+                        />
+                    </div>
+
+                </div>
+            )}
+            <div className="flex w-full flex-col md:flex-row gap-4">
+                <div className="basis-1/3">
                     <Input
                         name="name"
                         value={name}
@@ -54,50 +100,35 @@ export const PersonalDataSection = ({
                         placeholder="Nome completo"
                     />
                 </div>
-                <div className="flex-1">
+                <div className="basis-1/3">
                     <Controller
-                        name="email"
+                        name="cpf"
                         control={control}
-                        defaultValue={email}
-                        render={({ field }) => (
-                            <div className="flex flex-col">
-                                <Input
-                                    type="email"
-                                    placeholder="E-mail"
-                                    {...field}
-                                />
-                                {errors.email && (
-                                    <span className="text-xs text-red-400 mt-1">
-                                        {errors.email.message}
-                                    </span>
-                                )}
-                            </div>
-                        )}
+                        defaultValue={cpf}
+                        render={({ field }) =>
+                            maskedField(
+                                "cpf",
+                                field.onChange,
+                                field.name,
+                                "CPF",
+                                false,
+                                () => { },
+                                field.value,
+                                true
+                            )
+                        }
                     />
+                    {errors.cpf && (
+                        <span className="text-xs text-red-400 mt-1">
+                            {errors.cpf.message}
+                        </span>
+                    )}
                 </div>
-            </div>
-            <div className="flex flex-col md:flex-row gap-4 mt-4">
-                <div className="flex-1">
-                    <Input
-                        name="licenseNumber"
-                        value={licenseNumber}
-                        disabled
-                        placeholder={profileType === 'doctor' ? 'CRM' : 'Nro de registro'}
-                    />
-                </div>
-                <div className="flex-1">
-                    <Input
-                        name="licenseState"
-                        value={licenseState}
-                        disabled
-                        placeholder="UF"
-                    />
-                </div>
-                <div className="flex-1">
+                <div className="basis-1/3">
                     <Controller
-                        name="telephoneNumber"
+                        name="mobilenumber"
                         control={control}
-                        defaultValue={telephoneNumber}
+                        defaultValue={mobilenumber}
                         render={({ field }) => {
                             const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                                 let value = e.target.value;
@@ -127,54 +158,14 @@ export const PersonalDataSection = ({
                     {cellphoneError && (
                         <span className="text-xs text-red-400 mt-1 mr-1">{cellphoneError}</span>
                     )}
-                    {errors.telephoneNumber && (
+                    {errors.mobilenumber && (
                         <span className="text-xs text-red-400 mt-1">
-                            {errors.telephoneNumber.message}
+                            {errors.mobilenumber.message}
                         </span>
                     )}
                 </div>
-                <div className="flex-1">
-                    <Controller
-                        name="cpf"
-                        control={control}
-                        defaultValue={cpf}
-                        render={({ field }) =>
-                            maskedField(
-                                "cpf",
-                                field.onChange,
-                                field.name,
-                                "CPF",
-                                false,
-                                () => { },
-                                field.value
-                            )
-                        }
-                    />
-                    {errors.cpf && (
-                        <span className="text-xs text-red-400 mt-1">
-                            {errors.cpf.message}
-                        </span>
-                    )}
-                </div>
-
             </div>
-            {profileType === 'doctor' && (
-                <div className="flex flex-col mt-4">
-                    <Controller
-                        name="specialtyDoctor"
-                        control={control}
-                        defaultValue={specialty}
-                        render={({ field }) => (
-                            <CustomFilterSelect label="Especialidades" options={options} {...field} />
-                        )}
-                    />
-                    {errors.specialtyDoctor && (
-                        <span className="text-xs text-red-400 mt-1">
-                            {errors.specialtyDoctor.message}
-                        </span>
-                    )}
-                </div>
-            )}
+
         </>
     );
 }

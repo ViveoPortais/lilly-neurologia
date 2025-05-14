@@ -3,3 +3,9 @@ export interface IStringMapModel {
     optionName : string | undefined;
     flag : string | undefined;
 }
+
+export interface IReturnMessage<T = any>{
+    isValidData : boolean;
+    value : T;
+    additionalMessage : string;
+}

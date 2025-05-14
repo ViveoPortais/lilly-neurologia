@@ -6,6 +6,8 @@ import registerRepresentativeSlice from "./slices/registerRepresentativeSlice";
 import registerPatientSlice from "./slices/registerPatientSlice";
 import linkManagementSlice from "./slices/linkManagementeSlice";
 import userSlice from "./slices/userSlice";
+import profileSlice from "./slices/profileSlice";
+
 
 export const store = configureStore({
  reducer: {
@@ -16,6 +18,7 @@ export const store = configureStore({
   registerPatient: registerPatientSlice,
   linkManagement: linkManagementSlice,
   user: userSlice,
+  profile : profileSlice,
  },
  devTools: true,
 });

@@ -9,7 +9,7 @@ const buttonVariants = cva(
  {
   variants: {
    variant: {
-    default: "bg-mainlilly text-primary-foreground hover:bg-mainlilly/75",
+    default: "bg-mainlilly text-primary-foreground hover:bg-mainlilly/75 font-bold",
     destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
     tertiary: "bg-black text-primary-foreground hover:bg-gray-800",
     secondary: "bg-main-darkblue text-white hover:bg-blue-950/80",
@@ -17,7 +17,7 @@ const buttonVariants = cva(
     semighost: "bg:white border text-main-darkblue hover:bg-accent hover:text-accent-foreground",
     link: "text-primary underline-offset-4 hover:underline",
     genericModalNo: "bg-slate text-destructive-foreground hover:bg-slate-500",
-    outlineMainlilly: "bg-white border border-mainlilly text-mainlilly hover:bg-mainlilly/10",
+    outlineMainlilly: "bg-white border border-mainlilly text-mainlilly hover:bg-mainlilly/10 font-bold",
    },
    size: {
     default: "h-10 px-4 py-2",

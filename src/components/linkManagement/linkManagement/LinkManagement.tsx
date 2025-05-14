@@ -5,6 +5,7 @@ import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchHealthProfessionalByProgramDoctorByPrograms } from "@/store/slices/linkManagementeSlice";
 import ModalAddLink from "../modalAddLink/ModalAddLink";
+import { Loading } from "@/components/custom/Loading";
 
 
 export default function LinkManagement() {
@@ -15,39 +16,39 @@ export default function LinkManagement() {
 
     let contentHeaderByProfile = "";
 
-    switch(auth.role){
+    switch (auth.role) {
         case "doctor":
-            contentHeaderByProfile = "Total de profissionais vinculados"
+            contentHeaderByProfile = "Total de assistentes vinculados"
             break;
         case "professional":
             contentHeaderByProfile = "Total de médicos vinculados"
             break;
-        default : 
+        default:
             contentHeaderByProfile = "Total de vínculos"
             break;
     }
 
-     useEffect(() => {
-      dispatch(fetchHealthProfessionalByProgramDoctorByPrograms());
-     }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchHealthProfessionalByProgramDoctorByPrograms());
+    }, [dispatch]);
 
 
     return (
-    <>
-        {auth.role === "professional" && 
-            (
-                <div className="mb-6">
-                    <ModalAddLink/>
-                </div>
-            )
-        }
-        <div>
-            <DataTable  
-                columns={ auth.role == 'doctor' ? columnsDoctor : columnsProfessional} 
-                data={healthProfessionalByProgramDoctorByPrograms} 
-                hasHeaderNumberOfRows={true}  
-                contentHeaderNumberOfRows={contentHeaderByProfile}
-            />
-        </div>
-    </>);
+        <>
+            {auth.role === "professional" &&
+                (
+                    <div className="mb-6">
+                        <ModalAddLink />
+                    </div>
+                )
+            }
+            <div>
+                <DataTable
+                    columns={auth.role == 'doctor' ? columnsDoctor : columnsProfessional}
+                    data={healthProfessionalByProgramDoctorByPrograms}
+                    hasHeaderNumberOfRows={true}
+                    contentHeaderNumberOfRows={contentHeaderByProfile}
+                />
+            </div>
+        </>);
 }

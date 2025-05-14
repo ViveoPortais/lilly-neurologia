@@ -38,7 +38,7 @@ export const addProfessional = async (data: IProfessionalData) => {
   return res.data;
 }
 
-export const linkDoctor = async (doctorId: string, programCode: string) => {
+export const linkDoctor = async (doctorId: string) => {
   const res = await api.post(`/healthProfessional/healthprofessionalbond`, {
     doctorId: doctorId,
     programCode: programCode

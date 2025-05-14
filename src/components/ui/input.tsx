@@ -33,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   return (
    <div className={cn("w-full", className)}>
     <div className="flex gap-1 mb-1">
-     <label className=" text-sm font-semibold uppercase tracking-wide text-[#919191]">
+     <label className="text-base tracking-wide text-black">
       {props.placeholder}
       {props.required && <span className="text-red-500 ml-1">*</span>}
      </label>

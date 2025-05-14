@@ -11,18 +11,18 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
         accessorKey : "id",
         header :"Aprovar/Reprovar",
         cell : ({row}) =>{
-            const { statusCodeStringMap } = row.original;
+            const { statusCodeStringMap ,id } = row.original;
             switch(statusCodeStringMap.flag){
                 case "#PENDENT":
                     return (
                         <div>
-                            <AproveReproveButtons/>
+                            <AproveReproveButtons id={id}/>
                         </div>
                     );
                 case "#ACTV":
                     return(
                         <div>
-                            <DeleteButton/>
+                            <DeleteButton id={id}/>
                         </div>
                     )
             }
@@ -41,7 +41,7 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
         },
     },
     {
-        accessorKey : "professionalName",
+        accessorKey : "healthProfessionalByProgram.name",
         header : "Nome do Profissional",
         cell : ({row}) =>{
             return row.original.healthProfessionalByProgram.name;
@@ -103,12 +103,12 @@ export const columnsProfessional: ColumnDef<IHealthProfessionalByProgramDoctorBy
         accessorKey : "id",
         header :"Remover vínculo",
         cell : ({row}) =>{
-            const { statusCodeStringMap } = row.original;
+            const { statusCodeStringMap,id } = row.original;
             switch(statusCodeStringMap.flag){
                 case "#ACTV":
                     return(
                         <div>
-                            <DeleteButton/>
+                            <DeleteButton id={id}/>
                         </div>
                     )
             }

@@ -84,7 +84,7 @@ export const managementNurses = async (id: string, statusCode: string) => {
   return res.data;
 }
 
-export const getDoctorCRMUFByProgram = async (crm: string, ufcrm: string, programCode: string) => {
+export const getDoctorCRMUFByProgram = async (crm: string, ufcrm: string) => {
   const res = await api.get(`/doctor/getdoctorcrmufbyprogram`, {
     params: {
       crm: crm,

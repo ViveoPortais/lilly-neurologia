@@ -17,6 +17,7 @@ export interface IUserData {
   addressState: string;
   addressCountry: string;
   professionalTypeStringMapId: string;
+  doctorId : string;
 }
 
 export interface IChangePassword {

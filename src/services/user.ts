@@ -1,11 +1,11 @@
-import { IUpdateRepresentativeInfo } from "@/types/professions";
+import { IUpdateProfessionalData } from "@/types/professions";
 import api from "./api";
 import { IDoctorData, IUpdateDoctorData } from "@/types";
 import { IChangePassword, IRegisterRepresentative } from "@/types/user";
 
 const programCode = `${process.env.PROGRAM_CODE}`;
 
-export const getUserInfo = async (programCode: string) => {
+export const getUserInfo = async () => {
   const res = await api.get("/user/getuserdata", {
     params: {
       programCode: programCode,
@@ -19,8 +19,11 @@ export const updateDoctorInfo = async (data: IUpdateDoctorData) => {
   return res.data;
 };
 
-export const updateRepresentativeInfo = async (data: IUpdateRepresentativeInfo) => {
-  const res = await api.put("/healthProfessional/updatehealthprofessional", data);
+export const updateProfessional = async (data: IUpdateProfessionalData) => {
+  const res = await api.put("/healthProfessional/updatehealthprofessional", {
+    ...data,
+    programCode: programCode,
+  });
   return res.data;
 };
 

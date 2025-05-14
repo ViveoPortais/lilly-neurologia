@@ -76,7 +76,7 @@ export default function SignIn() {
   if (role.toLowerCase().includes("doctor")) {
    return "doctor";
   }
-  if (role.toLowerCase().includes("rofessional")) {
+  if (role.toLowerCase().includes("professional")) {
    return "professional";
   }
   return "";
