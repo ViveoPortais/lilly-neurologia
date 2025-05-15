@@ -6,7 +6,7 @@ import {
 } from "@/types";
 import { api } from "./api";
 
-const programCode = `${process.env.PROGRAM_CODE}`;
+const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
 export const getDoctorbyCRM = async (data: IDoctorInfoByCRM) => {
   const res = await api.get("/doctor/getdoctorbycfm", {

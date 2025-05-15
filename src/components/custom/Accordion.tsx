@@ -19,7 +19,7 @@ export function Accordion({ title, badgeText, children, openByDefault = false }:
    >
     <div className="flex items-center gap-2">
      <span>{title}</span>
-     {badgeText && <span className="text-xs bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded-full">{badgeText}</span>}
+     {badgeText && <span className="text-xs bg-red-100 text-black font-semibold px-2 py-0.5 rounded-full">{badgeText}</span>}
     </div>
     <svg
      className={`w-4 h-4 text-red-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}

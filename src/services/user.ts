@@ -3,7 +3,7 @@ import api from "./api";
 import { IDoctorData, IUpdateDoctorData } from "@/types";
 import { IChangePassword, IRegisterRepresentative } from "@/types/user";
 
-const programCode = `${process.env.PROGRAM_CODE}`;
+const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
 export const getUserInfo = async () => {
   const res = await api.get("/user/getuserdata", {

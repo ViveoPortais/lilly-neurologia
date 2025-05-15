@@ -1,50 +1,37 @@
 import { Pencil } from "lucide-react";
 import RejectedDocModal from "../modals/RejectedDocModal";
 import { useState } from "react";
+import { ExamPendingModel } from "@/types/diagnostic";
 
-interface PendingsMobilePageProps {
- items: {
-  id: string;
-  columns: string[];
-  reason?: string;
- }[];
+interface Props {
+ items: ExamPendingModel[];
 }
 
-export function PendingsMobilePage({ items }: PendingsMobilePageProps) {
- const [isModalOpen, setIsModalOpen] = useState(false);
- const [selectedItem, setSelectedItem] = useState<{ id: string; reason?: string } | null>(null);
+export function PendingsMobilePage({ items }: Props) {
+ const [selectedItem, setSelectedItem] = useState<ExamPendingModel | null>(null);
 
- const handleOpen = (item: { id: string; reason?: string }) => {
-  setSelectedItem(item);
-  setIsModalOpen(true);
- };
-
- const handleClose = () => {
-  setIsModalOpen(false);
-  setSelectedItem(null);
- };
  return (
   <div className="flex flex-col gap-3 px-2 pb-3">
    {items.map((item) => (
     <div key={item.id} className="border border-zinc-200 rounded-xl p-4 bg-white relative shadow-sm mt-2">
-     <button onClick={() => handleOpen(item)} className="absolute top-2 right-2 text-red-500">
+     <button onClick={() => setSelectedItem(item)} className="absolute top-2 right-2 text-red-500">
       <Pencil size={16} />
      </button>
 
-     <div className="text-xs text-zinc-500">Protocolo {item.columns[0]}</div>
+     <div className="text-xs text-zinc-500">Protocolo {item.numberProtocol}</div>
 
-     <div className="grid grid-cols-2 gap-y-2 text-sm text-zinc-700">
+     <div className="grid grid-cols-2 gap-y-2 text-sm text-zinc-700 mt-2">
       <div>
        <span className="block text-xs text-zinc-500">Paciente</span>
-       <span>{item.columns[1]}</span>
+       <span>{item.patientName}</span>
       </div>
       <div>
        <span className="block text-xs text-zinc-500">Criação da pendência</span>
-       <span>{item.columns[2]}</span>
+       <span>{formatDate(item.dateCreate)}</span>
       </div>
       <div>
        <span className="block text-xs text-zinc-500">Data de Reprovação</span>
-       <span>{item.columns[3]}</span>
+       <span>{formatDate(item.dateUpdate)}</span>
       </div>
       <div>
        <span className="block text-xs text-zinc-500">Motivo</span>
@@ -56,13 +43,20 @@ export function PendingsMobilePage({ items }: PendingsMobilePageProps) {
      </div>
     </div>
    ))}
-   <RejectedDocModal
-    open={isModalOpen}
-    onClose={handleClose}
-    docName="Termo de Consentimento Assinado"
-    fileSize="100 KB"
-    reason={selectedItem?.reason || ""}
-   />
+
+   {selectedItem && (
+    <RejectedDocModal
+     open={!!selectedItem}
+     onClose={() => setSelectedItem(null)}
+     docName={selectedItem.attachments?.[0]?.fileName || "Documento"}
+     fileSize={formatFileSize(selectedItem.attachments?.[0]?.fileSize)}
+     reason={selectedItem.reason || ""}
+    />
+   )}
   </div>
  );
 }
+
+const formatDate = (date?: string | Date | null) => (date ? new Intl.DateTimeFormat("pt-BR").format(new Date(date)) : "-");
+
+const formatFileSize = (size?: string | number | null) => (size ? `${(Number(size) / 1024).toFixed(1)} KB` : "Tamanho desconhecido");

@@ -1,7 +1,7 @@
 import { IReturnMessage} from "@/types/general";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IUserData } from "@/types/user";
-import { getUserInfo, updateProfessional } from "@/services/user";
+import { IChangePassword, IUserData } from "@/types/user";
+import { changePassword, getUserInfo, updateProfessional } from "@/services/user";
 import { IMedicalSpecialty, IUpdateDoctorData } from "@/types";
 import { getListSpecialties, updateDoctor } from "@/services/doctor";
 import { AddressData } from "@/services/api";
@@ -14,7 +14,6 @@ interface ProfileState {
         userInfo : IReturnMessage<IUserData> | undefined;
         medicalSpecialties : IMedicalSpecialty[];
         resultCEP : any | undefined;
-        resultUpdate : IReturnMessage | undefined;
     };
 }
 const initialState: ProfileState = {
@@ -23,8 +22,7 @@ const initialState: ProfileState = {
     data: {
         userInfo : undefined,
         medicalSpecialties : [],
-        resultCEP : undefined,
-        resultUpdate : undefined
+        resultCEP : undefined
     },
 };
 
@@ -71,6 +69,15 @@ export const putUpdateProfessional = createAsyncThunk("healthprofessional/update
         return result;
     } catch (error) {
         return thunkAPI.rejectWithValue("Erro ao atualizar dados");
+    }
+});
+
+export const changePasswordSlice = createAsyncThunk("user/changePassword", async (data: IChangePassword, { rejectWithValue }) => {
+    try {
+        const response = await changePassword(data);
+        return response;
+    } catch (error: any) {
+        return rejectWithValue(error.response?.data || "Erro ao alterar a senha");
     }
 });
 
@@ -126,7 +133,6 @@ const profileSlice = createSlice({
             })
             .addCase(putUpdateDoctor.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data.resultUpdate = action.payload;
             })
             .addCase(putUpdateDoctor.rejected, (state, action) => {
                 state.loading = false;
@@ -139,12 +145,22 @@ const profileSlice = createSlice({
             })
             .addCase(putUpdateProfessional.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data.resultUpdate = action.payload;
             })
             .addCase(putUpdateProfessional.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })
+
+            .addCase(changePasswordSlice.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(changePasswordSlice.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(changePasswordSlice.rejected, (state, action) => {
+                state.loading = false;
+            });
     },
 });
 

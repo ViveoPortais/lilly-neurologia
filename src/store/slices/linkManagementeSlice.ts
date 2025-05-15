@@ -11,9 +11,7 @@ interface LinksState {
     error: string | null;
     data: {
         healthProfessionalByProgramDoctorByPrograms: IHealthProfessionalByProgramDoctorByProgram[];
-        doctor: IDoctorExistsResult[],
-        resultManagementNurses: IReturnMessage | undefined;
-        resultAddLink : IReturnMessage | undefined;
+        doctor: IDoctorExistsResult[]
     };
 }
 const initialState: LinksState = {
@@ -21,9 +19,7 @@ const initialState: LinksState = {
     error: null,
     data: {
         healthProfessionalByProgramDoctorByPrograms: [],
-        doctor: [],
-        resultManagementNurses: undefined,
-        resultAddLink : undefined
+        doctor: []
     },
 };
 
@@ -103,7 +99,6 @@ const linkManagementSlice = createSlice({
             })
             .addCase(managementHealthProfessionalByProgramDoctorByProgram.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data.resultManagementNurses = action.payload;
             })
             .addCase(managementHealthProfessionalByProgramDoctorByProgram.rejected, (state, action) => {
                 state.loading = false;
@@ -116,7 +111,6 @@ const linkManagementSlice = createSlice({
             })
             .addCase(addHealthProfessionalByProgramDoctorByProgram.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data.resultAddLink = action.payload;
             })
             .addCase(addHealthProfessionalByProgramDoctorByProgram.rejected, (state, action) => {
                 state.loading = false;

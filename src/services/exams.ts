@@ -1,4 +1,5 @@
 import { api } from "./api";
+const programCodeEnv = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
 export const getListOptions = async (programCode: string) => {
   const response = await api.get("/exam/options", {
@@ -19,4 +20,13 @@ export const downloadLaudo = async (id: string, programCode: string) => {
     headers: {}
   });
   return response;
+}
+
+export const getListExamPending = async () => {
+  const response = await api.get("/exam/listexampending", {
+    params: {
+      programCode: programCodeEnv
+    },
+  });
+  return response.data;
 }

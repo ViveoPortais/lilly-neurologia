@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { Button } from "@/components/ui/button";
 import { IReturnMessage } from "@/types/general";
+import { useLoading } from "@/contexts/LoadingContext";
 
 interface FormAddLinkProps {
   onClose: () => void;
@@ -23,13 +24,23 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
     mode: "onBlur",
   });
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = methods;
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = methods;
 
   const dispatch = useAppDispatch();
   const doctor = useAppSelector((state) => state.linkManagement.data.doctor);
   const error = useAppSelector((state) => state.linkManagement.error);
-  const resultAddLink = useAppSelector((state) => state.linkManagement.data.resultAddLink);
   const modal = useGenericModal();
+  const loading = useAppSelector((state) => state.linkManagement.loading);
+
+  const {show,hide} = useLoading();
+  useEffect(()=>{
+
+      if(loading)
+          show()
+      else
+          hide()
+
+  },[loading]);
 
   const licenseState = watch("licenseState");
   const licenseNumber = watch("licenseNumber");
@@ -66,39 +77,44 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
     }
   }, [doctor]);
 
-  useEffect(() => {
-    const result = resultAddLink as IReturnMessage;
+  const onCloseModal = async()=>{
+    reset();
+    setValue("doctorName", "");
+    onClose();
+  };
 
-    if (result) {
-      if (result.isValidData) {
-        modal.showModal(
-          {
-            type: "success",
-            title: "Vínculo atualizado com sucesso",
-            buttonLabel: "Fechar",
-            message: result.additionalMessage
-          },
-          () => { }
-        )
-        dispatch(fetchHealthProfessionalByProgramDoctorByPrograms())
-      }
-      else {
-        modal.showModal(
-          {
-            type: "error",
-            title: "Falha ao atualizar vínculo",
-            buttonLabel: "Fechar",
-            message: result.additionalMessage
-          },
-          () => { }
-        )
-      }
-    }
-  }, [resultAddLink]);
-
-  const onSubmit = (data: HealthProfessionalByProgramDoctorByProgramFormData) => {
+  const onSubmit = async (data: HealthProfessionalByProgramDoctorByProgramFormData) => {
     try {
-      dispatch(addHealthProfessionalByProgramDoctorByProgram({ doctorId: doctor[0].doctorId ? doctor[0].doctorId : "" }))
+
+      const response = await dispatch(addHealthProfessionalByProgramDoctorByProgram({ doctorId: doctor[0].doctorId ? doctor[0].doctorId : "" }));
+
+      const result = response.payload;
+
+      if (result) {
+        if (result.isValidData) {
+          modal.showModal(
+            {
+              type: "success",
+              title: "Sucesso",
+              buttonLabel: "Fechar",
+              message: result.additionalMessage
+            },
+            onCloseModal
+          )
+          dispatch(fetchHealthProfessionalByProgramDoctorByPrograms())
+        }
+        else {
+          modal.showModal(
+            {
+              type: "error",
+              title: "Erro",
+              buttonLabel: "Fechar",
+              message: result.additionalMessage
+            },
+            onCloseModal
+          )
+        }
+      }
     }
     catch (error: string | any) {
       modal.showModal(
@@ -107,7 +123,7 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
           buttonLabel: "Fechar",
           message: error
         },
-        onClose
+        onCloseModal
       )
     }
   }

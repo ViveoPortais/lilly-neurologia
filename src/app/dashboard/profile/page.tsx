@@ -2,7 +2,7 @@
 
 import { AccessSection } from "@/components/profile/AccessSection";
 import { AddressSection } from "@/components/profile/AddressSection";
-import { ConfirmationDialog } from "@/components/profile/ConfirmationDialog";
+import { ConfirmationDialog } from "@/components/custom/ConfirmationDialog";
 import { PersonalDataSection } from "@/components/profile/PersonalDataSection";
 import { Button } from "@/components/ui/button";
 import { useGenericModal } from "@/contexts/GenericModalContext";
@@ -15,6 +15,8 @@ import { IUpdateProfessionalData } from "@/types/professions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { IReturnMessage } from "@/types/general";
+import { useLoading } from "@/contexts/LoadingContext";
 
 export default function Profile() {
 
@@ -24,7 +26,6 @@ export default function Profile() {
   const auth = useSession();
   const profile = useAppSelector((state) => state.profile.data.userInfo);
   const medicalSpecialties = useAppSelector((state) => state.profile.data.medicalSpecialties);
-  const resultUpdate = useAppSelector((state) => state.profile.data.resultUpdate);
 
   const schema = auth.role === 'doctor' ? doctorProfileSchema : professionalProfileSchema;
 
@@ -33,25 +34,57 @@ export default function Profile() {
     mode: "onChange",
   });
 
-  const { register,control, handleSubmit, setValue,setFocus, watch, formState: { errors } } = methods;
+  const { register, control, handleSubmit, setValue, setFocus, watch, formState: { errors } } = methods;
 
   const modal = useGenericModal();
 
   useEffect(() => {
-      dispatch(fetchUserData());
-      dispatch(fetchMedicalSpecialties())
+    dispatch(fetchUserData());
+    dispatch(fetchMedicalSpecialties())
   }, [dispatch]);
 
-  useEffect(() => {
-    if (resultUpdate) {
+  const loading = useAppSelector((state) => state.profile.loading);
 
-      if (resultUpdate.isValidData) {
+  const {show,hide} = useLoading();
+
+  useEffect(()=>{
+
+      if(loading)
+          show()
+      else
+          hide()
+
+  },[loading]);
+
+
+  const handleSaveChangesProfile = async (data: any) => {
+
+    let result: IReturnMessage | undefined;
+
+    if (auth.role === 'doctor') {
+
+      const dataUpdate = data as IUpdateDoctorData;
+      dataUpdate.id = profile?.value.doctorId;
+
+      result = await dispatch(putUpdateDoctor({ doctor: dataUpdate })).unwrap();
+
+    } else if (auth.role === 'professional') {
+      const dataUpdate = data as IUpdateProfessionalData;
+      dataUpdate.id = profile?.value.healthProfessionalByProgramId;
+      dataUpdate.mobilePhone1 = data.mobilenumber;
+
+      result = await dispatch(putUpdateProfessional({ professional: dataUpdate })).unwrap();
+    }
+
+    if (result) {
+
+      if (result.isValidData) {
         modal.showModal(
           {
             type: "success",
             title: "Sucesso",
             buttonLabel: "Fechar",
-            message: resultUpdate.additionalMessage
+            message: result.additionalMessage
           },
           () => { }
         )
@@ -63,30 +96,11 @@ export default function Profile() {
             type: "error",
             title: "Erro",
             buttonLabel: "Fechar",
-            message: resultUpdate.additionalMessage
+            message: result.additionalMessage
           },
           () => { }
         )
       }
-    }
-  }, [resultUpdate]);
-
-
-
-  const handleSaveChangesProfile = (data: any) => {
-    if (auth.role === 'doctor') {
-
-      const dataUpdate = data as IUpdateDoctorData;
-      dataUpdate.id = profile?.value.doctorId;
-
-      dispatch(putUpdateDoctor({doctor : dataUpdate}))
-
-    } else if (auth.role === 'professional') {
-      const dataUpdate = data as IUpdateProfessionalData;
-      dataUpdate.id = profile?.value.healthProfessionalByProgramId;
-      dataUpdate.mobilePhone1 = data.mobilenumber;
-
-      dispatch(putUpdateProfessional({professional : dataUpdate}))
     }
   };
 
@@ -95,64 +109,64 @@ export default function Profile() {
     setIsDialogOpen(false);
   };
 
-  const handleFormSubmit = (data:any) => {
+  const handleFormSubmit = (data: any) => {
     setIsDialogOpen(true);
   };
 
   return (
     <div className="h-full w-full md:px-6">
       <FormProvider {...methods}>
-      <form
-        className="flex flex-col gap-4 h-full pb-12"
-        onSubmit={handleSubmit(handleFormSubmit)}
-      >
+        <form
+          className="flex flex-col gap-4 h-full pb-12"
+          onSubmit={handleSubmit(handleFormSubmit)}
+        >
 
-        <PersonalDataSection
-          control={control}
-          emailAddress={profile?.value.emailAddress ?? ''}
-          errors={errors}
-          licenseNumber={profile?.value.licenseNumber ?? ''}
-          licenseState={profile?.value.licenseState ?? ''}
-          name={profile?.value.name ?? ''}
-          specialties={medicalSpecialties}
-          profileType={auth.role}
-          mobilenumber={profile?.value.mobilephone ?? ''}
-          cpf={profile?.value.cpf ?? ''}
-          medicalSpecialty={profile?.value.medicalSpecialty ?? ''}
-          setValue={setValue}
-        />
+          <PersonalDataSection
+            control={control}
+            emailAddress={profile?.value.emailAddress ?? ''}
+            errors={errors}
+            licenseNumber={profile?.value.licenseNumber ?? ''}
+            licenseState={profile?.value.licenseState ?? ''}
+            name={profile?.value.name ?? ''}
+            specialties={medicalSpecialties}
+            profileType={auth.role}
+            mobilenumber={profile?.value.mobilephone ?? ''}
+            cpf={profile?.value.cpf ?? ''}
+            medicalSpecialty={profile?.value.medicalSpecialty ?? ''}
+            setValue={setValue}
+          />
 
-        <AddressSection
-          control={control}
-          errors={errors}
-          addressPostalCode={profile?.value.addressPostalCode ?? ''}
-          addressCity={profile?.value.addressCity ?? ''}
-          addressState={profile?.value.addressState ?? ''}
-          setValue={setValue}
-          setFocus={setFocus}
-        />
-        <AccessSection
-          emailAddress={profile?.value.emailAddress ?? ''}
-          control = {control}
-          errors = {errors}
-          setValue = {setValue}
-        />
+          <AddressSection
+            control={control}
+            errors={errors}
+            addressPostalCode={profile?.value.addressPostalCode ?? ''}
+            addressCity={profile?.value.addressCity ?? ''}
+            addressState={profile?.value.addressState ?? ''}
+            setValue={setValue}
+            setFocus={setFocus}
+          />
+          <AccessSection
+            emailAddress={profile?.value.emailAddress ?? ''}
+            control={control}
+            errors={errors}
+            setValue={setValue}
+          />
 
-        <ConfirmationDialog
-          open={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          onConfirm={handleSubmit(onConfirm)}
-          userName={auth.name}
-        />
+          <ConfirmationDialog
+            open={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            onConfirm={handleSubmit(onConfirm)}
+            content={`Olá ${auth.name}, você está realizando alterações em seus dados, deseja prosseguir?`}
+          />
 
-        <div className="flex flex-col md:flex-row justify-center md:justify-start">
-          <div className="md:basis-1/6">
-            <Button type="submit" size="lg" className='w-full'>
-              Salvar Alterações
-            </Button>
+          <div className="flex flex-col md:flex-row justify-center md:justify-start">
+            <div className="md:basis-1/6">
+              <Button type="submit" size="lg" className='w-full'>
+                Salvar Alterações
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
       </FormProvider>
     </div>
   );

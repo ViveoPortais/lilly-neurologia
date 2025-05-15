@@ -1,11 +1,11 @@
 import { DataTable } from "@/components/dashboard/DataTable";
 import { columnsDoctor, columnsProfessional } from "./columns";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchHealthProfessionalByProgramDoctorByPrograms } from "@/store/slices/linkManagementeSlice";
 import ModalAddLink from "../modalAddLink/ModalAddLink";
-import { Loading } from "@/components/custom/Loading";
+import { useLoading } from "@/contexts/LoadingContext";
 
 
 export default function LinkManagement() {
@@ -13,7 +13,19 @@ export default function LinkManagement() {
     const dispatch = useAppDispatch();
     const auth = useSession();
     const healthProfessionalByProgramDoctorByPrograms = useAppSelector((state) => state.linkManagement.data.healthProfessionalByProgramDoctorByPrograms);
+    const loading = useAppSelector((state) => state.linkManagement.loading);
 
+    const {show,hide} = useLoading();
+
+    useEffect(()=>{
+
+        if(loading)
+            show()
+        else
+            hide()
+
+    },[loading]);
+    
     let contentHeaderByProfile = "";
 
     switch (auth.role) {

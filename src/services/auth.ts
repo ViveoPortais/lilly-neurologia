@@ -1,7 +1,7 @@
 import { IForgetPasswordData, IForgetPasswordDataProfessional, ILoginData, IResendToken } from "@/types";
 import api from "./api";
 
-const programCode = `${process.env.PROGRAM_CODE}`;
+const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
 export const login = async (data: ILoginData) => {
   const res = await api.post("/logintwosteps", {

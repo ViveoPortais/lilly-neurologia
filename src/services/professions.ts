@@ -2,7 +2,7 @@ import { IProfessionalData } from "@/types/professions";
 import api from "./api";
 import { IStringMap, IStringMapData } from "@/types";
 
-const programCode = `${process.env.PROGRAM_CODE}`;
+const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
 export const getListProfessions = async (data: IStringMapData) => {
   const response = await api.get("/StringMap/getbasicstringmaplist", {
@@ -20,7 +20,7 @@ export const getOptionsProfessions = async (): Promise<IStringMap[]> => {
   const optionsProfessions = await getListProfessions({
     entityName: "HealthProfessionalByProgram",
     attributeName: "ProfessionalTypeStringMap",
-    programCode: `${process.env.PROGRAM_CODE}`
+    programCode: `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`
   });
 
   return (

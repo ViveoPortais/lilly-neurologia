@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordFormData, passwordSchema } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { changePasswordSlice } from "@/store/slices/userSlice";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useState } from "react";
+import { changePasswordSlice } from "@/store/slices/profileSlice";
 
 interface AlterPasswordModalProps {
  isOpenExternally?: boolean;
@@ -20,7 +20,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
  const [isOpen, setIsOpen] = useState(isOpenExternally ?? true);
  const dispatch = useAppDispatch();
  const modal = useGenericModal();
- const isLoading = useAppSelector((state) => state.user.loading);
+ const isLoading = useAppSelector((state) => state.profile.loading);
  const methods = useForm<PasswordFormData>({
   resolver: zodResolver(passwordSchema),
   mode: "onChange",
@@ -43,6 +43,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
 
  const onSubmit = async (data: PasswordFormData) => {
   try {
+
    const res = await dispatch(
     changePasswordSlice({
      oldPassword: data.oldPassword,
@@ -80,7 +81,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
 
  return (
   <FormProvider {...methods}>
-   <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+   <form className="space-y-4">
     <div>
      <div className="relative">
       <Input
@@ -141,7 +142,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
      </div>
     </div>
 
-    <Button type="submit" disabled={!isValid || isLoading} className="w-full mt-4" isLoading={isLoading}>
+    <Button type="button" onClick={handleSubmit(onSubmit)} disabled={!isValid || isLoading} className="w-full mt-4" isLoading={isLoading}>
      Salvar
     </Button>
    </form>
