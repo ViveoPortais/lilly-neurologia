@@ -32,3 +32,13 @@ export const formatPhoneNumber = (phone: string) => {
  if (!phone) return "";
  return phone.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
 };
+
+export const formatDate = (date?: string | Date | null): string => {
+ if (!date) return "-";
+ return new Intl.DateTimeFormat("pt-BR").format(new Date(date));
+};
+
+export const formatFileSize = (size?: string | number | null): string => {
+ if (!size) return "Tamanho desconhecido";
+ return `${(Number(size) / 1024).toFixed(1)} KB`;
+};

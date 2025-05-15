@@ -2,6 +2,7 @@ import { Pencil } from "lucide-react";
 import RejectedDocModal from "../modals/RejectedDocModal";
 import { useState } from "react";
 import { ExamPendingModel } from "@/types/diagnostic";
+import { formatDate, formatFileSize } from "@/helpers/helpers";
 
 interface Props {
  items: ExamPendingModel[];
@@ -51,12 +52,11 @@ export function PendingsMobilePage({ items }: Props) {
      docName={selectedItem.attachments?.[0]?.fileName || "Documento"}
      fileSize={formatFileSize(selectedItem.attachments?.[0]?.fileSize)}
      reason={selectedItem.reason || ""}
+     selectedItem={selectedItem.diagnosticId}
+     documentBody={selectedItem.attachments?.[0]?.documentBody || ""}
+     contentType={selectedItem.attachments?.[0]?.contentType || ""}
     />
    )}
   </div>
  );
 }
-
-const formatDate = (date?: string | Date | null) => (date ? new Intl.DateTimeFormat("pt-BR").format(new Date(date)) : "-");
-
-const formatFileSize = (size?: string | number | null) => (size ? `${(Number(size) / 1024).toFixed(1)} KB` : "Tamanho desconhecido");

@@ -9,44 +9,30 @@ import { ExamPendingModel } from "@/types/diagnostic";
 
 interface Props {
  pendings: ExamPendingModel[];
+ grouped: Record<string, ExamPendingModel[]>;
+ fixedCategories: string[];
 }
 
-const fixedCategories = [
- "Documentação",
- "Recebimento do Tubo",
- "Solicitações de Retirada de Amostra",
- "Problema com a Amostra",
- "Aprovação de Vínculo",
-];
-
-export function GenericPendingsPage({ pendings }: Props) {
+export function GenericPendingsPage({ pendings, fixedCategories, grouped }: Props) {
  const isMobile = useMediaQuery("(max-width: 768px)");
-
- const grouped: Record<string, ExamPendingModel[]> = {
-  Documentação: pendings.filter((p) => p.reason === "Documentação pendente"),
-  "Recebimento do Tubo": [],
-  "Solicitações de Retirada de Amostra": [],
-  "Problema com a Amostra": [],
-  "Aprovação de Vínculo": [],
- };
 
  const totalPendings = pendings.length;
 
-//  if (totalPendings === 0) {
-//   return (
-//    <div className="pl-4 border-l-4 border-mainlilly rounded-l-2xl text-zinc-700 flex items-center gap-2">
-//     <MdTaskAlt className="text-mainlilly" size={20} />
-//     <span className="text-sm font-semibold">Você não possui pendências</span>
-//    </div>
-//   );
-//  }
+ //  if (totalPendings === 0) {
+ //   return (
+ //    <div className="pl-4 border-l-4 border-mainlilly rounded-l-2xl text-zinc-700 flex items-center gap-2">
+ //     <MdTaskAlt className="text-mainlilly" size={20} />
+ //     <span className="text-sm font-semibold">Você não possui pendências</span>
+ //    </div>
+ //   );
+ //  }
 
  return (
   <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
    {fixedCategories.map((category) => {
     const items = grouped[category] || [];
     return (
-     <Accordion key={category} title={category} badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? '' : 'pendentes'}`}>
+     <Accordion key={category} title={category} badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}>
       {items.length > 0 ? (
        isMobile ? (
         <PendingsMobilePage items={items} />

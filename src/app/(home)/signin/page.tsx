@@ -79,6 +79,12 @@ export default function SignIn() {
   if (role.toLowerCase().includes("professional")) {
    return "professional";
   }
+  if (role.toLowerCase().includes("operation")) {
+   return "operation";
+  }
+  if (role.toLowerCase().includes("logistics")) {
+   return "logistics";
+  }
   return "";
  }
 
@@ -202,12 +208,27 @@ export default function SignIn() {
      {/* ETAPA 1: Informar e-mail e senha */}
      <span className="self-start text-md text-zinc-700">Acesse com seu e-mail e senha abaixo:</span>
      <div className="w-full">
-      <Input type="text" icon="login" placeholder="E-mail" className="w-full" {...register("login", { required: true })} maxLength={100} inputPlaceholder="Digite seu email..." />
+      <Input
+       type="text"
+       icon="login"
+       placeholder="E-mail"
+       className="w-full"
+       {...register("login", { required: true })}
+       maxLength={100}
+       inputPlaceholder="Digite seu email..."
+      />
       {errors.login && <span className="w-full text-xs text-red-400 mt-1">{errors.login.message}</span>}
      </div>
 
      <div className="w-full">
-      <Input type="password" icon="password" placeholder="Senha" inputPlaceholder="Digite sua senha..." className="w-full" {...register("password", { required: true })} />
+      <Input
+       type="password"
+       icon="password"
+       placeholder="Senha"
+       inputPlaceholder="Digite sua senha..."
+       className="w-full"
+       {...register("password", { required: true })}
+      />
       {errors.password && <span className="w-full text-xs text-red-400 mt-1">{errors.password.message}</span>}
      </div>
      <div className="w-full flex justify-between items-center mt-2">

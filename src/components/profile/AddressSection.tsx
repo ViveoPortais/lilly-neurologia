@@ -31,7 +31,6 @@ export const AddressSection = ({
 }: AddressSectionProps) => {
 
     const dispatch = useAppDispatch();
-    const resultCEP = useAppSelector((state) => state.profile.data.resultCEP);
 
     useEffect(() => {
         setValue('addressPostalCode', addressPostalCode || '');
@@ -42,11 +41,11 @@ export const AddressSection = ({
     const handleCepBlur = async (cepValue: string) => {
         if (cepValue.length === 9) {
 
-            dispatch(fetchCEP({cep : cepValue}));
+            const result = await dispatch(fetchCEP({cep : cepValue})).unwrap();
 
-            if (resultCEP) {
-                setValue('addressCity', resultCEP.localidade || '');
-                setValue('addressState', resultCEP.uf || '');
+            if (result) {
+                setValue('addressCity', result.localidade || '');
+                setValue('addressState', result.uf || '');
             } else {
                 toast.error('CEP inválido ou não encontrado');
             }

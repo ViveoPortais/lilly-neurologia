@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getListExamPending } from "@/services/exams";
-import { ExamPendingModel } from "@/types/diagnostic";
+import { getListExamPending, resolvePendency } from "@/services/exams";
+import { ExamPendingModel, ResolveExamPendency } from "@/types/diagnostic";
 
 interface PendingsState {
  data: ExamPendingModel[];
@@ -23,10 +23,21 @@ export const fetchPendings = createAsyncThunk<ExamPendingModel[], void, { reject
  }
 });
 
+export const examResolvePendency = createAsyncThunk<void, ResolveExamPendency, { rejectValue: string }>(
+ "pendings/resolve",
+ async (model, thunkAPI) => {
+  try {
+   await resolvePendency(model);
+  } catch (err: any) {
+   return thunkAPI.rejectWithValue("Erro ao resolver pendência");
+  }
+ }
+);
+
 const initialState: PendingsState = {
-  data: [],
-  loading: false,
-  error: null,
+ data: [],
+ loading: false,
+ error: null,
 };
 
 const pendingsSlice = createSlice({
@@ -44,6 +55,18 @@ const pendingsSlice = createSlice({
     state.data = action.payload;
    })
    .addCase(fetchPendings.rejected, (state, action) => {
+    state.loading = false;
+    state.error = action.payload as string;
+   })
+
+   .addCase(examResolvePendency.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+   })
+   .addCase(examResolvePendency.fulfilled, (state, action) => {
+    state.loading = false;
+   })
+   .addCase(examResolvePendency.rejected, (state, action) => {
     state.loading = false;
     state.error = action.payload as string;
    });

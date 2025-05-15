@@ -6,7 +6,7 @@ import { fetchPendings } from "@/store/slices/pendingsSlice";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { useEffect } from "react";
 
-export default function PendingsDoctorPage() {
+export default function PendingsOperationPage() {
  const dispatch = useAppDispatch();
  const { data: pendings, loading, error } = useAppSelector((state) => state.pending);
  const { show, hide } = useLoading();
@@ -73,20 +73,13 @@ export default function PendingsDoctorPage() {
   },
  ];
 
- const fixedCategories = [
-  "Documentação",
-  "Recebimento do Tubo",
-  "Solicitações de Retirada de Amostra",
-  "Problema com a Amostra",
-  "Aprovação de Vínculo",
- ];
+ const fixedCategories = ["Documentação", "Gerar Declaração de Lote", "Confirmar Entrega de Amostra", "Concluir Análise"];
 
  const grouped: Record<string, ExamPendingModel[]> = {
   Documentação: pendings.filter((p) => p.reason === "Documentação reprovada"),
-  "Recebimento do Tubo": [],
-  "Solicitações de Retirada de Amostra": [],
-  "Problema com a Amostra": [],
-  "Aprovação de Vínculo": [],
+  "Gerar Declaração de Lote": [],
+  "Confirmar Entrega de Amostra": [],
+  "Concluir Análise": [],
  };
 
  return <GenericPendingsPage pendings={fakePendings} fixedCategories={fixedCategories} grouped={grouped} />;

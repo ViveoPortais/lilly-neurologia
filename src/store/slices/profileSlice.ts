@@ -13,7 +13,6 @@ interface ProfileState {
     data: {
         userInfo : IReturnMessage<IUserData> | undefined;
         medicalSpecialties : IMedicalSpecialty[];
-        resultCEP : any | undefined;
     };
 }
 const initialState: ProfileState = {
@@ -21,8 +20,7 @@ const initialState: ProfileState = {
     error: null,
     data: {
         userInfo : undefined,
-        medicalSpecialties : [],
-        resultCEP : undefined
+        medicalSpecialties : []
     },
 };
 
@@ -120,7 +118,6 @@ const profileSlice = createSlice({
             })
             .addCase(fetchCEP.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data.resultCEP = action.payload;
             })
             .addCase(fetchCEP.rejected, (state, action) => {
                 state.loading = false;

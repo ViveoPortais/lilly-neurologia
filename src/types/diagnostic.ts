@@ -114,3 +114,8 @@ export interface ExamPendingModel {
  dateUpdate?: string;
  attachments: AttachmentModel[];
 }
+
+export interface ResolveExamPendency {
+ id: string;
+ Attachments?: AttachmentModel[];
+}

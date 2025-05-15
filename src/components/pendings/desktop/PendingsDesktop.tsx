@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RejectedDocModal from "../modals/RejectedDocModal";
 import { ExamPendingModel } from "@/types/diagnostic";
+import { formatDate, formatFileSize } from "@/helpers/helpers";
 
 interface Props {
  items: ExamPendingModel[];
@@ -26,12 +27,14 @@ export default function PendingsDesktopPage({ items }: Props) {
      {items.map((item) => (
       <tr key={item.id} className="border-t">
        <td className="px-2 py-2">
-        <button
-         onClick={() => setSelectedItem(item)}
-         className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
-        >
-         Resolver
-        </button>
+        {item.reason?.toLowerCase().includes("reprovada") && (
+         <button
+          onClick={() => setSelectedItem(item)}
+          className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
+         >
+          Resolver
+         </button>
+        )}
        </td>
        <td className="px-3 py-2">{item.numberProtocol}</td>
        <td className="px-3 py-2">{item.patientName}</td>
@@ -53,12 +56,11 @@ export default function PendingsDesktopPage({ items }: Props) {
      docName={selectedItem.attachments?.[0]?.fileName || "Documento"}
      fileSize={formatFileSize(selectedItem.attachments?.[0]?.fileSize)}
      reason={selectedItem.reason || ""}
+     selectedItem={selectedItem.diagnosticId}
+     documentBody={selectedItem.attachments?.[0]?.documentBody || ""}
+     contentType={selectedItem.attachments?.[0]?.contentType || ""}
     />
    )}
   </div>
  );
 }
-
-const formatDate = (date?: string | Date | null) => (date ? new Intl.DateTimeFormat("pt-BR").format(new Date(date)) : "-");
-
-const formatFileSize = (size?: string | number | null) => (size ? `${(Number(size) / 1024).toFixed(1)} KB` : "Tamanho desconhecido");
