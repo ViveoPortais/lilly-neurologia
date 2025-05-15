@@ -75,15 +75,13 @@ export default function PendingsDoctorPage() {
 
  const fixedCategories = [
   "Documentação",
-  "Recebimento do Tubo",
   "Solicitações de Retirada de Amostra",
   "Problema com a Amostra",
   "Aprovação de Vínculo",
  ];
 
  const grouped: Record<string, ExamPendingModel[]> = {
-  Documentação: pendings.filter((p) => p.reason === "Documentação reprovada"),
-  "Recebimento do Tubo": [],
+  Documentação: fakePendings,
   "Solicitações de Retirada de Amostra": [],
   "Problema com a Amostra": [],
   "Aprovação de Vínculo": [],

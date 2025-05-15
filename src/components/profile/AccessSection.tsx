@@ -24,7 +24,7 @@ export const AccessSection = ({
     return (
         <>
             <div className="flex flex-row justify-start text-xl">
-                <h1 className="">Accesso</h1>
+                <h1 className="">Acesso</h1>
             </div>
             <div className="flex w-full flex-col md:flex-row gap-4">
                 <div className="md:basis-1/3">

@@ -3,13 +3,17 @@ import RejectedDocModal from "../modals/RejectedDocModal";
 import { useState } from "react";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { formatDate, formatFileSize } from "@/helpers/helpers";
+import { ColumnConfig } from "../PendingTableColumns";
 
 interface Props {
  items: ExamPendingModel[];
+ columns: ColumnConfig[];
+ renderModal: (item: ExamPendingModel | null, onClose: () => void) => React.ReactNode;
 }
 
-export function PendingsMobilePage({ items }: Props) {
+export function PendingsMobilePage({ items, columns, renderModal }: Props) {
  const [selectedItem, setSelectedItem] = useState<ExamPendingModel | null>(null);
+ const filteredColumns = columns.filter((col) => col.label !== "Nº Protocolo" && col.label !== "Número do Protocolo");
 
  return (
   <div className="flex flex-col gap-3 px-2 pb-3">
@@ -22,41 +26,17 @@ export function PendingsMobilePage({ items }: Props) {
      <div className="text-xs text-zinc-500">Protocolo {item.numberProtocol}</div>
 
      <div className="grid grid-cols-2 gap-y-2 text-sm text-zinc-700 mt-2">
-      <div>
-       <span className="block text-xs text-zinc-500">Paciente</span>
-       <span>{item.patientName}</span>
-      </div>
-      <div>
-       <span className="block text-xs text-zinc-500">Criação da pendência</span>
-       <span>{formatDate(item.dateCreate)}</span>
-      </div>
-      <div>
-       <span className="block text-xs text-zinc-500">Data de Reprovação</span>
-       <span>{formatDate(item.dateUpdate)}</span>
-      </div>
-      <div>
-       <span className="block text-xs text-zinc-500">Motivo</span>
-       <div className="flex items-center gap-2 mt-1">
-        <span className="h-2 w-2 rounded-full bg-red-600 inline-block" />
-        <span className="text-xs text-red-600">{item.reason}</span>
+      {filteredColumns.map((col, index) => (
+       <div key={index}>
+        <span className="block text-xs text-zinc-500">{col.label}</span>
+        <div>{col.render(item)}</div>
        </div>
-      </div>
+      ))}
      </div>
     </div>
    ))}
 
-   {selectedItem && (
-    <RejectedDocModal
-     open={!!selectedItem}
-     onClose={() => setSelectedItem(null)}
-     docName={selectedItem.attachments?.[0]?.fileName || "Documento"}
-     fileSize={formatFileSize(selectedItem.attachments?.[0]?.fileSize)}
-     reason={selectedItem.reason || ""}
-     selectedItem={selectedItem.diagnosticId}
-     documentBody={selectedItem.attachments?.[0]?.documentBody || ""}
-     contentType={selectedItem.attachments?.[0]?.contentType || ""}
-    />
-   )}
+   {selectedItem && renderModal(selectedItem, () => setSelectedItem(null))}
   </div>
  );
 }

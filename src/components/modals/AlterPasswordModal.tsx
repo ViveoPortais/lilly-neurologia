@@ -138,7 +138,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
      </div>
      <div className="flex items-center gap-1">
       <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
-      <span>Ao menos um 12 caracteres</span>
+      <span>Ao menos 12 caracteres</span>
      </div>
     </div>
 

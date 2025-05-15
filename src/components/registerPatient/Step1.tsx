@@ -8,6 +8,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { searchPatientByCpf } from "@/store/slices/registerPatientSlice";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
+import { today, validateNoFutureDate } from "@/helpers/helpers";
 
 export const Step1 = ({
  setStep,
@@ -17,6 +18,7 @@ export const Step1 = ({
  exams,
  labs,
  genders,
+ setValue,
 }: {
  setStep: (step: number) => void;
  control: any;
@@ -25,6 +27,7 @@ export const Step1 = ({
  exams: IStringMap[];
  labs: IStringMap[];
  genders: IStringMap[];
+ setValue: any;
 }) => {
  const { register, watch } = useFormContext();
  const hasResponsible = watch("hasResponsible");
@@ -87,7 +90,13 @@ export const Step1 = ({
      {errors?.name && <span className="text-sm text-red-500 mt-1 block">{errors.name.message as string}</span>}
     </div>
     <div className="w-full">
-     <Input {...register("birthDate")} type="date" placeholder="Data de Nascimento" />
+     <Input
+      {...register("birthDate")}
+      type="date"
+      placeholder="Data de Nascimento"
+      max={today}
+      onChange={(e) => validateNoFutureDate(e.target.value, "birthDate", setValue)}
+     />
      {errors?.birthDate && <span className="text-sm text-red-500 mt-1 block">{errors.birthDate.message as string}</span>}
     </div>
 
@@ -102,22 +111,29 @@ export const Step1 = ({
      )}
     />
 
-    <div className="flex items-center gap-x-4 mt-5">
-     <span className="font-medium">Possui Cuidador Responsável?</span>
+    <div>
+     <span className="font-medium block mb-2">Possui Cuidador Responsável?</span>
+     <div className="flex gap-x-4 md:pl-8 md:pt-2">
+      <label className="cursor-pointer">
+       <input
+        type="radio"
+        value="yes"
+        {...register("hasResponsible")}
+        checked={watch("hasResponsible") === "yes"}
+        className="peer hidden"
+       />
+       <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
+        Sim
+       </div>
+      </label>
 
-     <label className="cursor-pointer">
-      <input type="radio" value="yes" {...register("hasResponsible")} checked={watch("hasResponsible") === "yes"} className="peer hidden" />
-      <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
-       Sim
-      </div>
-     </label>
-
-     <label className="cursor-pointer">
-      <input type="radio" value="no" {...register("hasResponsible")} checked={watch("hasResponsible") === "no"} className="peer hidden" />
-      <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
-       Não
-      </div>
-     </label>
+      <label className="cursor-pointer">
+       <input type="radio" value="no" {...register("hasResponsible")} checked={watch("hasResponsible") === "no"} className="peer hidden" />
+       <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
+        Não
+       </div>
+      </label>
+     </div>
     </div>
    </div>
 
@@ -138,7 +154,13 @@ export const Step1 = ({
       )}
      />
      <div className="w-full">
-      <Input {...register("birthDateCaregiver")} type="date" placeholder="Nascimento do Cuidador" />
+      <Input
+       {...register("birthDateCaregiver")}
+       type="date"
+       placeholder="Nascimento do Cuidador"
+       max={today}
+       onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue)}
+      />
       {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
      </div>
     </div>

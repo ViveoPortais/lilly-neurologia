@@ -76,7 +76,7 @@ export default function PendingsOperationPage() {
  const fixedCategories = ["Documentação", "Gerar Declaração de Lote", "Confirmar Entrega de Amostra", "Concluir Análise"];
 
  const grouped: Record<string, ExamPendingModel[]> = {
-  Documentação: pendings.filter((p) => p.reason === "Documentação reprovada"),
+  Documentação: fakePendings,
   "Gerar Declaração de Lote": [],
   "Confirmar Entrega de Amostra": [],
   "Concluir Análise": [],

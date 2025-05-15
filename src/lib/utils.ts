@@ -32,37 +32,36 @@ export type ForgetPasswordSchema = z.infer<typeof forgetPasswordSchema>;
 //------------------------ || --------------------------//
 
 export const doctorProfileSchema = z.object({
-  licenseNumber : z.string(),
-  licenseState : z.string(),
-  medicalSpecialty: z.string(),
-  name : z.string(),
-  cpf: z
-    .string()
-    .min(1, { message: "Insira seu CPF" })
-    .regex(cpfRegex, { message: "CPF inválido" })
-    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
-  mobilenumber : z.string(),
-  addressPostalCode : z.string(),
-  addressCity : z.string(),
-  addressState : z.string(),
-  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+ licenseNumber: z.string(),
+ licenseState: z.string(),
+ medicalSpecialty: z.string(),
+ name: z.string(),
+ cpf: z
+  .string()
+  .min(1, { message: "Insira seu CPF" })
+  .regex(cpfRegex, { message: "CPF inválido" })
+  .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+ mobilenumber: z.string(),
+ addressPostalCode: z.string(),
+ addressCity: z.string(),
+ addressState: z.string(),
+ emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 
-
 export const professionalProfileSchema = z.object({
-  licenseNumber : z.string(),
-  licenseState : z.string(),
-  name : z.string(),
-  cpf: z
-    .string()
-    .min(1, { message: "Insira seu CPF" })
-    .regex(cpfRegex, { message: "CPF inválido" })
-    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
-  mobilenumber : z.string(),
-  addressPostalCode : z.string(),
-  addressCity : z.string(),
-  addressState : z.string(),
-  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+ licenseNumber: z.string(),
+ licenseState: z.string(),
+ name: z.string(),
+ cpf: z
+  .string()
+  .min(1, { message: "Insira seu CPF" })
+  .regex(cpfRegex, { message: "CPF inválido" })
+  .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+ mobilenumber: z.string(),
+ addressPostalCode: z.string(),
+ addressCity: z.string(),
+ addressState: z.string(),
+ emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 
 export type DoctorProfileValidationProps = z.infer<typeof doctorProfileSchema>;
@@ -370,8 +369,19 @@ export const patientSchema = z
   name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
   birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
   hasResponsible: z.enum(["yes", "no"]).optional().nullable(),
-  nameCaregiver: z.string().optional(),
-  cpfCaregiver: z.string().optional(),
+  nameCaregiver: z
+   .string()
+   .optional()
+   .refine((val) => !val || nameRegex.test(val), { message: "Nome deve conter apenas letras" }),
+  cpfCaregiver: z
+   .string()
+   .optional()
+   .refine((val) => !val || cpfRegex.test(val), {
+    message: "CPF inválido",
+   })
+   .refine((val) => !val || isValidCPF(val), {
+    message: "CPF inválido",
+   }),
   birthDateCaregiver: z.string().optional(),
   disease: z.string().min(1, { message: "Informe a doença" }),
   examDefinition: z.string().min(1, { message: "Descreva o exame" }),
@@ -405,21 +415,15 @@ export const patientSchema = z
   }
  );
 
- export const healthProfessionalByProgramDoctorByProgramSchema = z
- .object({
-  licenseNumber: z
-    .string()
-    .min(1, { message: "Insira o CRM" }),
-  licenseState: z
-    .string()
-    .nonempty({message:"Selecione a UF"}),
-  doctorName: z
-    .string().min(1, { message: "Insira o CRM e a UF" })
- });
+export const healthProfessionalByProgramDoctorByProgramSchema = z.object({
+ licenseNumber: z.string().min(1, { message: "Insira o CRM" }),
+ licenseState: z.string().nonempty({ message: "Selecione a UF" }),
+ doctorName: z.string().min(1, { message: "Insira o CRM e a UF" }),
+});
 
- export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof healthProfessionalByProgramDoctorByProgramSchema>;
+export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof healthProfessionalByProgramDoctorByProgramSchema>;
 
- export const passwordSchema = z
+export const passwordSchema = z
  .object({
   oldPassword: z.string().min(1, "Preencha a senha atual"),
   newPassword: z
@@ -437,6 +441,3 @@ export const patientSchema = z
  });
 
 export type PasswordFormData = z.infer<typeof passwordSchema>;
-
-
-

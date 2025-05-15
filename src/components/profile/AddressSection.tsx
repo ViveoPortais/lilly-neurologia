@@ -96,6 +96,7 @@ export const AddressSection = ({
                                         placeholder="Cidade"
                                         {...field}
                                         value={field.value}
+                                        disabled
                                     />
                                     {errors.addressCity && (
                                         <span className="text-xs text-red-400 mt-1">
@@ -117,6 +118,7 @@ export const AddressSection = ({
                                         placeholder="UF"
                                         {...field}
                                         value={field.value}
+                                        disabled
                                     />
                                     {errors.addressState && (
                                         <span className="text-xs text-red-400 mt-1">

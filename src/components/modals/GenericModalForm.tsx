@@ -27,7 +27,7 @@ export default function GenericModalForm({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white rounded-2xl pt-12 pb-4 px-16 shadow-lg w-full text-center lg:max-w-2xl"
+            className="bg-white rounded-2xl pt-8 pb-4 px-5 shadow-lg w-full text-center lg:max-w-2xl"
           >
             {title &&
               <div className="flex justify-between border-b border-b-gray-400 pb-2 mb-4">

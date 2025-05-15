@@ -266,6 +266,7 @@ export default function PatientForm({ role, isMobile }: Props) {
        exams={exams}
        labs={labs}
        genders={genders}
+       setValue={methods.setValue}
       />
      </motion.div>
     ) : null}

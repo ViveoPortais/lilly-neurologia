@@ -1,3 +1,6 @@
+import { format, isAfter, parseISO } from "date-fns";
+import { toast } from "react-toastify";
+
 export default function isValidCPF(cpf: string) {
  cpf = cpf.replace(/[^\d]+/g, "");
 
@@ -42,3 +45,19 @@ export const formatFileSize = (size?: string | number | null): string => {
  if (!size) return "Tamanho desconhecido";
  return `${(Number(size) / 1024).toFixed(1)} KB`;
 };
+
+export const today = format(new Date(), "yyyy-MM-dd");
+
+type SetValueFn = (name: string, value: any) => void;
+
+export function validateNoFutureDate(value: string, fieldName: string, setValue: SetValueFn): void {
+ const selectedDate = parseISO(value);
+ const today = new Date();
+
+ if (isAfter(selectedDate, today)) {
+  toast.warning("Não é permitido cadastrar data futura");
+  setValue(fieldName, "");
+ } else {
+  setValue(fieldName, value);
+ }
+}

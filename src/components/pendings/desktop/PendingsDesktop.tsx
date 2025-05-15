@@ -2,12 +2,15 @@ import { useState } from "react";
 import RejectedDocModal from "../modals/RejectedDocModal";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { formatDate, formatFileSize } from "@/helpers/helpers";
+import { ColumnConfig } from "../PendingTableColumns";
 
 interface Props {
  items: ExamPendingModel[];
+ columns: ColumnConfig[];
+ renderModal: (item: ExamPendingModel | null, onClose: () => void) => React.ReactNode;
 }
 
-export default function PendingsDesktopPage({ items }: Props) {
+export default function PendingsDesktopPage({ items, columns, renderModal }: Props) {
  const [selectedItem, setSelectedItem] = useState<ExamPendingModel | null>(null);
 
  return (
@@ -16,11 +19,11 @@ export default function PendingsDesktopPage({ items }: Props) {
     <thead className="border-b bg-white">
      <tr>
       <th className="w-24 px-2 py-2"></th>
-      <th className="px-3 py-2 text-left font-medium">Nº Protocolo</th>
-      <th className="px-3 py-2 text-left font-medium">Nome do Paciente</th>
-      <th className="px-3 py-2 text-left font-medium">Data de Criação da pendência</th>
-      <th className="px-3 py-2 text-left font-medium">Data de Reprovação</th>
-      <th className="px-3 py-2 text-left font-medium">Motivo</th>
+      {columns.map((col, idx) => (
+       <th key={idx} className="px-3 py-2 text-left font-medium">
+        {col.label}
+       </th>
+      ))}
      </tr>
     </thead>
     <tbody>
@@ -36,31 +39,17 @@ export default function PendingsDesktopPage({ items }: Props) {
          </button>
         )}
        </td>
-       <td className="px-3 py-2">{item.numberProtocol}</td>
-       <td className="px-3 py-2">{item.patientName}</td>
-       <td className="px-3 py-2">{formatDate(item.dateCreate)}</td>
-       <td className="px-3 py-2">{formatDate(item.dateUpdate)}</td>
-       <td className="px-3 py-2 flex items-center gap-2 text-red-600">
-        <span className="h-2 w-2 bg-red-600 rounded-full inline-block"></span>
-        <span className="text-xs">{item.reason}</span>
-       </td>
+       {columns.map((col, idx) => (
+        <td key={idx} className="px-3 py-2">
+         {col.render(item)}
+        </td>
+       ))}
       </tr>
      ))}
     </tbody>
    </table>
 
-   {selectedItem && (
-    <RejectedDocModal
-     open={!!selectedItem}
-     onClose={() => setSelectedItem(null)}
-     docName={selectedItem.attachments?.[0]?.fileName || "Documento"}
-     fileSize={formatFileSize(selectedItem.attachments?.[0]?.fileSize)}
-     reason={selectedItem.reason || ""}
-     selectedItem={selectedItem.diagnosticId}
-     documentBody={selectedItem.attachments?.[0]?.documentBody || ""}
-     contentType={selectedItem.attachments?.[0]?.contentType || ""}
-    />
-   )}
+   {selectedItem && renderModal(selectedItem, () => setSelectedItem(null))}
   </div>
  );
 }

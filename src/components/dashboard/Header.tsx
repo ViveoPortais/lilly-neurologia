@@ -39,7 +39,7 @@ export function Header() {
    let findRoute = routes[role]?.find((x) => `${x.route}` === pathname) || routes[role]?.find((x) => `${x.route}` === pathname);
 
    if (pathname.includes("profile")) {
-    setCurrentRoute("Meus Dados");
+    setCurrentRoute("Perfil");
     return;
    }
 
@@ -89,7 +89,7 @@ export function Header() {
        {pathname.startsWith("/dashboard/starts") ? `Bem-vindo, ${auth.name}!` : currentRoute}
       </h1>
 
-      {routeSummary && <span className="text-sm text-zinc-600">{routeSummary}</span>}
+      {routeSummary && !pathname.includes("profile") && <span className="text-sm text-zinc-600">{routeSummary}</span>}
      </div>
     </div>
    </header>
