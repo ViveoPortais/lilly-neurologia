@@ -107,12 +107,12 @@ export default function RegisterDesktop({
       <div className="flex items-center gap-2">
        <Checkbox
         id="consentLGPD"
-        className="border border-zinc-600 data-[state=checked]:bg-white data-[state=checked]:text-zinc-600"
+        className="border border-[#82786F] data-[state=checked]:bg-white data-[state=checked]:text-[#82786F]"
         checked={field.value || false}
         onCheckedChange={(checked) => field.onChange(checked === true)}
         disabled
        />
-       <span className="text-sm leading-snug">
+       <span className="text-sm text-[#82786F] leading-snug">
         LI E ACEITO O{" "}
         <span
          onClick={() =>
@@ -131,7 +131,7 @@ export default function RegisterDesktop({
            },
           })
          }
-         className="underline cursor-pointer text-mainlilly font-medium"
+         className="underline cursor-pointer text-[#666666] font-bold"
         >
          TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
         </span>
@@ -151,9 +151,9 @@ export default function RegisterDesktop({
         id="programParticipationConsent"
         checked={field.value || false}
         onCheckedChange={(checked) => field.onChange(checked === true)}
-        className="border border-zinc-600 data-[state=checked]:bg-white data-[state=checked]:text-zinc-600"
+        className="border border-[#82786F] data-[state=checked]:bg-white data-[state=checked]:text-[#82786F]"
        />
-       <label htmlFor="programParticipationConsent" className="text-sm leading-snug">
+       <label htmlFor="programParticipationConsent" className="text-sm text-[#82786F] leading-snug">
         <span>
          AFIRMO QUE LI E CONFERI MEUS DADOS PESSOAIS E QUE TODAS AS INFORMAÇÕES AQUI PREENCHIDAS SÃO{" "}
          <span className="whitespace-nowrap">
