@@ -138,9 +138,10 @@ export default function RegisterMobile({
           id="consentLGPD"
           checked={field.value || false}
           onCheckedChange={(checked) => field.onChange(checked === true)}
+          className="border border-zinc-600 data-[state=checked]:bg-white data-[state=checked]:text-zinc-600"
           disabled
          />
-         <span className="text-sm">
+         <span className="text-sm leading-snug">
           LI E ACEITO O{" "}
           <span
            onClick={() =>
@@ -163,6 +164,7 @@ export default function RegisterMobile({
           >
            TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
           </span>
+          <span className="text-mainlilly"> *</span>
          </span>
         </div>
        )}
@@ -178,9 +180,15 @@ export default function RegisterMobile({
           id="programParticipationConsent"
           checked={field.value || false}
           onCheckedChange={(checked) => field.onChange(checked === true)}
+          className="border border-zinc-600 data-[state=checked]:bg-white data-[state=checked]:text-zinc-600"
          />
-         <label htmlFor="programParticipationConsent" className="text-sm">
-          AFIRMO QUE LI E CONFERI MEUS DADOS PESSOAIS E QUE TODAS AS INFORMAÇÕES AQUI PREENCHIDAS SÃO VERDADEIRAS
+         <label htmlFor="programParticipationConsent" className="text-sm leading-snug">
+          <span>
+           AFIRMO QUE LI E CONFERI MEUS DADOS PESSOAIS E QUE TODAS AS INFORMAÇÕES AQUI PREENCHIDAS SÃO{" "}
+           <span className="whitespace-nowrap">
+            VERDADEIRAS<span className="text-mainlilly"> *</span>
+           </span>
+          </span>
          </label>
         </div>
        )}

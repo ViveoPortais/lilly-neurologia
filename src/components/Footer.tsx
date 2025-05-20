@@ -18,7 +18,7 @@ export function Footer({ bgColor }: FooterProps) {
     <div className="flex-1 text-center">
      <div className="mb-2 px-2">
       <span>
-       Copyright © 2023 Eli Lilly and Company. / Todos os direitos reservados. / PP-SE-BR-0175 – Maio/2025 / Site destinado a profissionais
+       Copyright © 2023 Eli Lilly and Company. / Todos os direitos reservados. / PP-AD-BR-0150 – Abril/2025 / Site destinado a profissionais
        de saúde prescritores de medicamentos
       </span>
      </div>

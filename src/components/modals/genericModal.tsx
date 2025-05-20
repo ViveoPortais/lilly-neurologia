@@ -26,7 +26,7 @@ export default function GenericModal({
   title,
   message,
   onClose,
-  buttonLabel = "Okay",
+  buttonLabel = "Fechar",
   isOpen,
 }: GenericModalProps) {
   const [mounted, setMounted] = useState(false);
