@@ -1,4 +1,4 @@
-import { ResolveExamPendency } from "@/types/diagnostic";
+import { ExamPendingModel, ResolveExamPendency } from "@/types/diagnostic";
 import { api } from "./api";
 const programCodeEnv = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
@@ -32,9 +32,19 @@ export const getListExamPending = async () => {
  return response.data;
 };
 
-export const resolvePendency = async (model: ResolveExamPendency) => {
+export const resolvePendency = async (model: ExamPendingModel) => {
  const response = await api.post("/exam/examresolvependency", {
-  model,
+  ...model,
+  programCode: programCodeEnv,
+ });
+ return response.data;
+};
+
+export const getPendencyReasons = async () => {
+ const response = await api.get("/exam/getpendencyreason", {
+  params: {
+   programCode: programCodeEnv,
+  },
  });
  return response.data;
 };

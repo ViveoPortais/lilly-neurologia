@@ -7,85 +7,28 @@ import { ExamPendingModel } from "@/types/diagnostic";
 import { useEffect } from "react";
 
 export default function PendingsDoctorPage() {
- const dispatch = useAppDispatch();
- const { data: pendings, loading, error } = useAppSelector((state) => state.pending);
- const { show, hide } = useLoading();
+    const dispatch = useAppDispatch();
+    const { data: pendings, loading, error } = useAppSelector((state) => state.pending);
+    const { show, hide } = useLoading();
+
+    useEffect(() => {
+        dispatch(fetchPendings());
+    }, [dispatch]);
 
  useEffect(() => {
-  dispatch(fetchPendings());
- }, [dispatch]);
+  if (loading) show();
+  else hide();
+ }, [loading, show, hide]);
 
- if (loading) show();
- else hide();
+    const fixedCategories = ["Documentação", "Solicitações de Retirada de Amostra", "Problema com a Amostra", "Aprovação de Vínculo"];
 
- const fakePendings: ExamPendingModel[] = [
-  {
-   id: "1",
-   diagnosticId: "d1",
-   numberProtocol: "12345-XYZ",
-   voucher: "VOUCHER-001",
-   patientName: "Ana Beatriz Ramos",
-   doctorName: "Dr. Ricardo Souza",
-   reason: "Documentação reprovada",
-   dateCreate: "2024-05-01T14:30:00",
-   dateUpdate: "2024-05-05T09:15:00",
-   attachments: [
-    {
-     fileName: "termo_consentimento.pdf",
-     fileSize: "102400",
-     contentType: "application/pdf",
-     documentBody: "",
-     fileType: "PDF",
-     annotationTypeName: "Termo de Consentimento",
-     pendencyDescription: "Documento obrigatório ausente",
-     annotationTypeStringMapCode: null,
-     annotationTypeStringMapId: null,
-     healthProgramCode: null,
-     name: "Termo Consentimento",
-    },
-   ],
-  },
-  {
-   id: "2",
-   diagnosticId: "d2",
-   numberProtocol: "98765-ABC",
-   voucher: "VOUCHER-002",
-   patientName: "Carlos Henrique Lima",
-   doctorName: "Dra. Mariana Costa",
-   reason: "Documentação reprovada",
-   dateCreate: "2024-05-02T10:00:00",
-   dateUpdate: "2024-05-06T11:45:00",
-   attachments: [
-    {
-     fileName: "pedido_medico.jpeg",
-     fileSize: "204800",
-     contentType: "image/jpeg",
-     documentBody: "",
-     fileType: "JPEG",
-     annotationTypeName: "Pedido Médico",
-     pendencyDescription: "Arquivo ilegível",
-     annotationTypeStringMapCode: null,
-     annotationTypeStringMapId: null,
-     healthProgramCode: null,
-     name: "Pedido Médico",
-    },
-   ],
-  },
- ];
+    const grouped: Record<string, ExamPendingModel[]> = {
+        Documentação: pendings.documents,
+        "Recebimento do tubo": pendings.tubes,
+        "Solicitações de Retirada de Amostra": [],
+        "Problema com a Amostra": [],
+        "Aprovação de Vínculo": [],
+    };
 
- const fixedCategories = [
-  "Documentação",
-  "Solicitações de Retirada de Amostra",
-  "Problema com a Amostra",
-  "Aprovação de Vínculo",
- ];
-
- const grouped: Record<string, ExamPendingModel[]> = {
-  Documentação: fakePendings,
-  "Solicitações de Retirada de Amostra": [],
-  "Problema com a Amostra": [],
-  "Aprovação de Vínculo": [],
- };
-
- return <GenericPendingsPage pendings={fakePendings} fixedCategories={fixedCategories} grouped={grouped} />;
+ return <GenericPendingsPage fixedCategories={fixedCategories} grouped={grouped} />;
 }

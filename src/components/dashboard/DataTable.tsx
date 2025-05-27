@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
   const pageSizeOptions =  [5, 10, 20, 50];
 
   return (
-    <div className={`w-[90vw] ${isMenuOpen ? "lg:w-[70vw]" : "lg:w-[calc(95vw-100px)]"} mx-auto`}>
+    <div className={`w-[90vw] ${isMobile? 'mb-10' : ''} md:w-full md:px-5 mx-auto`}>
       <div className="border-separate border-spacing-0">
         {isLoading && (
           <div className="absolute top-0 left-0 w-full h-full bg-white/50 z-20 flex items-center justify-center">

@@ -1,14 +1,19 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { maskedField } from "../custom/MaskedField";
 import { IStringMap } from "@/types";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { searchPatientByCpf } from "@/store/slices/registerPatientSlice";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
 import { today, validateNoFutureDate } from "@/helpers/helpers";
+import { useLoading } from "@/contexts/LoadingContext";
+import { cclChecks, dlChecks } from "@/helpers/select-filters";
+import { Checkbox } from "../ui/checkbox";
+import { fetchDiagnosticDetailsById } from "@/store/slices/diagnosticSlice";
+import dayjs from "dayjs";
 
 export const Step1 = ({
  setStep,
@@ -19,6 +24,11 @@ export const Step1 = ({
  labs,
  genders,
  setValue,
+ clinalProfile,
+ setClinalProfile,
+ checkItems,
+ setCheckItems,
+ clinicalProfile,
 }: {
  setStep: (step: number) => void;
  control: any;
@@ -28,35 +38,112 @@ export const Step1 = ({
  labs: IStringMap[];
  genders: IStringMap[];
  setValue: any;
+ clinalProfile: any;
+ setClinalProfile: any;
+ checkItems: any;
+ setCheckItems: any;
+ clinicalProfile: IStringMap[];
 }) => {
  const { register, watch } = useFormContext();
  const hasResponsible = watch("hasResponsible");
  const dispatch = useAppDispatch();
  const modal = useGenericModal();
  const router = useRouter();
+ const { show, hide } = useLoading();
+ const loading = useAppSelector((state) => state.registerPatient.loadingSearchPatient);
+ const [selectedProfileLabel, setSelectedProfileLabel] = useState("");
+
+ const profileCheckMap: Record<string, string[]> = {
+  "Demência Leve": dlChecks,
+  "CCL – Comprometimento Cognitivo Leve": cclChecks,
+ };
+
+ const selectedChecks = profileCheckMap[clinicalProfile.find((opt) => opt.stringMapId === clinalProfile)?.optionName || ""] || [];
+
+ if (loading) show();
+ else hide();
+
+ const toggleCheck = (label: string) => {
+  setCheckItems((prev: any) => ({
+   ...prev,
+   [label]: !prev[label],
+  }));
+ };
 
  const handleCpfBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
   const onlyDigits = e.target.value.replace(/\D/g, "");
   if (onlyDigits.length === 11) {
    try {
     const res = await dispatch(searchPatientByCpf(e.target.value)).unwrap();
-    if (res.additionalMessage === "Paciente já cadastrado no programa e não está elegível para novos exames") {
+    if (!res.isValidData) {
      modal.showModal(
       {
        type: "warning",
        message: res.additionalMessage,
       },
-      () => {
-       false;
-       router.push("/dashboard/starts");
-      }
+      () => {}
      );
+    } else {
+     if (res.value != "") await fillForm(res.value);
     }
    } catch (error) {
     console.error("CPF não encontrado ou erro ao buscar:", error);
    }
   }
  };
+
+ const fillForm = async (id: string) => {
+  const exam = await dispatch(fetchDiagnosticDetailsById({ id: id })).unwrap();
+  if (exam) {
+   setValue("name", exam.namePatient);
+   setValue("birthDate", dayjs(exam.patientBirthDate).format("YYYY-MM-DD"));
+   setValue("genderId", exam.genderId);
+
+   if (exam.nameCaregiver) {
+    setValue("hasResponsible", "yes");
+    setValue("nameCaregiver", exam.nameCaregiver);
+    setValue("cpfCaregiver", exam.cpfCarefiver);
+    setValue("birthDateCaregiver", dayjs(exam.birthdateCaregiver).format("YYYY-MM-DD"));
+   } else {
+    setValue("hasResponsible", "no");
+    setValue("nameCaregiver", "");
+    setValue("cpfCaregiver", "");
+    setValue("birthDateCaregiver", "");
+   }
+
+   setClinalProfile(exam?.clinicalProfile?.id);
+
+   const profileOption = clinicalProfile.find((opt) => opt.stringMapId === exam?.clinicalProfile?.id);
+   const profileName = profileOption?.optionName || "";
+
+   const relatedChecks = profileCheckMap[profileName] || [];
+
+   const filledCheckItems = relatedChecks.reduce((acc, label) => {
+    acc[label] = true;
+    return acc;
+   }, {} as Record<string, boolean>);
+
+   setCheckItems(filledCheckItems);
+
+   setValue("disease", exam.diseaseId);
+   setValue("examDefinition", exam.examDefinitionId);
+   setValue("laboratoryAnalysis", exam.localId);
+   setValue("addressPostalCode", exam.logisticsAddressPostalCode);
+   setValue("addressName", exam.logisticsAddressName);
+   setValue("addressNumber", exam.logisticsAddressNumber);
+   setValue("sector", exam.section);
+   setValue("responsibleName", exam.mainContact);
+   setValue("contact", exam.institutionTelephone);
+  }
+ };
+
+ useEffect(() => {
+  if (hasResponsible === "no") {
+   setValue("nameCaregiver", "");
+   setValue("cpfCaregiver", "");
+   setValue("birthDateCaregiver", "");
+  }
+ }, [hasResponsible, setValue]);
 
  return (
   <div>
@@ -95,7 +182,7 @@ export const Step1 = ({
       type="date"
       placeholder="Data de Nascimento"
       max={today}
-      onChange={(e) => validateNoFutureDate(e.target.value, "birthDate", setValue)}
+      onChange={(e) => validateNoFutureDate(e.target.value, "birthDate", setValue, "Não é permitido cadastrar data futura")}
      />
      {errors?.birthDate && <span className="text-sm text-red-500 mt-1 block">{errors.birthDate.message as string}</span>}
     </div>
@@ -113,26 +200,33 @@ export const Step1 = ({
 
     <div>
      <span className="font-medium block mb-2">Possui Cuidador Responsável?</span>
-     <div className="flex gap-x-4 md:pl-8 md:pt-2">
-      <label className="cursor-pointer">
-       <input
-        type="radio"
-        value="yes"
-        {...register("hasResponsible")}
-        checked={watch("hasResponsible") === "yes"}
-        className="peer hidden"
-       />
-       <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
-        Sim
-       </div>
-      </label>
-
-      <label className="cursor-pointer">
-       <input type="radio" value="no" {...register("hasResponsible")} checked={watch("hasResponsible") === "no"} className="peer hidden" />
-       <div className="px-4 py-1 border border-red-500 rounded-full text-red-500 peer-checked:bg-red-500 peer-checked:text-white transition-colors">
-        Não
-       </div>
-      </label>
+     <div className="flex gap-x-4">
+      {["yes", "no"].map((val) => (
+       <label key={val} className="cursor-pointer">
+        <input type="radio" value={val} {...register("hasResponsible")} className="peer sr-only text-red" />
+        <div
+         className="
+          flex items-center gap-2
+          px-4 py-1 
+          border border-red-500 
+          rounded-lg
+          text-red-500 
+          peer-checked:bg-red-500 
+          peer-checked:text-white 
+          transition-colors
+        "
+        >
+         <div
+          className={`
+            w-4 h-4 rounded-full border-2 border-red-500 flex items-center justify-center
+          `}
+         >
+          <div className="w-2 h-2 rounded-full bg-mainlilly peer-checked:block bg-white" />
+         </div>
+         {val === "yes" ? "Sim" : "Não"}
+        </div>
+       </label>
+      ))}
      </div>
     </div>
    </div>
@@ -159,13 +253,22 @@ export const Step1 = ({
        type="date"
        placeholder="Nascimento do Cuidador"
        max={today}
-       onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue)}
+       onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue, "Não é permitido cadastrar data futura")}
       />
       {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
      </div>
     </div>
    )}
-   <div className="grid md:grid-cols-3 gap-3 mt-4">
+   <div className="grid md:grid-cols-4 gap-3 mt-4">
+    <div className="w-full">
+     <CustomFilterSelect
+      name="clinicalProfile"
+      label="Perfil Clínico do Paciente"
+      options={clinicalProfile}
+      value={clinalProfile}
+      onChange={setClinalProfile}
+     />
+    </div>
     <Controller
      name="disease"
      control={control}
@@ -205,6 +308,20 @@ export const Step1 = ({
      )}
     />
    </div>
+   {selectedChecks.length > 0 && (
+    <div className="grid grid-cols-1 gap-2 mt-4">
+     {selectedChecks.map((label) => (
+      <label key={label} className="flex items-center gap-3 text-sm text-zinc-700">
+       <Checkbox
+        checked={!!checkItems[label]}
+        onCheckedChange={() => toggleCheck(label)}
+        className="border border-[#82786F] data-[state=checked]:bg-white data-[state=checked]:text-[#82786F]"
+       />
+       <span>{label}</span>
+      </label>
+     ))}
+    </div>
+   )}
   </div>
  );
 };

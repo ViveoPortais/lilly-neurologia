@@ -6,7 +6,7 @@ export type ColumnConfig = {
  render: (item: ExamPendingModel) => React.ReactNode;
 };
 
-type Role = "doctor" | "operation";
+type Role = "doctor" | "operation" | "logistics";
 type TableColumnMap = Record<string, ColumnConfig[]>;
 
 const motivoColumn: ColumnConfig = {
@@ -75,6 +75,38 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
    { label: "Data da Criação da pendência", render: (item) => formatDate(item.dateCreate) },
    { label: "Data de Envio", render: (item) => formatDate(item.dateUpdate) },
    { label: "Nome do Médico/Profissional", render: (item) => item.doctorName || "-" },
+   motivoColumn,
+  ],
+ },
+
+ logistics: {
+  "Solicitações de Envio de Tubo": [
+   { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+   { label: "Nome do Paciente", render: (item) => formatDate(item.dateCreate) },
+   { label: "Data da Criação da pendência", render: (item) => formatDate(item.dateUpdate) },
+   { label: "Data do Pedido", render: (item) => item.doctorName || "-" },
+   { label: "Etiqueta", render: (item) => item.doctorName || "-" },
+   motivoColumn,
+  ],
+  "Confirma Entrega de Tubo": [
+   { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+   { label: "Nome do Paciente", render: (item) => formatDate(item.dateCreate) },
+   { label: "Data da Criação da pendência", render: (item) => formatDate(item.dateUpdate) },
+   { label: "Data do Pedido", render: (item) => item.doctorName || "-" },
+   motivoColumn,
+  ],
+  "Solicitações de Retirada": [
+   { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+   { label: "Data da Criação da pendência", render: (item) => formatDate(item.dateUpdate) },
+   { label: "Data da Coleta do Exame", render: (item) => item.doctorName || "-" },
+   { label: "Data da Retirada", render: (item) => item.doctorName || "-" },
+   motivoColumn,
+  ],
+  "Concluir Análise": [
+   { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+   { label: "Data da Criação da pendência", render: (item) => formatDate(item.dateUpdate) },
+   { label: "Data da Coleta do Exame", render: (item) => item.doctorName || "-" },
+   { label: "Data da Retirada", render: (item) => item.doctorName || "-" },
    motivoColumn,
   ],
  },

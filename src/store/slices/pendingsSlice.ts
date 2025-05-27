@@ -1,14 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getListExamPending, resolvePendency } from "@/services/exams";
-import { ExamPendingModel, ResolveExamPendency } from "@/types/diagnostic";
+import { getListExamPending, getPendencyReasons, resolvePendency } from "@/services/exams";
+import { ExamPendingModel, PendingResponse, ResolveExamPendency } from "@/types/diagnostic";
+import { IReturnMessage } from "@/types/general";
+import { IStringMap } from "@/types";
 
 interface PendingsState {
- data: ExamPendingModel[];
+ data: PendingResponse;
  loading: boolean;
  error: string | null;
+ reasons: IStringMap[];
 }
 
-export const fetchPendings = createAsyncThunk<ExamPendingModel[], void, { rejectValue: string }>("pendings/fetch", async (_, thunkAPI) => {
+export const fetchPendings = createAsyncThunk<PendingResponse, void, { rejectValue: string }>("pendings/fetch", async (_, thunkAPI) => {
  try {
   const result = await getListExamPending();
 
@@ -16,28 +19,51 @@ export const fetchPendings = createAsyncThunk<ExamPendingModel[], void, { reject
    return thunkAPI.rejectWithValue(result.additionalMessage || "Erro ao carregar pendências");
   }
 
-  const parsed = JSON.parse(result.value) as ExamPendingModel[];
-  return parsed;
+  const parsed = JSON.parse(result.value);
+  return parsed as PendingResponse;
  } catch (error) {
   return thunkAPI.rejectWithValue("Erro ao carregar pendências");
  }
 });
 
-export const examResolvePendency = createAsyncThunk<void, ResolveExamPendency, { rejectValue: string }>(
+export const examResolvePendency = createAsyncThunk<IReturnMessage<string>, ExamPendingModel, { rejectValue: string }>(
  "pendings/resolve",
  async (model, thunkAPI) => {
   try {
-   await resolvePendency(model);
+   const result = await resolvePendency(model);
+   return result;
   } catch (err: any) {
    return thunkAPI.rejectWithValue("Erro ao resolver pendência");
   }
  }
 );
 
+export const fetchPendencyReasons = createAsyncThunk("pendings/fetchReasons", async (_, thunkAPI) => {
+ try {
+  const result = await getPendencyReasons();
+
+  const transformed = result.map((item: any) => ({
+   stringMapId: item.id,
+   optionName: item.name,
+  }));
+
+  return transformed as IStringMap[];
+ } catch (error) {
+  return thunkAPI.rejectWithValue("Erro ao carregar gêneros");
+ }
+});
+
 const initialState: PendingsState = {
- data: [],
+ data: {
+  documents: [],
+  labels: [],
+  tubes: [],
+  batchPendingDeclarations: [],
+  generateBatchDeclarations: [],
+ },
  loading: false,
  error: null,
+ reasons: [],
 };
 
 const pendingsSlice = createSlice({
@@ -67,6 +93,19 @@ const pendingsSlice = createSlice({
     state.loading = false;
    })
    .addCase(examResolvePendency.rejected, (state, action) => {
+    state.loading = false;
+    state.error = action.payload as string;
+   })
+
+   .addCase(fetchPendencyReasons.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+   })
+   .addCase(fetchPendencyReasons.fulfilled, (state, action) => {
+    state.loading = false;
+    state.reasons = action.payload;
+   })
+   .addCase(fetchPendencyReasons.rejected, (state, action) => {
     state.loading = false;
     state.error = action.payload as string;
    });

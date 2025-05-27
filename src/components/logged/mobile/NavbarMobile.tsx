@@ -18,6 +18,7 @@ interface NavbarMobileProps {
  handleLogout: () => void;
  auth?: any;
  isMobileMenuOpen: boolean;
+ handleProtectedRoute: (route: string) => void;
 }
 
 export default function NavbarMobile({
@@ -27,6 +28,7 @@ export default function NavbarMobile({
  pathname,
  auth,
  isMobileMenuOpen,
+ handleProtectedRoute,
 }: NavbarMobileProps) {
  const router = useRouter();
 
@@ -79,19 +81,37 @@ export default function NavbarMobile({
      <div className="text-zinc-700 text-sm font-semibold px-4 mb-2">Plataforma:</div>
 
      <ul className="flex flex-col gap-2">
-      {generalRoutes.map((route) => (
-       <Link
-        key={route.route}
-        href={route.route}
-        className={`flex items-center gap-2 text-sm px-4 py-2 rounded-md hover:bg-mainlilly hover:text-white ${
-         pathname === route.route ? "bg-mainlilly text-white" : "text-zinc-800"
-        }`}
-        onClick={() => changeMobileMenu(false)}
-       >
-        <MenuIcon icon={route.icon} size={24} />
-        {route.text}
-       </Link>
-      ))}
+      {generalRoutes.map((route) => {
+       const isProtected = route.openModal === true;
+
+       return isProtected ? (
+        <button
+         key={route.route}
+         onClick={() => {
+          changeMobileMenu(false);
+          handleProtectedRoute(route.route);
+         }}
+         className={`flex items-center gap-2 text-sm px-4 py-2 rounded-md hover:bg-mainlilly hover:text-white w-full text-left ${
+          pathname === route.route ? "bg-mainlilly text-white" : "text-zinc-800"
+         }`}
+        >
+         <MenuIcon icon={route.icon} size={24} />
+         {route.text}
+        </button>
+       ) : (
+        <Link
+         key={route.route}
+         href={route.route}
+         className={`flex items-center gap-2 text-sm px-4 py-2 rounded-md hover:bg-mainlilly hover:text-white ${
+          pathname === route.route ? "bg-mainlilly text-white" : "text-zinc-800"
+         }`}
+         onClick={() => changeMobileMenu(false)}
+        >
+         <MenuIcon icon={route.icon} size={24} />
+         {route.text}
+        </Link>
+       );
+      })}
      </ul>
 
      <Separator className="bg-mainlilly mt-6 mb-4" />

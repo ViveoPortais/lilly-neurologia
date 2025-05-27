@@ -9,6 +9,7 @@ import {
  LuUserPlus,
  LuUserX,
 } from "react-icons/lu";
+import { FaBoxArchive } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
 
 interface IProfileProps {
@@ -16,6 +17,7 @@ interface IProfileProps {
  text: string;
  summary?: string;
  icon: IconType;
+ openModal?: boolean;
 }
 
 interface IRouteProps {
@@ -36,11 +38,11 @@ export const routes: IRouteProps = {
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
   },
-  { route: "/dashboard/doctor/requests", text: "Minhas Solicitações", icon: LuMousePointerClick },
+  { route: "/dashboard/myRequests", text: "Minhas Solicitações", icon: LuMousePointerClick },
   { route: "/dashboard/doctor/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
-  { route: "/dashboard/doctor/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
+  { route: "/dashboard/schedule-sample", text: "Agendar Retirada da Amostra", icon: LuTestTube },
   { route: "/dashboard/doctor/link-management", text: "Gerenciar Vínculo", icon: LuSlidersHorizontal },
-  { route: "/dashboard/doctor/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
+  { route: "/dashboar/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
  ],
 
  professional: [
@@ -56,11 +58,11 @@ export const routes: IRouteProps = {
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
   },
-  { route: "/dashboard/professional/requests", text: "Minhas Solicitações", icon: LuMousePointerClick },
+  { route: "/dashboard/myRequests", text: "Minhas Solicitações", icon: LuMousePointerClick },
   { route: "/dashboard/professional/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
-  { route: "/dashboard/professional/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
+  { route: "/dashboard/schedule-sample", text: "Agendar Retirada da Amostra", icon: LuTestTube },
   { route: "/dashboard/professional/link-management", text: "Meus vínculos", icon: LuSlidersHorizontal },
-  { route: "/dashboard/professional/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
+  { route: "/dashboard/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
  ],
 
  operation: [
@@ -76,8 +78,8 @@ export const routes: IRouteProps = {
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
   },
-  { route: "/dashboard/operation/register-patient", text: "Gerenciar arquivos", icon: LuFiles },
-  { route: "/dashboard/operation/requests", text: "Acompanhar Solicitações", icon: LuMousePointerClick },
+  { route: "/dashboard/operation/manage-files", text: "Gerenciar arquivos", icon: LuFiles, openModal: true },
+  { route: "/dashboard/myRequests", text: "Acompanhar Solicitações", icon: LuMousePointerClick },
   { route: "/dashboard/operation/register-patient", text: "Usuários bloqueados", icon: LuUserX },
  ],
 
@@ -94,10 +96,7 @@ export const routes: IRouteProps = {
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
   },
-  { route: "/dashboard/logistics/requests", text: "Minhas Solicitações", icon: LuMousePointerClick },
-  { route: "/dashboard/logistics/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
-  { route: "/dashboard/logistics/sample-collection", text: "Agendar Retirada da Amostra", icon: LuTestTube },
-  { route: "/dashboard/logistics/link-management", text: "Meus vínculos", icon: LuSlidersHorizontal },
-  { route: "/dashboard/logistics/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
+  { route: "/dashboard/myRequests", text: "Estoque", icon: FaBoxArchive },
+  { route: "/dashboard/logistics/register-patient", text: "Todas as solicitações", icon: LuMousePointerClick },
  ],
 };

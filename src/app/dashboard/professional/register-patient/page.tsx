@@ -30,7 +30,7 @@ export default function RegisterPatientProfessionalPage() {
     customClass="w-full md:max-w-md"
    />
 
-   {selectedDoctorId && <PatientForm role={role.role} isMobile={isMobile} />}
+   {selectedDoctorId && <PatientForm role={role.role} isMobile={isMobile} doctor={selectedDoctorId} />}
   </div>
  );
 }

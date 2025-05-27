@@ -1,4 +1,4 @@
-import { IStringMapModel } from "./general";
+import { IStringMap } from ".";
 
 interface listProfessions {
     id: string;
@@ -47,7 +47,7 @@ export interface IProfessionalData {
     id : string;
     healthProfessionalByProgram : IHealthProfessionalByProgramModel;
     doctorByProgram : IDoctorByProgramModel;
-    statusCodeStringMap : IStringMapModel;
+    statusCodeStringMap : IStringMap;
     aproveDate : string;
     reproveDate : string;
     createdOn : string;

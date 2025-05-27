@@ -5,6 +5,8 @@ import { useFormContext } from "react-hook-form";
 import { Download, Upload, AlertCircle, LinkIcon, Pen } from "lucide-react";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { CustomSelect } from "@/components/custom/CustomSelect";
+import { useDownloadReqConFiles } from "@/hooks/useDownloadReqConFile";
+import { downloadBase64File } from "@/helpers/fileHelper";
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
@@ -21,6 +23,7 @@ export const Step3Doctor = () => {
  const [requestType, setRequestType] = useState("");
  const [consentFileName, setConsentFileName] = useState("");
  const [requestFileName, setRequestFileName] = useState("");
+ const { consentFile, requestFile } = useDownloadReqConFiles();
 
  const consentInputRef = useRef<HTMLInputElement | null>(null);
  const requestInputRef = useRef<HTMLInputElement | null>(null);
@@ -64,8 +67,14 @@ export const Step3Doctor = () => {
    <Button
     type="button"
     variant="ghost"
-    disabled
-    className="w-[300px] h-10 bg-gray-200 text-gray-500 text-sm font-normal cursor-not-allowed"
+    disabled={fieldName === "termConsentAttach" ? !consentFile?.attachments?.[0] : !requestFile?.attachments?.[0]}
+    onClick={() => {
+     const file = fieldName === "termConsentAttach" ? consentFile?.attachments?.[0] : requestFile?.attachments?.[0];
+     if (file) {
+      downloadBase64File(file.documentBody!, file.fileName!, file.contentType!);
+     }
+    }}
+    className="w-[300px] h-10 bg-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-300"
    >
     <Download className="w-4 h-4 mr-2" />
     {downloadLabel}
@@ -130,7 +139,7 @@ export const Step3Doctor = () => {
       fieldPrefix === "consent" ? "Upload do termo assinado" : "Upload do pedido médico",
       fieldPrefix === "consent" ? consentInputRef : requestInputRef,
       fieldPrefix === "consent" ? consentFileName : requestFileName,
-      fieldPrefix === "consent" ? "Download do termo assinado" : "Download do pedido médico"
+      fieldPrefix === "consent" ? "Download do termo" : "Download do pedido médico"
      )}
 
      <p className="text-xs text-center text-red-500 mt-2 flex items-center justify-center gap-1">

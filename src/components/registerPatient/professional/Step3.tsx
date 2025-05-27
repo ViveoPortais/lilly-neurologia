@@ -4,6 +4,8 @@ import { useFormContext } from "react-hook-form";
 import { Download, Upload, AlertCircle } from "lucide-react";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRef, useState } from "react";
+import { useDownloadReqConFiles } from "@/hooks/useDownloadReqConFile";
+import { downloadBase64File } from "@/helpers/fileHelper";
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
@@ -18,6 +20,7 @@ export const Step3 = () => {
 
  const [consentFileName, setConsentFileName] = useState("");
  const [requestFileName, setRequestFileName] = useState("");
+ const { consentFile, requestFile } = useDownloadReqConFiles();
 
  const consentInputRef = useRef<HTMLInputElement | null>(null);
  const requestInputRef = useRef<HTMLInputElement | null>(null);
@@ -68,8 +71,14 @@ export const Step3 = () => {
      <Button
       type="button"
       variant="ghost"
-      disabled
-      className="w-[300px] h-10 bg-gray-200 text-gray-500 text-sm font-normal cursor-not-allowed"
+      disabled={fieldName === "termConsentAttach" ? !consentFile?.attachments?.[0] : !requestFile?.attachments?.[0]}
+      onClick={() => {
+       const file = fieldName === "termConsentAttach" ? consentFile?.attachments?.[0] : requestFile?.attachments?.[0];
+       if (file) {
+        downloadBase64File(file.documentBody!, file.fileName!, file.contentType!);
+       }
+      }}
+      className="w-[300px] h-10 bg-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-300"
      >
       <Download className="w-4 h-4 mr-2" />
       {downloadLabel}

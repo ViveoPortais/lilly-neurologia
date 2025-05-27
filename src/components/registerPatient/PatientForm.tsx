@@ -22,13 +22,16 @@ import useSession from "@/hooks/useSession";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
 import { ButtonsNavigation } from "./ButtonsNavigation";
+import { cclChecks, dlChecks } from "@/helpers/select-filters";
+import { fetchStringMaps } from "@/store/slices/basicSlice";
 
 type Props = {
  role: string;
  isMobile: boolean;
+ doctor?: string;
 };
 
-export default function PatientForm({ role, isMobile }: Props) {
+export default function PatientForm({ role, isMobile, doctor }: Props) {
  const [step, setStep] = useState(1);
  const auth = useSession();
  const dispatch = useAppDispatch();
@@ -38,6 +41,9 @@ export default function PatientForm({ role, isMobile }: Props) {
  const diseases = useAppSelector((state) => state.registerPatient.data.diseases);
  const doctorId = useAppSelector((state) => state.registerPatient.data.doctorId);
  const isSubmitting = useAppSelector((state) => state.registerPatient.isSubmitting);
+ const [selectedProfile, setSelectedProfile] = useState("");
+ const [checkItems, setCheckItems] = useState<Record<string, boolean>>({});
+ const stringMaps = useAppSelector((state) => state.basic.data.stringMaps);
  const router = useRouter();
 
  const methods = useForm({
@@ -46,6 +52,8 @@ export default function PatientForm({ role, isMobile }: Props) {
  });
 
  const handleClearForm = () => {
+  setSelectedProfile("");
+  setCheckItems({});
   methods.reset({
    cpf: "",
    name: "",
@@ -70,6 +78,13 @@ export default function PatientForm({ role, isMobile }: Props) {
  };
 
  const modal = useGenericModal();
+
+ const clinicalProfile = stringMaps.map((item) => {
+  return {
+   stringMapId: item.stringMapId,
+   optionName: item.optionName,
+  };
+ });
 
  const getStepFields = () => {
   const hasResponsible = methods.watch("hasResponsible") === "yes";
@@ -115,6 +130,23 @@ export default function PatientForm({ role, isMobile }: Props) {
   return [];
  };
 
+const validateClinalProfile = () => {
+ if (!selectedProfile) return false;
+
+ const profileOption = clinicalProfile.find((opt) => opt.stringMapId === selectedProfile);
+ const profileName = profileOption?.optionName || "";
+
+ const profileCheckMap: Record<string, string[]> = {
+  "Demência Leve": dlChecks,
+  "CCL – Comprometimento Cognitivo Leve": cclChecks,
+ };
+
+ const requiredChecks = profileCheckMap[profileName] || [];
+ const allChecked = requiredChecks.every((label) => checkItems[label]);
+
+ return allChecked;
+};
+
  const handleNext = async () => {
   const fields = getStepFields();
   const values = Object.fromEntries(fields.map((field) => [field, methods.getValues(field)]));
@@ -124,7 +156,7 @@ export default function PatientForm({ role, isMobile }: Props) {
    return !value || (typeof value === "string" && value.trim() === "") || (value instanceof File === false && typeof value === "object");
   });
 
-  if (invalidFields.length > 0) {
+  if (invalidFields.length > 0 || !validateClinalProfile()) {
    modal.showModal(
     {
      type: "warning",
@@ -180,15 +212,18 @@ export default function PatientForm({ role, isMobile }: Props) {
 
     const payload = {
      ...restData,
-     programCode: "1001",
-     doctorId: doctorId,
+     isQualified: true,
+     clinicalProfile: selectedProfile,
+     doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
      termConsentAttach: {
       fileName: termConsentAttach.name,
       documentBody: await readFileAsBase64(termConsentAttach),
+      fileSize: termConsentAttach.size.toString(),
      },
      medicalRequestAttach: {
       fileName: medicalRequestAttach.name,
       documentBody: await readFileAsBase64(medicalRequestAttach),
+      fileSize: medicalRequestAttach.size.toString(),
      },
     };
 
@@ -230,6 +265,7 @@ export default function PatientForm({ role, isMobile }: Props) {
   dispatch(fetchLabs());
   dispatch(fetchDiseases());
   dispatch(getDoctorInfo());
+  dispatch(fetchStringMaps({ attributeName: "Custom1StringMap", entityName: "diagnostic" }));
  }, [dispatch]);
 
  return (
@@ -267,6 +303,11 @@ export default function PatientForm({ role, isMobile }: Props) {
        labs={labs}
        genders={genders}
        setValue={methods.setValue}
+       clinalProfile={selectedProfile}
+       setClinalProfile={setSelectedProfile}
+       checkItems={checkItems}
+       setCheckItems={setCheckItems}
+       clinicalProfile={clinicalProfile}
       />
      </motion.div>
     ) : null}

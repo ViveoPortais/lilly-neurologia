@@ -1,8 +1,8 @@
-import { ExamCreateModel, HistoricExamModel } from "@/types/diagnostic";
+import { ExamCreateModel, IDiagnosticFilterModel, IExamCancellationModel } from "@/types/diagnostic";
 import { api } from "./api";
 import { DiagnosticData, TreatmentData } from "@/types";
 
-const programCode = "150";
+const programCode = "1001";
 
 export const addDiagnostic = async (data: DiagnosticData) => {
   const response = await api.post("/Diagnostic/add", {
@@ -85,6 +85,25 @@ export const getDiagnosticById = async (id: string, filters?: any) => {
   return response.data;
 };
 
+export const getAnnotations = async (id: string) => {
+  const response = await api.get("/annotation/getAnnotations", {
+    params: {
+      programcode: programCode,
+      entityMetadataIdName: 'Diagnostic',
+      regardingObjectId : id,
+    },
+  });
+  return response.data;
+};
+
+export const informexamcancellation = async (data: IExamCancellationModel) => {
+  const response = await api.post('exam/cancelExam', {
+    ...data,
+    programCode: programCode
+  });
+  return response.data;
+};
+
 export const inactivateDiagnosticById = async (id: string) => {
   const response = await api.post(
     "/Diagnostic/inactivatediagnosticbyid",
@@ -124,7 +143,7 @@ export const getDiagnosticsAdmin = async (filters?: any) => {
   return response.data.data;
 };
 
-export const historyDiagnotics = async (data: HistoricExamModel, programCode: string) => {
+export const historyDiagnostics = async (data: IDiagnosticFilterModel) => {
   const response = await api.get('/Diagnostic/getdiagnostics', {
     params: {
       ...data,

@@ -37,3 +37,15 @@ export const downloadBase64File = (base64: string, fileName: string, contentType
  document.body.removeChild(link);
  URL.revokeObjectURL(url);
 };
+
+export const base64ToBlobUrl = (base64: string, mimeType: string): string => {
+ const byteCharacters = atob(base64);
+ const byteArrays = [];
+
+ for (let i = 0; i < byteCharacters.length; i++) {
+  byteArrays.push(byteCharacters.charCodeAt(i));
+ }
+
+ const blob = new Blob([new Uint8Array(byteArrays)], { type: mimeType });
+ return URL.createObjectURL(blob);
+};

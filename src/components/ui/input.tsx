@@ -4,6 +4,7 @@ import { MdInfo, MdOutlineEmail, MdVisibility, MdVisibilityOff } from "react-ico
 import { CiLock, CiLogin } from "react-icons/ci";
 import { InputLoading } from "../custom/InputLoading";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { FiCheck, FiCopy } from "react-icons/fi";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
  icon?: React.ReactNode;
@@ -12,16 +13,19 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
  tooltip?: boolean;
  textTooltip?: string;
  inputPlaceholder?: string;
+ onClickIcon?: ()=>{};
 }
 
 const iconsMap = {
  email: <MdOutlineEmail size={20} />,
  password: <CiLock size={20} />,
  login: <CiLogin size={20} />,
+ copy: <FiCopy size={20}/>,
+ copied : <FiCheck size={20} color="green"/>
 };
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
- ({ className, type = "text", icon, isLoading, maxLength, tooltip, textTooltip, inputPlaceholder, ...props }, ref) => {
+ ({ className, type = "text", icon, isLoading, maxLength, tooltip, textTooltip, inputPlaceholder,onClickIcon, ...props }, ref) => {
   const [showPassword, setShowPassword] = React.useState(false);
 
   if (isLoading) return <InputLoading />;
@@ -60,7 +64,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       className
      )}
     >
-     {icon && iconsMap[icon as keyof typeof iconsMap]}
+     {icon && <div onClick={onClickIcon}>{iconsMap[icon as keyof typeof iconsMap]}</div>}
      <input
       type={type === "password" ? (showPassword ? "text" : "password") : type}
       className={cn(

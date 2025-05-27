@@ -1,37 +1,38 @@
 import CircleStatusCustom from "@/components/custom/CircleStatusCustom";
-import {IHealthProfessionalByProgramDoctorByProgram } from "@/types/professions";
+import { IHealthProfessionalByProgramDoctorByProgram } from "@/types/professions";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import AproveReproveButtons from "./AproveReproveButtons";
 import DeleteButton from "./DeleteButton";
+import StatusCustom from "@/components/custom/StatusCustom";
 
 
 export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgram>[] = [
     {
-        accessorKey : "id",
-        header :"Aprovar/Reprovar",
-        cell : ({row}) =>{
-            const { statusCodeStringMap ,id } = row.original;
-            switch(statusCodeStringMap.flag){
+        accessorKey: "id",
+        header: "Aprovar/Reprovar",
+        cell: ({ row }) => {
+            const { statusCodeStringMap, id } = row.original;
+            switch (statusCodeStringMap.flag) {
                 case "#PENDENT":
                     return (
                         <div>
-                            <AproveReproveButtons id={id}/>
+                            <AproveReproveButtons id={id} />
                         </div>
                     );
                 case "#ACTV":
-                    return(
+                    return (
                         <div>
-                            <DeleteButton id={id}/>
+                            <DeleteButton id={id} />
                         </div>
                     )
             }
-            
+
         },
     },
     {
-        accessorKey : "requestDate",
-        header : "Data Solicitação",
+        accessorKey: "requestDate",
+        header: "Data Solicitação",
         meta: {
             hideOnMobile: true
         },
@@ -41,22 +42,22 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
         },
     },
     {
-        accessorKey : "healthProfessionalByProgram.name",
-        header : "Nome do Profissional",
-        cell : ({row}) =>{
+        accessorKey: "healthProfessionalByProgram.name",
+        header: "Nome do Profissional",
+        cell: ({ row }) => {
             return row.original.healthProfessionalByProgram.name;
         }
     },
     {
-        accessorKey : "professionalEmail",
-        header : "Email do Profissional",
-        cell : ({row}) =>{
+        accessorKey: "professionalEmail",
+        header: "Email do Profissional",
+        cell: ({ row }) => {
             return row.original.healthProfessionalByProgram.emailAddress1;
         }
     },
     {
-        accessorKey : "status",
-        header : "Status",
+        accessorKey: "status",
+        header: "Status",
         meta: {
             hideOnMobile: true
         },
@@ -64,7 +65,7 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
             const { statusCodeStringMap } = row.original;
             let color = "";
 
-            switch(statusCodeStringMap.flag){
+            switch (statusCodeStringMap.flag) {
                 case "#PENDENT":
                     color = "bg-yellow-400";
                     break;
@@ -74,20 +75,20 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
                     break;
                 case "#ACTV":
                     color = "bg-green-500"
-                break;
+                    break;
             }
-        
+
             return (
                 <div className="flex items-center gap-2">
                     <CircleStatusCustom color={color} />
                     <span>{statusCodeStringMap.optionName}</span>
-               </div>
+                </div>
             );
-          },
+        },
     },
     {
-        accessorKey : "aproveDate",
-        header : "Data de Aprovação",
+        accessorKey: "aproveDate",
+        header: "Data de Aprovação",
         meta: {
             hideOnMobile: true
         },
@@ -100,24 +101,24 @@ export const columnsDoctor: ColumnDef<IHealthProfessionalByProgramDoctorByProgra
 
 export const columnsProfessional: ColumnDef<IHealthProfessionalByProgramDoctorByProgram>[] = [
     {
-        accessorKey : "id",
-        header :"Remover vínculo",
-        cell : ({row}) =>{
-            const { statusCodeStringMap,id } = row.original;
-            switch(statusCodeStringMap.flag){
+        accessorKey: "id",
+        header: "Remover vínculo",
+        cell: ({ row }) => {
+            const { statusCodeStringMap, id } = row.original;
+            switch (statusCodeStringMap.flag) {
                 case "#ACTV":
-                    return(
+                    return (
                         <div>
-                            <DeleteButton id={id}/>
+                            <DeleteButton id={id} />
                         </div>
                     )
             }
-            
+
         },
     },
     {
-        accessorKey : "requestDate",
-        header : "Data Solicitação",
+        accessorKey: "requestDate",
+        header: "Data Solicitação",
         meta: {
             hideOnMobile: true
         },
@@ -127,60 +128,40 @@ export const columnsProfessional: ColumnDef<IHealthProfessionalByProgramDoctorBy
         },
     },
     {
-        accessorKey : "doctorByProgram.name",
-        header : "Nome do Médico",
-        cell : ({row}) =>{
+        accessorKey: "doctorByProgram.name",
+        header: "Nome do Médico",
+        cell: ({ row }) => {
             return row.original.doctorByProgram.name;
         }
     },
     {
-        accessorKey : "licenseNumber",
-        header : "CRM",
-        cell : ({row}) =>{
+        accessorKey: "licenseNumber",
+        header: "CRM",
+        cell: ({ row }) => {
             return row.original.doctorByProgram.licenseNumber;
         }
     },
     {
-        accessorKey : "doctorByProgram.licenseState",
-        header : "UF",
-        cell : ({row}) =>{
+        accessorKey: "doctorByProgram.licenseState",
+        header: "UF",
+        cell: ({ row }) => {
             return row.original.doctorByProgram.licenseState;
         }
     },
     {
-        accessorKey : "status",
-        header : "Status",
+        accessorKey: "status",
+        header: "Status",
         meta: {
             hideOnMobile: true
         },
         cell: ({ row }) => {
             const { statusCodeStringMap } = row.original;
-            let color = "";
-
-            switch(statusCodeStringMap.flag){
-                case "#PENDENT":
-                    color = "bg-yellow-400";
-                    break;
-                case "#IACTV":
-                case "#REJECTED":
-                    color = "bg-red-600"
-                    break;
-                case "#ACTV":
-                    color = "bg-green-500"
-                break;
-            }
-        
-            return (
-                <div className="flex items-center gap-2">
-                    <CircleStatusCustom color={color} />
-                    <span>{statusCodeStringMap.optionName}</span>
-               </div>
-            );
-          },
+            return (<StatusCustom type={'StatusCodeLink'} statusStringMap={statusCodeStringMap} />);
+        },
     },
     {
-        accessorKey : "aproveDate",
-        header : "Data de Aprovação",
+        accessorKey: "aproveDate",
+        header: "Data de Aprovação",
         meta: {
             hideOnMobile: true
         },
@@ -190,8 +171,8 @@ export const columnsProfessional: ColumnDef<IHealthProfessionalByProgramDoctorBy
         },
     },
     {
-        accessorKey : "reproveDate",
-        header : "Data de Exclusão",
+        accessorKey: "reproveDate",
+        header: "Data de Exclusão",
         meta: {
             hideOnMobile: true
         },

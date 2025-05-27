@@ -228,7 +228,7 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
 
  return (
   <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-   <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6">
+   <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl p-10">
     <div>
      <h2>{role === "medico" ? "Cadastro médico" : "Cadastro Assistente Médico"}</h2>
      <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-black transition">

@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { PdfViewerMobile } from "./PdfViewerMobile";
+import { MdDownload } from "react-icons/md";
 
 interface PdfViewerModalProps {
  open: boolean;
@@ -25,6 +26,7 @@ export function PdfViewerModal({
  onDisagree,
 }: PdfViewerModalProps) {
  const isMobile = useMediaQuery("(max-width: 768px)");
+ const showActionButtons = showAgree || showDisagree;
 
  return (
   <Dialog open={open} onOpenChange={onClose}>
@@ -35,20 +37,29 @@ export function PdfViewerModal({
 
     {isMobile ? <PdfViewerMobile pdfUrl={pdfUrl} /> : <iframe src={pdfUrl} className="flex-1 border rounded" title="Documento PDF" />}
 
-    <DialogFooter className="mt-4 flex justify-between items-center">
+    <DialogFooter className={`mt-4 flex ${showActionButtons ? "justify-between" : "justify-center"} items-center`}>
      {showDownload && (
-      <a href={pdfUrl} download className="text-blue-600 underline text-sm" target="_blank" rel="noopener noreferrer">
+      <a
+       href={pdfUrl}
+       download
+       className="bg-mainlilly text-white text-sm font-semibold px-6 py-2 rounded flex items-center gap-2"
+       target="_blank"
+       rel="noopener noreferrer"
+      >
+       <MdDownload size={16} />
        Baixar Documento
       </a>
      )}
-     <div className="flex gap-2">
-      {showDisagree && (
-       <Button variant="outlineMainlilly" onClick={onDisagree}>
-        Eu discordo
-       </Button>
-      )}
-      {showAgree && <Button onClick={onAgree}>Eu concordo</Button>}
-     </div>
+     {showActionButtons && (
+      <div className="flex gap-2">
+       {showDisagree && (
+        <Button variant="outlineMainlilly" onClick={onDisagree}>
+         Eu discordo
+        </Button>
+       )}
+       {showAgree && <Button onClick={onAgree}>Eu concordo</Button>}
+      </div>
+     )}
     </DialogFooter>
    </DialogContent>
   </Dialog>

@@ -18,9 +18,19 @@ export interface NavbarDesktopProps {
  pathname: string;
  auth: any;
  handleLogout: () => void;
+ handleProtectedRoute: (route: string) => void;
 }
 
-export default function NavbarDesktop({ isMenuOpen, changeMenu, generalRoutes, role, pathname, auth, handleLogout }: NavbarDesktopProps) {
+export default function NavbarDesktop({
+ isMenuOpen,
+ changeMenu,
+ generalRoutes,
+ role,
+ pathname,
+ auth,
+ handleLogout,
+ handleProtectedRoute,
+}: NavbarDesktopProps) {
  const router = useRouter();
  return (
   <nav
@@ -41,18 +51,33 @@ export default function NavbarDesktop({ isMenuOpen, changeMenu, generalRoutes, r
 
    <ul className={`flex flex-col mt-6 ${!isMenuOpen && "items-center"} gap-2 w-full px-2`}>
     {role &&
-     generalRoutes.map((route) => (
-      <Link
-       key={route.route}
-       href={route.route}
-       className={`flex gap-x-2 items-center cursor-pointer hover:bg-mainlilly hover:text-white rounded-md py-2 px-3 text-sm transition-colors ${
-        pathname === route.route ? `bg-mainlilly text-white hover:text-zinc-800` : ""
-       }`}
-      >
-       <MenuIcon icon={route.icon} size={24} />
-       {isMenuOpen && route.text}
-      </Link>
-     ))}
+     generalRoutes.map((route) => {
+      const isProtected = route.openModal === true;
+
+      return isProtected ? (
+       <button
+        key={route.route}
+        onClick={() => handleProtectedRoute(route.route)}
+        className={`flex gap-x-2 items-center w-full cursor-pointer hover:bg-mainlilly hover:text-white rounded-md py-2 px-3 text-sm transition-colors ${
+         pathname === route.route ? "bg-mainlilly text-white" : ""
+        }`}
+       >
+        <MenuIcon icon={route.icon} size={24} />
+        {isMenuOpen && route.text}
+       </button>
+      ) : (
+       <Link
+        key={route.route}
+        href={route.route}
+        className={`flex gap-x-2 items-center w-full cursor-pointer hover:bg-mainlilly hover:text-white rounded-md py-2 px-3 text-sm transition-colors ${
+         pathname === route.route ? "bg-mainlilly text-white" : ""
+        }`}
+       >
+        <MenuIcon icon={route.icon} size={24} />
+        {isMenuOpen && route.text}
+       </Link>
+      );
+     })}
    </ul>
 
    <Separator className="bg-mainlilly mt-4" />

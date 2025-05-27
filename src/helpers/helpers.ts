@@ -50,12 +50,12 @@ export const today = format(new Date(), "yyyy-MM-dd");
 
 type SetValueFn = (name: string, value: any) => void;
 
-export function validateNoFutureDate(value: string, fieldName: string, setValue: SetValueFn): void {
+export function validateNoFutureDate(value: string, fieldName: string, setValue: SetValueFn, warningMessage: string): void {
  const selectedDate = parseISO(value);
  const today = new Date();
 
  if (isAfter(selectedDate, today)) {
-  toast.warning("Não é permitido cadastrar data futura");
+  toast.warning(warningMessage);
   setValue(fieldName, "");
  } else {
   setValue(fieldName, value);

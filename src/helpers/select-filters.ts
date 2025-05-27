@@ -1,3 +1,5 @@
+import { IStringMap } from "@/types";
+
 export const UFlist = [
   {
     id: "AC",
@@ -505,3 +507,15 @@ Variantes clássicas: Podem ter sinais e sintomas desde a primeira infância, co
 Variantes de início tardio: Características clínicas iniciais geralmente são ausentes e as manifestações principais em órgãos-alvo podem ser ausentes/leves, ocorrem mais tarde e podem ser limitados ao envolvimento cardíaco.`
   }
 ]
+
+export const cclChecks = [
+ "O exame CDR-G (Clinical Dementia Rating - Global Score) foi realizado e o valor é menor ou igual a 0,5.",
+ "Ao menos uma avaliação neuropsicológica foi realizada e é condizente com os requerimentos do programa.",
+ "Ao menos um exame de neuroimagem estrutural, realizado com técnicas SWI e FLAIR, e com Fazekas Graus 0 ou 1, foi realizado e o resultado é condizente com os requerimentos do programa.",
+];
+
+export const dlChecks = [
+ "O exame CDR-G (Clinical Dementia Rating - Global Score) foi realizado e o valor é menor ou igual a 1,0.",
+ "O teste de rastreio cognitivo MMSE (Mini-Mental State Examination) foi realizado e o valor é superior a 20.",
+ "Ao menos um exame de neuroimagem estrutural, realizado com técnicas SWI e FLAIR, e com Fazekas Graus 0 ou 1, foi realizado e o resultado é condizente com os requerimentos do programa.",
+];

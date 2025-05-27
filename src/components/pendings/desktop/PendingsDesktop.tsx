@@ -30,14 +30,12 @@ export default function PendingsDesktopPage({ items, columns, renderModal }: Pro
      {items.map((item) => (
       <tr key={item.id} className="border-t">
        <td className="px-2 py-2">
-        {item.reason?.toLowerCase().includes("reprovada") && (
-         <button
-          onClick={() => setSelectedItem(item)}
-          className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
-         >
-          Resolver
-         </button>
-        )}
+        <button
+         onClick={() => setSelectedItem(item)}
+         className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
+        >
+         Resolver
+        </button>
        </td>
        {columns.map((col, idx) => (
         <td key={idx} className="px-3 py-2">

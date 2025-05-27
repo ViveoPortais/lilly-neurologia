@@ -134,7 +134,7 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
 
         <div className="flex flex-row gap-6 py-4">
           <div className="flex flex-col basis-2/3">
-            <Input {...register("licenseNumber")} placeholder="CRM" />
+            <Input {...register("licenseNumber")} placeholder="Número do CRM" inputPlaceholder="Digite o CRM aqui..." />
             {errors?.licenseNumber && <span className="flex text-sm text-red-500 mt-1">{errors.licenseNumber.message as string}</span>}
           </div>
           <div className="flex flex-col basis-1/3 text-left">
@@ -153,7 +153,7 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
           </div>
         </div>
         <div className="flex flex-row gap-4">
-          <Input {...register("doctorName")} placeholder="Nome do Médico" disabled />
+          <Input {...register("doctorName")} placeholder={"Nome completo"} inputPlaceholder="" disabled />
         </div>
         <div className="flex flex-row justifybetween py-6 gap-4">
           <Button variant={"outlineMainlilly"} size="lg" onClick={onClose} className="flex basis-1/2 font-bold">CANCELAR</Button>

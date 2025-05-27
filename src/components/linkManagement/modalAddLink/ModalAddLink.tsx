@@ -19,7 +19,7 @@ export default function ModalAddLink({}: ModalAddLinkProps) {
   const { isMenuOpen } = useLateralMenu();
 
   return (
-    <div className={`w-[90vw] ${isMenuOpen ? "lg:w-[70vw]" : "lg:w-[calc(95vw-100px)]"} mx-auto`}>
+    <div className={`w-[90vw] md:w-full md:px-5 mx-auto`}>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between border border-gray-300 border-l-8  border-l-mainlilly rounded-2xl pl-3 pr-4 py-4 shadow-sm gap-4">
         <p className="text-xl text-gray-800 px-4">
           Adicione um vínculo com um médico para acompanhar diferentes solicitações.

@@ -44,7 +44,8 @@ export const gender = async () => {
 
 export const registerPatient = async (data: ExamCreateModel) => {
  const response = await api.post("/Diagnostic/add", {
-  ...data
+  ...data,
+  programCode,
  });
  return response.data;
 };
@@ -69,7 +70,7 @@ export const getDoctor = async () => {
 };
 
 export const linkedDoctor = async () => {
- const response = await api.get("/HealthProfessional/healthProfessionalByProgramDoctorByProgram", {
+ const response = await api.get("/Exam/options", {
   params: {
    programCode,
   },

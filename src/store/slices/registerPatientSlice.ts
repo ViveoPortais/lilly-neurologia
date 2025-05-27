@@ -5,6 +5,7 @@ import { ExamCreateModel } from "@/types/diagnostic";
 
 interface RegisterPatientState {
  loading: boolean;
+ loadingSearchPatient: boolean;
  isSubmitting: boolean;
  error: string | null;
  data: {
@@ -20,6 +21,7 @@ interface RegisterPatientState {
 
 const initialState: RegisterPatientState = {
  loading: false,
+ loadingSearchPatient: false,
  isSubmitting: false,
  error: null,
  data: {
@@ -125,9 +127,10 @@ export const getDoctorInfo = createAsyncThunk("registerPatient/getDoctorInfo", a
 export const getLinkedDoctor = createAsyncThunk("registerPatient/getLinkedDoctor", async (_, thunkAPI) => {
  try {
   const res = await linkedDoctor();
-  const mapping = res.data.map((link: any) => ({
-   stringMapId: link.doctorByProgram.doctorId,
-   optionName: link.doctorByProgram.name,
+  const doctors = res.value.doctors;
+  const mapping = doctors.map((doctor: any) => ({
+   stringMapId: doctor.doctorId,
+   optionName: doctor.name,
   }));
 
   return mapping as IStringMap[];
@@ -200,15 +203,15 @@ const registerPatientSlice = createSlice({
    })
 
    .addCase(searchPatientByCpf.pending, (state) => {
-    state.loading = true;
+    state.loadingSearchPatient = true;
     state.error = null;
    })
    .addCase(searchPatientByCpf.fulfilled, (state, action) => {
-    state.loading = false;
+    state.loadingSearchPatient = false;
     state.data.foundPatient = action.payload;
    })
    .addCase(searchPatientByCpf.rejected, (state, action) => {
-    state.loading = false;
+    state.loadingSearchPatient = false;
     state.error = action.payload as string;
     state.data.foundPatient = undefined;
    })

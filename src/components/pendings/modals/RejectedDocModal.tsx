@@ -1,56 +1,26 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { DownloadIcon, UploadIcon, X } from "lucide-react";
-import { AiFillFilePdf } from "react-icons/ai";
-import { useAppDispatch } from "@/store/hooks";
-import { examResolvePendency } from "@/store/slices/pendingsSlice";
+import { X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { downloadBase64File, fileToBase64 } from "@/helpers/fileHelper";
+import { fileToBase64 } from "@/helpers/fileHelper";
+import { ExamPendingModel } from "@/types/diagnostic";
+import FileDownload from "@/components/custom/FileDownload";
+import { useLoading } from "@/contexts/LoadingContext";
+import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
+import { UploadButton } from "@/components/custom/UploadButton";
 
 interface RejectedDocModalProps {
  open: boolean;
  onClose: () => void;
- docName: string;
- fileSize: string;
- reason: string;
- selectedItem: string;
- documentBody: string;
- contentType: string;
+ item: ExamPendingModel;
 }
 
-export default function RejectedDocModal({
- open,
- onClose,
- docName,
- fileSize,
- reason,
- selectedItem,
- documentBody,
- contentType,
-}: RejectedDocModalProps) {
+export default function RejectedDocModal({ open, onClose, item }: RejectedDocModalProps) {
  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
  const [attachmentBase64, setAttachmentBase64] = useState<string | null>(null);
- const dispatch = useAppDispatch();
- if (!open || !selectedItem) return null;
-
- const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-   setUploadedFile(file);
-   const base64 = await fileToBase64(file);
-   setAttachmentBase64(base64);
-  }
- };
-
- const handleDownload = () => {
-  if (!documentBody || !docName || !contentType) {
-   toast.warning("Documento indisponível para download.");
-   return;
-  }
-
-  downloadBase64File(documentBody, docName, contentType);
- };
+ const { show } = useLoading();
+ const { resolve } = useResolveExamPendency();
+ if (!open || !item) return null;
 
  const handleConfirm = async () => {
   if (!uploadedFile || !attachmentBase64) return;
@@ -61,18 +31,19 @@ export default function RejectedDocModal({
    documentBody: attachmentBase64,
    fileSize: uploadedFile.size.toString(),
    fileType: uploadedFile.type,
-   annotationTypeStringMapCode: null,
-   healthProgramCode: "1001",
   };
 
-  await dispatch(
-   examResolvePendency({
-    id: selectedItem,
-    Attachments: [attachment],
-   })
-  );
+  const updatedModel = {
+   ...item,
+   attachments: [attachment],
+  };
 
-  onClose();
+  show();
+
+  resolve({
+   item: updatedModel,
+   onSuccess: onClose,
+  });
  };
 
  return (
@@ -92,39 +63,50 @@ export default function RejectedDocModal({
     </div>
     <hr className="mb-4 border-zinc-200" />
 
-    <div className="flex items-center gap-3 border border-zinc-300 p-3 rounded-md">
-     <AiFillFilePdf className="text-red-600" size={24} />
-     <div>
-      <p className="text-sm font-medium text-zinc-800">{docName}</p>
-      <p className="text-xs text-zinc-500">{fileSize}</p>
-     </div>
-    </div>
+    {item.attachments?.[0] && (
+     <FileDownload
+      annotationType={item.attachments[0].annotationTypeName ?? ""}
+      attachment={{
+       contentType: item.attachments[0].contentType ?? "",
+       documentBody: item.attachments[0].documentBody ?? "",
+       fileName: item.attachments[0].fileName ?? "",
+       fileSize: item.attachments[0].fileSize ?? "",
+       fileType: item.attachments[0].fileType ?? "",
+      }}
+     />
+    )}
 
     <div className="border border-zinc-300 bg-[#efe9e9] mt-4 text-left p-3 rounded-md">
      <label className="text-sm font-semibold text-zinc-800 mb-1 block">Motivo</label>
-     <div className="text-sm text-zinc-700">{reason}</div>
+     <div className="text-sm text-zinc-700">{item.reason}</div>
     </div>
 
     <div className="mt-6 space-y-2">
-     <button
-      onClick={handleDownload}
-      className="w-full bg-[#8d9ea7] text-white py-2 rounded flex items-center justify-center gap-2 font-medium hover:bg-[#8d9ea7]/75 transition"
-     >
-      <DownloadIcon size={18} />
-      Download documento modelo
-     </button>
-     <label className="w-full cursor-pointer bg-[#8d9ea7] text-white py-2 rounded flex items-center justify-center gap-2 font-medium hover:bg-[#8d9ea7]/75 transition">
-      <UploadIcon size={18} />
-      Upload Novo Documento
-      <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleFileChange} />
-     </label>
-     {uploadedFile && (
-      <div className="text-sm text-zinc-600 mt-1 text-center">
-       Arquivo selecionado: <span className="font-medium">{uploadedFile.name}</span>
-      </div>
-     )}
+     <FileDownload
+      annotationType="Download documento modelo"
+      attachment={{
+       fileName: item.attachments![0].fileName ?? "",
+       contentType: item.attachments![0].contentType ?? "",
+       documentBody: item.attachments![0].documentBody ?? "",
+       fileSize: item.attachments![0].fileSize ?? "",
+       fileType: item.attachments![0].fileType ?? "",
+      }}
+     />
+     <UploadButton
+      fieldName="docUpload"
+      label="Upload Novo Documento"
+      onFileValid={async (file) => {
+       setUploadedFile(file);
+       const base64 = await fileToBase64(file);
+       setAttachmentBase64(base64);
+      }}
+      onError={() => {
+       setUploadedFile(null);
+       setAttachmentBase64(null);
+      }}
+     />
      <div className="flex py-2 mt-2 justify-center gap-2">
-      <Button type="button" disabled={!uploadedFile || !attachmentBase64}>
+      <Button type="button" disabled={!uploadedFile || !attachmentBase64} onClick={handleConfirm}>
        Confirmar
       </Button>
      </div>

@@ -1,3 +1,5 @@
+import { IStringMap } from ".";
+
 export interface ExamCreateModel {
  doctorId?: string | null;
  disease?: string | null;
@@ -35,6 +37,128 @@ export interface ExamCreateModel {
  responsibleName?: string | null;
  contact?: string | null;
  saveAddress?: boolean | null;
+ clinicalProfile?: string | null;
+ isQualified?: boolean | null;
+}
+
+export interface IDiagnosticExamModel {
+ id: string;
+ doctorId?: string | null;
+ createdOn?: string | null;
+ numberProtocol?: string | null;
+ namePatient?: string | null;
+ diseaseName?: string | null;
+ diseaseId?: string | null;
+ localName?: string | null;
+ nameDoctor?: string | null;
+ licenseNumber?: string | null;
+ licenseState?: string | null;
+ emaillAddressDoctor?: string | null;
+ typeProfessionalName?: string | null;
+ professionalName?: string | null;
+ professionalEmail?: string | null;
+ professionalMobilephone?: string | null;
+ professionalLicenseNumber?: string | null;
+ professionalLicenseState?: string | null;
+ professionalSugestedName?: string | null;
+ professionalSugestedEmail?: string | null;
+ professionalSugestedMobilephone?: string | null;
+ realizationDate?: string | null;
+ cpf?: string | null;
+ patientPhase?: string | null;
+ patientStatus?: string | null;
+ patientStatusId?: string | null;
+ patientEmail?: string | null;
+ patientBirthDate?: string | null;
+ patientMobilephone?: string | null;
+ patientTelephone?: string | null;
+ patientUserPassword?: string | null;
+ examDefinition?: string | null;
+ voucher?: string | null;
+ scheduledDate?: string | null;
+ scheduledDateStart?: string | null;
+ scheduledDateEnd?: string | null;
+ examStatus?: string | null;
+ clinicName?: string | null;
+ examStatusId?: string | null;
+ reasonPendingCanceled?: string | null;
+ programParticipation?: string | null;
+ fileReport?: string | null;
+ result?: string | null;
+ resultId?: string | null;
+ statusSms?: string | null;
+ examAudit?: string | null;
+ addressPostalCode?: string | null;
+ addressComplement?: string | null;
+ addressName?: string | null;
+ addressCity?: string | null;
+ addressState?: string | null;
+ addressNumber?: string | null;
+ addressDistrict?: string | null;
+ statusDetail?: string | null;
+ statusPhase?: string | null;
+ isOnboardingAnswered?: string | null;
+ firstPhonecallDate?: string | null;
+ lastPhonecallDate?: string | null;
+ diagnosticId?: string | null;
+ logisticsStatus?: string | null;
+ customDateTime2?: string | null;
+ logisticsDateForecast?: string | null;
+ hasPending?: string | null;
+ withdrawalDate?: string | null;
+ amount?: string | null;
+ needKit?: string | null;
+ institutionName?: string | null;
+ institutionEmail?: string | null;
+ institutionTelephone?: string | null;
+ description?: string | null;
+ logisticsStuffName?: string | null;
+ localTypeStringMapName?: string | null;
+ mainContact?: string | null;
+ createdByName?: string | null;
+ centrifugeRequired?: string | null;
+ logisticsAddressPostalCode?: string | null;
+ logisticsAddressComplement?: string | null;
+ logisticsAddressName?: string | null;
+ logisticsAddressCity?: string | null;
+ logisticsAddressState?: string | null;
+ logisticsAddressNumber?: string | null;
+ logisticsAddressDistrict?: string | null;
+ voucherReceiptTypeName?: string | null;
+ knownMutation?: string | null;
+ mutationIndex?: string | null;
+ amountDayOneTurnOne?: string | null;
+ amountDayOneTurnTwo?: string | null;
+ amountDayOneTurnTree?: string | null;
+ amountDayOneTurnFour?: string | null;
+ amountDayTwoTurnOne?: string | null;
+ amountDayTwoTurnTwo?: string | null;
+ amountDayTwoTurnTree?: string | null;
+ amountDayTwoTurnFour?: string | null;
+ needPostingCode?: string | null;
+ postingCode?: string | null;
+ emailToSendPostCode?: string | null;
+ recollectDate?: string | null;
+ amountPerMonth?: string | null;
+ expirationDate?: string | null;
+ validity?: string | null;
+ nameCaregiver?: string | null;
+ birthdateCaregiver?: string | null;
+ telephone?: string | null;
+ cpfCarefiver?: string | null;
+ mobileNumber?: string | null;
+ telephoneNumber?: string | null;
+ doctorName?: string | null;
+ examStatusStringMap?: IStringMap | null;
+ mobilephoneCaregiver?: string | null;
+ section?: string | null;
+ schedulingHistory?: ISchedulingHistoryResultModel[];
+ reasonExamNotDoneStringMap? : IStringMap;
+ examDefinitionId? : string | null;
+ localId? : string | null;
+ genderId? : string | null;
+ clinicalProfile? : IStringMap;
+ isQualified? : boolean;
 }
 
 export interface LogisticsModel {
@@ -88,34 +212,77 @@ export interface AttachmentModel {
  name?: string | null;
  annotationTypeName?: string | null;
  pendencyDescription?: string | null;
+ flag?: string | null;
 }
 
-export interface HistoricExamModel {
- startDate?: Date;
- endDate?: Date;
- examStatus?: string;
- doctor?: string;
- numberProtocol?: string;
+export interface IDiagnosticFilterModel {
  patientName?: string;
  patientCPF?: string;
- addressState?: string;
- addressCity?: string;
+ examStatus?: string;
 }
 
 export interface ExamPendingModel {
  id: string;
  diagnosticId: string;
- numberProtocol: string;
- voucher: string;
+ numberProtocol?: string;
+ voucher?: string;
  patientName?: string;
  doctorName?: string;
  reason?: string;
+ isDocumentTermApproved?: boolean;
+ isDocumentMedicApproved?: boolean;
  dateCreate?: string;
  dateUpdate?: string;
- attachments: AttachmentModel[];
+ sentAt?: string;
+ deliveryConfirmedAt?: string;
+ attachments?: AttachmentModel[];
+ flagStatus?: string;
+ logistAttachments?: AttachmentModel[];
 }
 
 export interface ResolveExamPendency {
  id: string;
  Attachments?: AttachmentModel[];
+}
+
+export interface PatientData {
+ fullName: string;
+ birthdate: string;
+ examDefinition: string;
+ disease: string;
+ laboratoryAnalysis: string;
+ requestDate: string;
+ receiptDate: string;
+}
+
+export interface ISchedulingHistoryResultModel {
+ id: string;
+ requestDate: string;
+ statusName: string;
+ description: string;
+}
+
+export interface PendingResponse {
+ documents: DocumentPendingModel[];
+ labels: LabelPendingModel[];
+ tubes: ExamPendingModel[];
+ batchPendingDeclarations: ExamPendingModel[];
+ generateBatchDeclarations: ExamPendingModel[];
+}
+
+export interface DocumentPendingModel extends ExamPendingModel {
+ diagnosticId: string;
+ voucher: string;
+ doctorName?: string;
+ attachments: AttachmentModel[];
+}
+
+export interface LabelPendingModel extends ExamPendingModel {
+ attachments: AttachmentModel[];
+}
+
+
+export interface IExamCancellationModel {
+    id? : string;
+    examCancellationReason? : string;
 }

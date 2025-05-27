@@ -1,5 +1,6 @@
 import isValidCPF, { cpfRegex, mobilephoneRegex, nameRegex } from "@/helpers/helpers";
 import { type ClassValue, clsx } from "clsx";
+import { addDays, isAfter, isBefore, isFriday, isValid, parseISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import { any, z } from "zod";
 
@@ -441,3 +442,57 @@ export const passwordSchema = z
  });
 
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+
+export const scheduleSampeSchema = (dataRecebimento: string) =>
+ z
+  .object({
+   collectDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+   desiredDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+  })
+  .superRefine((data, ctx) => {
+   const coleta = parseISO(data.collectDate);
+   const desejada = parseISO(data.desiredDate);
+   const recebimento = parseISO(dataRecebimento);
+   const hoje = new Date();
+   const doisDiasDepois = addDays(hoje, 2);
+
+   if (!isValid(recebimento)) return;
+
+   if (isBefore(coleta, recebimento) || isAfter(coleta, hoje)) {
+    ctx.addIssue({
+     path: ["collectDate"],
+     message: "Data de coleta inválida: deve ser maior ou igual a recebimento e menor ou igual a hoje",
+     code: z.ZodIssueCode.custom,
+    });
+   }
+
+   if (isBefore(desejada, coleta) || isBefore(desejada, recebimento) || isBefore(desejada, doisDiasDepois) || isFriday(desejada)) {
+    ctx.addIssue({
+     path: ["desiredDate"],
+     message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dois dias após hoje, e não pode ser sexta-feira",
+     code: z.ZodIssueCode.custom,
+    });
+   }
+  });
+  
+
+export const diagnosticFilterModelSchema = z
+  .object({
+    patientName: z.string(),
+    patientCPF: z.string(),
+    examStatus : z.string(),
+  });
+
+export type DiagnosticFilterModelSchema = z.infer<typeof diagnosticFilterModelSchema>;
+
+
+export const examCancellationModelSchema = z
+  .object({
+    examCancellationReason: z.string().min(1, "Selecione uma opção de cancelamento"),
+  });
+
+export type ExamCancellationModelSchema = z.infer<typeof examCancellationModelSchema>;
+
+
+
+
