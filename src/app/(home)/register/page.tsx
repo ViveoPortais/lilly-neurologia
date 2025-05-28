@@ -8,7 +8,7 @@ import MedicalSignUpModal from "@/components/modals/RegisterModal";
 
 export default function RoleSelectionPage() {
   const router = useRouter();
-  const [role, setRole] = useState<string>("");
+  const [role, setRole] = useState<string>("medico");
   const [showModal, setShowModal] = useState(false);
 
   const handleContinue = () => {

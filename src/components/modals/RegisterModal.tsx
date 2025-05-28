@@ -125,6 +125,7 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
   try {
    const res = await handleRegistration(data);
    if (res.isValidData) {
+    onClose();
     modal.showModal(
      {
       type: "success",
@@ -132,7 +133,6 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
       message: "Você será informado através do e-mail cadastrado quando as solicitações de testes estiverem liberadas.",
      },
      () => {
-      onClose();
       router.push("/signin");
      }
     );
@@ -144,17 +144,11 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
     });
    }
   } catch (error: any) {
-   modal.showModal(
-    {
-     type: "error",
-     title: "Ocorreu um erro",
-     message: error.response?.data?.additionalMessage || "Erro inesperado.",
-    },
-    () => {
-     onClose();
-     router.push("/signin");
-    }
-   );
+   modal.showModal({
+    type: "error",
+    title: "Ocorreu um erro",
+    message: error.response?.data?.additionalMessage || "Erro inesperado.",
+   });
   } finally {
    reset();
   }
@@ -236,7 +230,7 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
 
  return (
   <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-   <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl p-10">
+   <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 mt-20 md:p-10 md:mt-0">
     <div>
      <h2>{role === "medico" ? "Cadastro médico" : "Cadastro Assistente Médico"}</h2>
      <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-black transition">

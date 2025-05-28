@@ -10,8 +10,8 @@ export function Footer({ bgColor }: FooterProps) {
  const { openCookieModal } = useCookieModal();
  return (
   <footer className={`w-full ${bgColor} text-xs px-4 py-4 text-muted-foreground`}>
-   <div className="flex items-center justify-between w-full">
-    <div className="flex-shrink-0">
+   <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full">
+    <div className="flex justify-center mb-4 md:mb-0 md:justify-start flex-shrink-0">
      <img src="/images/LILLY_LOGO.png" alt="Lilly Logo" className="h-14" />
     </div>
 
