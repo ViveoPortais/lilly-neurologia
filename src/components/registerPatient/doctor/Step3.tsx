@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
@@ -7,11 +7,20 @@ import { useGenericModal } from "@/contexts/GenericModalContext";
 import { CustomSelect } from "@/components/custom/CustomSelect";
 import { useDownloadReqConFiles } from "@/hooks/useDownloadReqConFile";
 import { downloadBase64File } from "@/helpers/fileHelper";
+import { IDiagnosticExamModel } from "@/types/diagnostic";
+import { IAnnotationModel } from "@/types/general";
+import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchAnnotations } from "@/store/slices/diagnosticSlice";
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
 
-export const Step3Doctor = () => {
+export interface Step3DoctorProps{
+    examExistent : IDiagnosticExamModel | null;
+}
+
+export const Step3Doctor = ( {examExistent} : Step3DoctorProps) => {
  const {
   register,
   setValue,
@@ -23,10 +32,25 @@ export const Step3Doctor = () => {
  const [requestType, setRequestType] = useState("");
  const [consentFileName, setConsentFileName] = useState("");
  const [requestFileName, setRequestFileName] = useState("");
+ const [annotationsExistent, setAnnotationsExistent] = useState<IAnnotationModel[]>([]);
  const { consentFile, requestFile } = useDownloadReqConFiles();
+ const dispatch = useAppDispatch();
 
  const consentInputRef = useRef<HTMLInputElement | null>(null);
  const requestInputRef = useRef<HTMLInputElement | null>(null);
+
+ useEffect(()=>{
+    getAnnotations();
+ },[examExistent]);
+
+ const getAnnotations = async () =>{
+    if(examExistent && examExistent.diagnosticId){
+        const annotations = await dispatch(fetchAnnotations({id : examExistent?.diagnosticId})).unwrap();
+
+        if(annotations)
+            setAnnotationsExistent({...annotations});
+    }  
+ };
 
  const handleFileValidation = (event: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
   const file = event.target.files?.[0];
@@ -103,12 +127,10 @@ export const Step3Doctor = () => {
      Arquivo selecionado: <span className="font-medium">{fileName}</span>
     </p>
    )}
-
-   {errors[fieldName] && <span className="text-sm text-red-500 block text-center">{errors[fieldName]?.message as string}</span>}
   </div>
  );
 
- const renderSection = (title: string, fieldPrefix: string, selectedType: string, setSelectedType: (val: string) => void) => (
+ const renderSection = (title: string, fieldPrefix: string, selectedType: string, setSelectedType: (val: string) => void, fieldName : string) => (
   <div className="border border-dashed border-gray-300 rounded-lg p-4 space-y-4 bg-gray-50">
    <div className="text-sm font-medium">{title}</div>
 
@@ -166,13 +188,17 @@ export const Step3Doctor = () => {
      </p>
     </div>
    )}
+   {errors[fieldName] && <span className="text-sm text-red-500 block text-center">{errors[fieldName]?.message as string}</span>}
   </div>
  );
 
  return (
   <div className="md:p-4 p-0 space-y-6 border border-gray-300 rounded-xl">
-   {renderSection("Termo de Consentimento", "consent", consentType, setConsentType)}
-   {renderSection("Pedido Médico", "medicalRequest", requestType, setRequestType)}
+   {(Array.isArray(annotationsExistent) && 
+    !annotationsExistent.some(item => item.annotationTypeStringMap.flag == "#TERM_CONSENT")) && 
+        renderSection("Termo de Consentimento", "consent", consentType, setConsentType, "termConsentAttach")
+    }
+   {renderSection("Pedido Médico", "medicalRequest", requestType, setRequestType,"medicalRequestAttach")}
   </div>
  );
 };

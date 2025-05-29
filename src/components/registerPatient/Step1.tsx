@@ -12,8 +12,9 @@ import { today, validateNoFutureDate } from "@/helpers/helpers";
 import { useLoading } from "@/contexts/LoadingContext";
 import { cclChecks, dlChecks } from "@/helpers/select-filters";
 import { Checkbox } from "../ui/checkbox";
-import { fetchDiagnosticDetailsById } from "@/store/slices/diagnosticSlice";
+import { fetchAnnotations, fetchDiagnosticDetailsById } from "@/store/slices/diagnosticSlice";
 import dayjs from "dayjs";
+import { IDiagnosticExamModel } from "@/types/diagnostic";
 
 export const Step1 = ({
  setStep,
@@ -29,6 +30,7 @@ export const Step1 = ({
  checkItems,
  setCheckItems,
  clinicalProfile,
+ setExamExistent
 }: {
  setStep: (step: number) => void;
  control: any;
@@ -43,6 +45,7 @@ export const Step1 = ({
  checkItems: any;
  setCheckItems: any;
  clinicalProfile: IStringMap[];
+ setExamExistent : (arg0: IDiagnosticExamModel | null) => void;
 }) => {
  const { register, watch } = useFormContext();
  const hasResponsible = watch("hasResponsible");
@@ -94,6 +97,7 @@ export const Step1 = ({
 
  const fillForm = async (id: string) => {
   const exam = await dispatch(fetchDiagnosticDetailsById({ id: id })).unwrap();
+
   if (exam) {
    setValue("name", exam.namePatient);
    setValue("birthDate", dayjs(exam.patientBirthDate).format("YYYY-MM-DD"));
@@ -134,6 +138,13 @@ export const Step1 = ({
    setValue("sector", exam.section);
    setValue("responsibleName", exam.mainContact);
    setValue("contact", exam.institutionTelephone);
+
+   setExamExistent(exam);
+   setValue("isSecondSolicitation",true);
+  }
+  else{
+    setExamExistent(null);
+    setValue("isSecondSolicitation",false)
   }
  };
 

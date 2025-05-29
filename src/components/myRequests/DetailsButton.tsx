@@ -4,6 +4,7 @@ import { fetchAnnotations, fetchDiagnosticDetailsById } from "@/store/slices/dia
 import { useEffect, useState } from "react";
 import ModalDiagnosticDetails from "../diagnosticDetails/ModalDiagnosticDetails";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
+import { IStringMap } from "@/types";
 
 type DetailsButtonProps = {
     id: string;
@@ -14,7 +15,7 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
     const loading = useAppSelector((state) => state.diagnostic.loading);
     const exam = useAppSelector((state) => state.diagnostic.data.exam);
     const annotations = useAppSelector((state) => state.diagnostic.data.annotations);
-    const optionsCancellation = useAppSelector((state) => state.basic.data.stringMaps);
+    const [optionsCancellation, setOptionsCancellation] = useState<IStringMap[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
     const { show, hide } = useLoading();
@@ -36,7 +37,10 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
         try{
             await dispatch(fetchDiagnosticDetailsById({ id: id }));
             await dispatch(fetchAnnotations({id: exam?.diagnosticId!}));
-            await dispatch(fetchStringMaps({entityName:"Exam", attributeName : "ReasonExamNotDoneStringMap"}))
+
+            const examNotDoneStringMaps : IStringMap[] = await dispatch(fetchStringMaps({entityName:"Exam", attributeName : "ReasonExamNotDoneStringMap"})).unwrap();
+
+            setOptionsCancellation(examNotDoneStringMaps);
             setIsOpen(true)
         }
         catch(error){

@@ -20,13 +20,13 @@ export default function PendingsLogisticPage() {
   else hide();
  }, [loading, show, hide]);
 
- const fixedCategories = ["Documentação", "Solicitações de Retirada de Amostra", "Problema com a Amostra", "Aprovação de Vínculo"];
+ const fixedCategories = ["Solicitações de Envio de Tubo", "Confirmar Entrega de Tubo", "Solicitações de Retirada", "Confirmar Retirada da Amostra"];
 
  const grouped: Record<string, ExamPendingModel[]> = {
   "Solicitações de Envio de Tubo": pendings.labels,
-  "Confirma Entrega de Tubo": pendings.tubes,
-  "Solicitações de Retirada": [],
-  "Confirmar Retirada da Amostra": [],
+  "Confirmar Entrega de Tubo": pendings.tubes,
+  "Solicitações de Retirada": pendings.pickupRequests,
+  "Confirmar Retirada da Amostra": pendings.confirmPickupRequests,
  };
 
  return <GenericPendingsPage fixedCategories={fixedCategories} grouped={grouped} />;

@@ -45,16 +45,14 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
  const handleSave = async () => {
   const logistAttachments =
    uploadedFile && attachmentBase64
-    ? [
-       {
-        fileName: uploadedFile.name,
-        contentType: uploadedFile.type,
-        documentBody: attachmentBase64,
-        fileSize: uploadedFile.size.toString(),
-        fileType: uploadedFile.type,
-        flag: "#ETIQUETA",
-       },
-      ]
+    ? {
+       fileName: uploadedFile.name,
+       contentType: uploadedFile.type,
+       documentBody: attachmentBase64,
+       fileSize: uploadedFile.size.toString(),
+       fileType: uploadedFile.type,
+       flag: "#ETIQUETA",
+      }
     : undefined;
 
   const itemWithLogist = {
@@ -91,10 +89,12 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
      const isPedido = doc.annotationTypeName?.toLowerCase().includes("pedido");
      const status = isTerm ? isTermApproved : isMedicApproved;
 
-     const rejectionOptions = pendencyReasons.map((item: any) => ({
-      id: item.stringMapId,
-      value: item.optionName,
-     }));
+     const rejectionOptions = pendencyReasons
+      .filter((reason) => (isTerm ? reason.flag === "#TERM_CONSENT" : isPedido ? reason.flag === "#MEDICAL_ORDER" : true))
+      .map((item) => ({
+       id: item.stringMapId,
+       value: item.optionName,
+      }));
 
      return (
       <div

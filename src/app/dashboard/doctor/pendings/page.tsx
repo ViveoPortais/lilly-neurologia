@@ -24,10 +24,10 @@ export default function PendingsDoctorPage() {
 
     const grouped: Record<string, ExamPendingModel[]> = {
         Documentação: pendings.documents,
-        "Recebimento do tubo": pendings.tubes,
-        "Solicitações de Retirada de Amostra": [],
+        "Recebimento do tubo": [],
+        "Solicitações de Retirada de Amostra": pendings.generateBatchDeclarations,
         "Problema com a Amostra": [],
-        "Aprovação de Vínculo": [],
+        "Aprovação de Vínculo": pendings.pendingAssociations,
     };
 
  return <GenericPendingsPage fixedCategories={fixedCategories} grouped={grouped} />;

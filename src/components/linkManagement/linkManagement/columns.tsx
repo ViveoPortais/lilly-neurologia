@@ -2,7 +2,7 @@ import CircleStatusCustom from "@/components/custom/CircleStatusCustom";
 import { IHealthProfessionalByProgramDoctorByProgram } from "@/types/professions";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import AproveReproveButtons from "./AproveReproveButtons";
+import AproveReproveButtons from "./ApproveRejectButtons";
 import DeleteButton from "./DeleteButton";
 import StatusCustom from "@/components/custom/StatusCustom";
 

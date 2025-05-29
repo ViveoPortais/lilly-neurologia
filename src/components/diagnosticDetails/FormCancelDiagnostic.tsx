@@ -11,7 +11,6 @@ import { fetchMyDiagnostics, postCancellationExam } from "@/store/slices/diagnos
 import { IExamCancellationModel, IDiagnosticFilterModel } from "@/types/diagnostic";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { examCancellationModelSchema } from "@/lib/utils";
-import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
 
 
@@ -24,7 +23,7 @@ export default function FormAddLink({ onClose, options }: CalcelDiagnosticProps)
 
     const methods = useForm<IExamCancellationModel>({
         resolver: zodResolver(examCancellationModelSchema),
-        mode: "onBlur"
+        mode: "onSubmit"
     });
 
     const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = methods;
@@ -106,7 +105,7 @@ export default function FormAddLink({ onClose, options }: CalcelDiagnosticProps)
                         {errors?.examCancellationReason && <span className="flex text-sm text-red-500 mt-1 block">{errors.examCancellationReason.message as string}</span>}
                     </div>
                     <div className="flex">
-                        <Button type="submit" variant={"default"} size="lg" className="w-full" disabled={!watch("examCancellationReason")}>Cancelar Protocolo</Button>
+                        <Button type="submit" variant={"default"} size="lg" className="w-full" disabled={!watch("examCancellationReason")}>Salvar</Button>
                     </div>
                 </div>
             </form>

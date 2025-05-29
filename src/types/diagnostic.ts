@@ -153,12 +153,12 @@ export interface IDiagnosticExamModel {
  mobilephoneCaregiver?: string | null;
  section?: string | null;
  schedulingHistory?: ISchedulingHistoryResultModel[];
- reasonExamNotDoneStringMap? : IStringMap;
- examDefinitionId? : string | null;
- localId? : string | null;
- genderId? : string | null;
- clinicalProfile? : IStringMap;
- isQualified? : boolean;
+ reasonExamNotDoneStringMap?: IStringMap;
+ examDefinitionId?: string | null;
+ localId?: string | null;
+ genderId?: string | null;
+ clinicalProfile?: IStringMap;
+ isQualified?: boolean;
 }
 
 export interface LogisticsModel {
@@ -223,7 +223,7 @@ export interface IDiagnosticFilterModel {
 
 export interface ExamPendingModel {
  id: string;
- diagnosticId: string;
+ diagnosticId?: string;
  numberProtocol?: string;
  voucher?: string;
  patientName?: string;
@@ -237,7 +237,9 @@ export interface ExamPendingModel {
  deliveryConfirmedAt?: string;
  attachments?: AttachmentModel[];
  flagStatus?: string;
- logistAttachments?: AttachmentModel[];
+ logistAttachments?: AttachmentModel;
+ examCollectionDate?: string;
+ nameHealthProfessional?:string;
 }
 
 export interface ResolveExamPendency {
@@ -268,6 +270,9 @@ export interface PendingResponse {
  tubes: ExamPendingModel[];
  batchPendingDeclarations: ExamPendingModel[];
  generateBatchDeclarations: ExamPendingModel[];
+ pendingAssociations: IPendingAssociationModel[];
+ confirmPickupRequests: IPickupRequestModel[];
+ pickupRequests: IPickupRequestModel[];
 }
 
 export interface DocumentPendingModel extends ExamPendingModel {
@@ -281,8 +286,18 @@ export interface LabelPendingModel extends ExamPendingModel {
  attachments: AttachmentModel[];
 }
 
-
 export interface IExamCancellationModel {
-    id? : string;
-    examCancellationReason? : string;
+ id?: string;
+ examCancellationReason?: string;
+}
+
+export interface IPendingAssociationModel extends ExamPendingModel {
+ registerDate?: string;
+ nameHealthProfessional?: string;
+ doctorByProgramId?: string;
+ helathProfessionalByProgramId?: string;
+}
+
+export interface IPickupRequestModel extends ExamPendingModel {
+ examPickupDate?: string;
 }

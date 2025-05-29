@@ -6,11 +6,16 @@ import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRef, useState } from "react";
 import { useDownloadReqConFiles } from "@/hooks/useDownloadReqConFile";
 import { downloadBase64File } from "@/helpers/fileHelper";
+import { IDiagnosticExamModel } from "@/types/diagnostic";
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
 
-export const Step3 = () => {
+export interface Step3Props{
+    examExistent : IDiagnosticExamModel | null;
+}
+
+export const Step3 = ( {examExistent} : Step3Props) => {
  const {
   register,
   setValue,

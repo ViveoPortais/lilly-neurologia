@@ -48,9 +48,9 @@ export const formatFileSize = (size?: string | number | null): string => {
 
 export const today = format(new Date(), "yyyy-MM-dd");
 
-type SetValueFn = (name: string, value: any) => void;
+type SetValueFn<T> = (name: keyof T, value: string) => void;
 
-export function validateNoFutureDate(value: string, fieldName: string, setValue: SetValueFn, warningMessage: string): void {
+export function validateNoFutureDate<T>(value: string, fieldName: keyof T, setValue: SetValueFn<T>, warningMessage: string): void {
  const selectedDate = parseISO(value);
  const today = new Date();
 

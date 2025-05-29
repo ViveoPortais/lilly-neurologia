@@ -43,9 +43,8 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
    motivoColumn,
   ],
   "Aprovação de Vínculo": [
-   { label: "Nome do Profissional", render: (item) => item.patientName },
+   { label: "Nome do Profissional", render: (item) => item.nameHealthProfessional },
    { label: "Data de Solicitação do Vínculo", render: (item) => formatDate(item.dateCreate) },
-   { label: "Data do Registro", render: (item) => formatDate(item.dateUpdate) },
    motivoColumn,
   ],
  },

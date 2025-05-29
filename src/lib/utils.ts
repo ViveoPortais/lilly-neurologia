@@ -394,10 +394,8 @@ export const patientSchema = z
   sector: z.string().min(1, { message: "Bairro/Setor é obrigatório" }),
   responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
   contact: z.string().min(1, { message: "Contato é obrigatório" }),
-  termConsentAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
-   message: "O termo de consentimento é obrigatório",
-  }),
-
+  isSecondSolicitation : z.boolean().optional(),
+  termConsentAttach: z.custom<File>().optional(),
   medicalRequestAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
    message: "O pedido médico é obrigatório",
   }),
@@ -413,13 +411,26 @@ export const patientSchema = z
   {
    message: "Preencha os dados do responsável.",
    path: ["nameCaregiver"],
+  },
+ ).refine(
+  (data) =>{
+    if(!data.isSecondSolicitation && data.medicalRequestAttach.name == "")
+      return false;
+    else if(data.isSecondSolicitation)
+      return true;
+
+      return true;
+  },
+  {
+    message: "O termo de consentimento é obrigatório",
+    path: ["termConsentAttach"],
   }
  );
 
 export const healthProfessionalByProgramDoctorByProgramSchema = z.object({
- licenseNumber: z.string().min(1, { message: "Insira o CRM" }),
- licenseState: z.string().nonempty({ message: "Selecione a UF" }),
- doctorName: z.string().min(1, { message: "Insira o CRM e a UF" }),
+  licenseNumber: z.string().min(1, { message: "Insira o CRM" }),
+  licenseState: z.string().min(1, { message: "Selecione a UF" }),
+  doctorName: z.string().min(1, { message: "Insira o CRM e a UF" }),
 });
 
 export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof healthProfessionalByProgramDoctorByProgramSchema>;
@@ -478,9 +489,20 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
 
 export const diagnosticFilterModelSchema = z
   .object({
-    patientName: z.string(),
-    patientCPF: z.string(),
-    examStatus : z.string(),
+    patientCPF: 
+      z.string()
+      .optional()
+      .refine((value)=>{ 
+        
+        if (value && !/^[\d.-]*$/.test(value)) 
+          return false; 
+        else
+          return true;
+
+      },{
+        message:"Informe valores válidos para busca de CPF"
+      }),
+    examStatus : z.string().optional(),
   });
 
 export type DiagnosticFilterModelSchema = z.infer<typeof diagnosticFilterModelSchema>;

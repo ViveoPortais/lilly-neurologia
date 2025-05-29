@@ -33,10 +33,7 @@ export const getListExamPending = async () => {
 };
 
 export const resolvePendency = async (model: ExamPendingModel) => {
- const response = await api.post("/exam/examresolvependency", {
-  ...model,
-  programCode: programCodeEnv,
- });
+ const response = await api.post("/exam/resolvependency?programCode=" + programCodeEnv, model);
  return response.data;
 };
 

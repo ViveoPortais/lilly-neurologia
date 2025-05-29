@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, NonUndefined, useForm } from "react-hook-form";
 import StepIndicator from "../custom/StepIndicator";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { ButtonsNavigation } from "./ButtonsNavigation";
 import { cclChecks, dlChecks } from "@/helpers/select-filters";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
+import { IDiagnosticExamModel } from "@/types/diagnostic";
 
 type Props = {
  role: string;
@@ -45,6 +46,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
  const [checkItems, setCheckItems] = useState<Record<string, boolean>>({});
  const stringMaps = useAppSelector((state) => state.basic.data.stringMaps);
  const router = useRouter();
+ const [examExistent, setExamExistent] = useState<IDiagnosticExamModel | null>(null);
 
  const methods = useForm({
   resolver: zodResolver(patientSchema),
@@ -203,29 +205,29 @@ const validateClinalProfile = () => {
     if (data.hasResponsible === "no") {
      data.birthDateCaregiver = null;
     }
-    const termFile = data.termConsentAttach as File;
-    const requestFile = data.medicalRequestAttach as File;
-
-    const [termBase64, requestBase64] = await Promise.all([readFileAsBase64(termFile), readFileAsBase64(requestFile)]);
 
     const { termConsentAttach, medicalRequestAttach, hasResponsible, ...restData } = data;
 
-    const payload = {
+    const payload : any = {
      ...restData,
      isQualified: true,
      clinicalProfile: selectedProfile,
      doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
-     termConsentAttach: {
-      fileName: termConsentAttach.name,
-      documentBody: await readFileAsBase64(termConsentAttach),
-      fileSize: termConsentAttach.size.toString(),
-     },
      medicalRequestAttach: {
       fileName: medicalRequestAttach.name,
       documentBody: await readFileAsBase64(medicalRequestAttach),
       fileSize: medicalRequestAttach.size.toString(),
      },
     };
+
+    if (termConsentAttach) {
+        payload.termConsentAttach = {
+            fileName: termConsentAttach.name,
+            documentBody: await readFileAsBase64(termConsentAttach),
+            fileSize: termConsentAttach.size.toString(),
+        };
+    }
+
 
     const response = await dispatch(submitPatientRegistration(payload)).unwrap();
 
@@ -308,6 +310,7 @@ const validateClinalProfile = () => {
        checkItems={checkItems}
        setCheckItems={setCheckItems}
        clinicalProfile={clinicalProfile}
+       setExamExistent={setExamExistent}
       />
      </motion.div>
     ) : null}
@@ -332,7 +335,7 @@ const validateClinalProfile = () => {
       exit={{ opacity: 0, x: 20 }}
       transition={{ duration: 0.2 }}
      >
-      {auth.role === "doctor" ? <Step3Doctor /> : <Step3 />}
+      {auth.role === "doctor" ? <Step3Doctor examExistent={examExistent}/> : <Step3 examExistent={examExistent}/>}
      </motion.div>
     )}
    </AnimatePresence>

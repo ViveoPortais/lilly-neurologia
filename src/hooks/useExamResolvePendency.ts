@@ -1,8 +1,10 @@
 import { useAppDispatch } from "@/store/hooks";
-import { examResolvePendency } from "@/store/slices/pendingsSlice";
+import { examResolvePendency, fetchPendings } from "@/store/slices/pendingsSlice";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useLoading } from "@/contexts/LoadingContext";
+import { useRouter } from "next/navigation";
+import useSession from "./useSession";
 
 interface ResolvePendencyParams {
  item: ExamPendingModel;
@@ -13,6 +15,8 @@ export function useResolveExamPendency() {
  const dispatch = useAppDispatch();
  const { showModal } = useGenericModal();
  const { show, hide } = useLoading();
+ const router = useRouter();
+ const auth = useSession();
 
  const resolve = async ({ item, onSuccess }: ResolvePendencyParams) => {
   show();
@@ -27,12 +31,16 @@ export function useResolveExamPendency() {
    if (examResolvePendency.fulfilled.match(response)) {
     const payload = response.payload;
     if (payload.isValidData) {
+     const role = auth.role;
      showModal(
       {
        type: "success",
        message: payload.additionalMessage ?? "Pendência resolvida com sucesso.",
       },
-      onSuccess
+      () => {
+       onSuccess?.();
+       window.location.reload();
+      }
      );
     } else {
      showModal({

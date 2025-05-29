@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/dashboard/DataTable";
 import { columns } from "./columns";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchHealthProfessionalByProgramDoctorByPrograms } from "@/store/slices/linkManagementeSlice";
@@ -10,6 +10,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { fetchMyDiagnostics } from "@/store/slices/diagnosticSlice";
 import { IDiagnosticFilterModel } from "@/types/diagnostic";
 import Filter from "./Filter";
+import { IStringMap } from "@/types";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
 
 
@@ -18,7 +19,8 @@ export default function MyRequests() {
     const dispatch = useAppDispatch();
     const myExams = useAppSelector((state) => state.diagnostic.data.myExams);
     const loading = useAppSelector((state) => state.diagnostic.loading);
-
+    const [stringMapsFilter, setStringMapsFilter] = useState<IStringMap[]>([]);
+    
     const { show, hide } = useLoading();
 
     useEffect(() => {
@@ -29,16 +31,25 @@ export default function MyRequests() {
     }, [loading])
 
     useEffect(() => {
-        const filterDiagnostic: IDiagnosticFilterModel = {}
-        dispatch(fetchMyDiagnostics({ filterDiagnostic: filterDiagnostic }));
+
+        const fetchData = async()=>{
+            const filterDiagnostic: IDiagnosticFilterModel = {}
+            dispatch(fetchMyDiagnostics({ filterDiagnostic: filterDiagnostic }));
+            
+            const examStatusStringMaps = await dispatch(fetchStringMaps({entityName:"Exam", attributeName:"ExamStatusStringMap"})).unwrap();
+            setStringMapsFilter(examStatusStringMaps);
+        }
+
+        fetchData();
 
     }, [dispatch]);
+
 
 
     return (
         <>
             <div>
-                <Filter />
+                <Filter stringMapsFilter={stringMapsFilter}/>
             </div>
             <div>
                 <DataTable

@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import { UFlist } from "@/helpers/select-filters";
 import { CustomSelect } from "@/components/custom/CustomSelect";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addHealthProfessionalByProgramDoctorByProgram, fetchDoctorByCrmUf, fetchHealthProfessionalByProgramDoctorByPrograms } from "@/store/slices/linkManagementeSlice";
 import { toast } from "react-toastify";
@@ -18,41 +18,33 @@ import { IDiagnosticFilterModel } from "@/types/diagnostic";
 import { fetchMyDiagnostics } from "@/store/slices/diagnosticSlice";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
+import { maskedField } from "../custom/MaskedField";
+import { IStringMap } from "@/types";
 
 
 
-export default function Filter() {
+export default function Filter({stringMapsFilter} : {stringMapsFilter : IStringMap[]}) {
 
   const methods = useForm<DiagnosticFilterModelSchema>({
     resolver: zodResolver(diagnosticFilterModelSchema),
-    mode: "onChange",
+    mode: "onSubmit",
   });
-
+  
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = methods;
 
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.diagnostic.loading);
-  const stringMaps = useAppSelector((state) => state.basic.data.stringMaps);
 
   const { show, hide } = useLoading();
 
-  useEffect(()=>{
+  useEffect(() => {
     if (loading)
       show()
     else
       hide()
-  },[loading])
-
-
-
-  useEffect(() => {
-    dispatch(fetchStringMaps({ entityName: "Exam", attributeName: "ExamStatusStringMap" }));
-  }, [dispatch]);
-
+  }, [loading])
 
   const onClean = async () => {
-
-    setValue("patientName", "");
 
     setValue("patientCPF", "");
 
@@ -61,11 +53,12 @@ export default function Filter() {
     const filterDiagnostic: IDiagnosticFilterModel = {}
     await dispatch(fetchMyDiagnostics({ filterDiagnostic: filterDiagnostic }));
   }
+
   const onSubmit = async (data: DiagnosticFilterModelSchema) => {
     try {
       await dispatch(fetchMyDiagnostics({ filterDiagnostic: data as IDiagnosticFilterModel }));
     }
-    catch (error: string | any) {   
+    catch (error: string | any) {
 
     }
   }
@@ -75,26 +68,44 @@ export default function Filter() {
       <form onSubmit={handleSubmit(onSubmit)} className="w-[90vw] md:w-full md:px-5 mx-auto">
 
         <div className="flex flex-col md:flex-row gap-6 py-5">
-          <div className="flex flex-col basis-1/3">
+          <div className="flex flex-col basis-1/2">
             <Controller
               name="examStatus"
               control={methods.control}
               render={({ field }) => (
                 <div className="w-full">
-                  <CustomFilterSelect options={stringMaps} value={field.value} onChange={field.onChange} name="examStatus" label="Status" />
+                  <CustomFilterSelect options={stringMapsFilter} value={field.value} onChange={field.onChange} name="examStatus" label="Status" />
                   {errors?.examStatus && <span className="text-sm text-red-500 mt-1 block">{errors.examStatus.message as string}</span>}
                 </div>
               )}
             />
             {errors?.examStatus && <span className="flex text-sm text-red-500 mt-1 block">{errors.examStatus.message as string}</span>}
           </div>
-          <div className="flex flex-col basis-1/3">
-            <Input {...register("patientName")} placeholder="Nome do Paciente" />
-            {errors?.patientName && <span className="flex text-sm text-red-500 mt-1">{errors.patientName.message as string}</span>}
-          </div>
-          <div className="flex flex-col basis-1/3">
-            <Input {...register("patientCPF")} placeholder="CPF do paciente" />
-            {errors?.patientCPF && <span className="flex text-sm text-red-500 mt-1">{errors.patientCPF.message as string}</span>}
+          <div className="flex flex-col basis-1/2">
+            <Controller
+              name="patientCPF"
+              control={methods.control}
+              render={({ field }) => (
+                <div className="w-full">
+                  {maskedField(
+                    "cpf",
+                    (e) => {
+                      const rawValue = e.target.value.replace(/[^\d]/g, "");
+                      field.onChange(rawValue);
+                    },
+                    field.name,
+                    "CPF",
+                    false,
+                    (e) => { field.onBlur() },
+                    field.value,
+                    false,
+                    `w-full`,
+                    "Digite aqui..."
+                  )}
+                  {errors?.patientCPF && <span className="text-sm text-red-500 mt-1 block">{errors.patientCPF.message as string}</span>}
+                </div>
+              )}
+            />
           </div>
         </div>
         <div className="flex flex-row justify-between md:justify-end py-6 gap-4">

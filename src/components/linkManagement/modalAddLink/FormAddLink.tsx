@@ -21,7 +21,7 @@ export default function FormAddLink({ onClose }: FormAddLinkProps) {
 
   const methods = useForm<HealthProfessionalByProgramDoctorByProgramFormData>({
     resolver: zodResolver(healthProfessionalByProgramDoctorByProgramSchema),
-    mode: "onBlur",
+    mode: "onSubmit",
   });
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = methods;

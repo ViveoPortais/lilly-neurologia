@@ -7,6 +7,9 @@ import OperationGenerateDeclarationModal from "./OperationGenerateDeclarationMod
 import TubeShippingModal from "./TubeShippingModal";
 import TubeDeliveryDate from "./TubeDeliveryDate";
 import RedirectToScheduleSample from "@/components/scheduleSample/RedirectToScheduleSample";
+import AnalysisConclusionModal from "./AnalysisConclusionModal";
+import DeliverySampleModal from "./DeliverySampleModal";
+import ApproveRejectButtons from "@/components/linkManagement/linkManagement/ApproveRejectButtons";
 
 interface RenderPendingModalProps {
  item: ExamPendingModel | null;
@@ -35,6 +38,7 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
  doctor: {
   Documentação: (item, onClose) => <RejectedDocModal open onClose={onClose} item={item} />,
   "Solicitações de Retirada de Amostra": (item) => <RedirectToScheduleSample item={item} />,
+  "Aprovação de Vínculo" : (item, onClose) => <GenericModalForm size={"sm"} title="Aprovação de Vínculo" isOpen={true} onClose={onClose}><ApproveRejectButtons id={item.id} typeRender="modalPending" /></GenericModalForm>,
  },
  operation: {
   Documentação: (item, onClose) => (
@@ -47,6 +51,12 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
     <OperationGenerateDeclarationModal onClose={onClose} />
    </GenericModalForm>
   ),
+  "Concluir Análise": (item, onClose) => <AnalysisConclusionModal onClose={onClose} item={item} />,
+  "Confirma Entrega de Amostra": (item, onClose) => (
+   <GenericModalForm title="Entrega de Amostra" isOpen onClose={onClose}>
+    <DeliverySampleModal onClose={onClose} />
+   </GenericModalForm>
+  ),
  },
  logistics: {
   "Solicitações de Envio de Tubo": (item, onClose) => (
@@ -57,6 +67,11 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
   "Confirma Entrega de Tubo": (item, onClose) => (
    <GenericModalForm title="Data da Entrega" isOpen onClose={onClose}>
     <TubeDeliveryDate onClose={onClose} item={item} />
+   </GenericModalForm>
+  ),
+  "Confirmar Retirada da Amostra": (item, onClose) => (
+   <GenericModalForm title="Amostra Retirada" isOpen onClose={onClose}>
+    <DeliverySampleModal onClose={onClose} />
    </GenericModalForm>
   ),
  },
