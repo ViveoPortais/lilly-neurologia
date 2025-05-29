@@ -119,11 +119,14 @@ export default function SignIn() {
      return;
     } else {
      const response = await login(loginData);
-     toast.success(response.token);
      if (response.role === "") {
+      toast.success(response.token);
       setStep(3);
       setIsTokenSended(true);
       return;
+     }
+     else{
+      authenticate(response);
      }
     }
    }
@@ -141,6 +144,17 @@ export default function SignIn() {
     } else {
      localStorage.removeItem("rememberedEmail");
     }
+    authenticate(response);
+   }
+  } catch (err: any) {
+   toast.error(err.response.data);
+  } finally {
+   setIsLoading(false);
+  }
+ }
+
+ const authenticate = (response : any)=>{
+    const role = handleUserRole(response.role);
     auth.setProgramsCode(response.programsCode);
     auth.setName(response.userName);
     auth.setEmail(response.email);
@@ -152,12 +166,6 @@ export default function SignIn() {
     auth.setObrigatorioAlterarSenha(response.obrigatorioAlterarSenha);
     auth.onLogin();
     router.push("/dashboard/starts");
-   }
-  } catch (err: any) {
-   toast.error(err.response.data);
-  } finally {
-   setIsLoading(false);
-  }
  }
 
  const handleResendToken = (data: SignInValidationProps) => {
