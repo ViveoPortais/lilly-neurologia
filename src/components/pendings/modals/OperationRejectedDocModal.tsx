@@ -12,7 +12,6 @@ import { fetchPendencyReasons } from "@/store/slices/pendingsSlice";
 import { downloadBase64File, fileToBase64 } from "@/helpers/fileHelper";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { UploadButton } from "@/components/custom/UploadButton";
-import { is } from "date-fns/locale";
 
 interface OperationRejectedDocModalProps {
  onClose: () => void;
@@ -55,11 +54,24 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
       }
     : undefined;
 
+  const updatedAttachments = item.attachments?.map((attachment) => {
+   const docName = attachment.annotationTypeName ?? "";
+   const rejectionReasonId = rejectionReasonMap[docName];
+   const matchedReason = pendencyReasons.find((r) => r.id === rejectionReasonId);
+   const rejectionReasonName = matchedReason?.name;
+
+   return {
+    ...attachment,
+    pendencyDescription: rejectionReasonName,
+   };
+  });
+
   const itemWithLogist = {
    ...item,
-   isDocumentTermApproved: isTermApproved == true,
-   isDocumentMedicApproved: isMedicApproved == true,
+   isDocumentTermApproved: isTermApproved === true,
+   isDocumentMedicApproved: isMedicApproved === true,
    logistAttachments,
+   attachments: updatedAttachments,
   };
 
   await resolve({
@@ -68,18 +80,19 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
   });
  };
 
- const termRejectedNeedsReason = isTermApproved === false && !!rejectionReasonMap["Termo de Consentimento"];
- const medicRejectedNeedsReason = isMedicApproved === false && !!rejectionReasonMap["Pedido do Médico"];
-
- const approvedNeedsUpload = (isTermApproved === true || isMedicApproved === true) && !!attachmentBase64;
-
  const hasAnyDecision = isTermApproved !== null || isMedicApproved !== null;
+ const hasUpload = !!attachmentBase64;
 
- const canSave =
-  hasAnyDecision &&
-  (isTermApproved !== false || termRejectedNeedsReason) &&
-  (isMedicApproved !== false || medicRejectedNeedsReason) &&
-  (isTermApproved !== true && isMedicApproved !== true ? true : approvedNeedsUpload);
+ const termNeedsReason = isTermApproved === false && !!rejectionReasonMap["Termo de Consentimento"];
+ const medicNeedsReason = isMedicApproved === false && !!rejectionReasonMap["Pedido do Médico"];
+
+ const isTermValid =
+  (isTermApproved === true && hasUpload) || (isTermApproved === false && termNeedsReason && hasUpload) || isTermApproved === null;
+
+ const isMedicValid =
+  (isMedicApproved === true && hasUpload) || (isMedicApproved === false && medicNeedsReason && hasUpload) || isMedicApproved === null;
+
+ const canSave = hasAnyDecision && isTermValid && isMedicValid;
 
  return (
   <div className="space-y-4">
@@ -91,9 +104,9 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
 
      const rejectionOptions = pendencyReasons
       .filter((reason) => (isTerm ? reason.flag === "#TERM_CONSENT" : isPedido ? reason.flag === "#MEDICAL_ORDER" : true))
-      .map((item) => ({
-       id: item.stringMapId,
-       value: item.optionName,
+      .map((reasons) => ({
+       id: reasons.id,
+       value: reasons.name,
       }));
 
      return (

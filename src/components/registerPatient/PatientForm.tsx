@@ -210,7 +210,7 @@ const validateClinalProfile = () => {
 
     const payload : any = {
      ...restData,
-     isQualified: true,
+     hasClinicalProfile: true,
      clinicalProfile: selectedProfile,
      doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
      medicalRequestAttach: {

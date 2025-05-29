@@ -10,6 +10,8 @@ import RedirectToScheduleSample from "@/components/scheduleSample/RedirectToSche
 import AnalysisConclusionModal from "./AnalysisConclusionModal";
 import DeliverySampleModal from "./DeliverySampleModal";
 import ApproveRejectButtons from "@/components/linkManagement/linkManagement/ApproveRejectButtons";
+import SampleIssueModal from "../doctor/SampleIssueModal";
+import ApproveSampleDateModal from "../logistic/ApproveSampleDateModal";
 
 interface RenderPendingModalProps {
  item: ExamPendingModel | null;
@@ -38,7 +40,12 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
  doctor: {
   Documentação: (item, onClose) => <RejectedDocModal open onClose={onClose} item={item} />,
   "Solicitações de Retirada de Amostra": (item) => <RedirectToScheduleSample item={item} />,
-  "Aprovação de Vínculo" : (item, onClose) => <GenericModalForm size={"sm"} title="Aprovação de Vínculo" isOpen={true} onClose={onClose}><ApproveRejectButtons id={item.id} typeRender="modalPending" /></GenericModalForm>,
+  "Aprovação de Vínculo": (item, onClose) => (
+   <GenericModalForm size={"sm"} title="Aprovação de Vínculo" isOpen={true} onClose={onClose}>
+    <ApproveRejectButtons id={item.id} typeRender="modalPending" />
+   </GenericModalForm>
+  ),
+  "Problema com a Amostra": (item, onClose) => <SampleIssueModal onClose={onClose} />,
  },
  operation: {
   Documentação: (item, onClose) => (
@@ -74,6 +81,7 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
     <DeliverySampleModal onClose={onClose} />
    </GenericModalForm>
   ),
+  "Solicitações de Retirada": (item, onClose) => <ApproveSampleDateModal onClose={onClose} />,
  },
 };
 

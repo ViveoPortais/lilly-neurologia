@@ -38,7 +38,7 @@ export interface ExamCreateModel {
  contact?: string | null;
  saveAddress?: boolean | null;
  clinicalProfile?: string | null;
- isQualified?: boolean | null;
+ hasClinicalProfile?: boolean | null;
 }
 
 export interface IDiagnosticExamModel {
@@ -158,7 +158,7 @@ export interface IDiagnosticExamModel {
  localId?: string | null;
  genderId?: string | null;
  clinicalProfile?: IStringMap;
- isQualified?: boolean;
+ hasClinicalProfile?: boolean;
 }
 
 export interface LogisticsModel {

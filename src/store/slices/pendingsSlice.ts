@@ -8,7 +8,7 @@ interface PendingsState {
  data: PendingResponse;
  loading: boolean;
  error: string | null;
- reasons: IStringMap[];
+ reasons: any[];
 }
 
 export const fetchPendings = createAsyncThunk<PendingResponse, void, { rejectValue: string }>("pendings/fetch", async (_, thunkAPI) => {
@@ -41,13 +41,7 @@ export const examResolvePendency = createAsyncThunk<IReturnMessage<string>, Exam
 export const fetchPendencyReasons = createAsyncThunk("pendings/fetchReasons", async (_, thunkAPI) => {
  try {
   const result = await getPendencyReasons();
-
-  const transformed = result.map((item: any) => ({
-   stringMapId: item.id,
-   optionName: item.name,
-  }));
-
-  return transformed as IStringMap[];
+  return result;
  } catch (error) {
   return thunkAPI.rejectWithValue("Erro ao carregar gêneros");
  }
