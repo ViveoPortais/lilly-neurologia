@@ -151,11 +151,6 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
      title: "Ocorreu um erro",
      message: error.response?.data?.additionalMessage || "Erro inesperado.",
     },
-    () => {
-     onClose();
-     router.push("/signin");
-     reset();
-    }
    );
   } finally {
   }
