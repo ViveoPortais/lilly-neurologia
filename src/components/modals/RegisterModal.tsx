@@ -125,6 +125,7 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
   try {
    const res = await handleRegistration(data);
    if (res.isValidData) {
+    onClose();
     modal.showModal(
      {
       type: "success",
@@ -132,7 +133,6 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
       message: "Você será informado através do e-mail cadastrado quando as solicitações de testes estiverem liberadas.",
      },
      () => {
-      onClose();
       router.push("/signin");
       reset();
      }
@@ -145,13 +145,11 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
     });
    }
   } catch (error: any) {
-   modal.showModal(
-    {
-     type: "error",
-     title: "Ocorreu um erro",
-     message: error.response?.data?.additionalMessage || "Erro inesperado.",
-    },
-   );
+   modal.showModal({
+    type: "error",
+    title: "Ocorreu um erro",
+    message: error.response?.data?.additionalMessage || "Erro inesperado.",
+   });
   } finally {
   }
  };
