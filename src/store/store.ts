@@ -10,6 +10,7 @@ import pendingsSlice from "./slices/pendingsSlice";
 import diagnosticSlice from "./slices/diagnosticSlice";
 import basicSlice from "./slices/basicSlice";
 import manageFileSlice from "./slices/manageFileSlice";
+import logisticsSlice from "./slices/logisticsSlice";
 
 export const store = configureStore({
  reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
   diagnostic: diagnosticSlice,
   basic: basicSlice,
   manageFile: manageFileSlice,
+  logistics : logisticsSlice,
  },
  devTools: true,
 });

@@ -45,7 +45,7 @@ export const Step3Doctor = ( {examExistent} : Step3DoctorProps) => {
 
  const getAnnotations = async () =>{
     if(examExistent && examExistent.diagnosticId){
-        const annotations = await dispatch(fetchAnnotations({id : examExistent?.diagnosticId})).unwrap();
+        const annotations = await dispatch(fetchAnnotations({id : examExistent?.id})).unwrap();
 
         if(annotations)
             setAnnotationsExistent({...annotations});
@@ -172,19 +172,19 @@ export const Step3Doctor = ( {examExistent} : Step3DoctorProps) => {
    )}
 
    {selectedType === "digital" && (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full max-w-[300px] mx-auto">
      <Input
       type="email"
-      placeholder="Digite o e-mail do paciente"
+      placeholder="Digite o e-mail do médico"
       {...register(`${fieldPrefix}Email`, {
        required: true,
        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       })}
-      className="w-full text-sm placeholder:text-gray-500"
+      className="text-sm placeholder:text-gray-500"
      />
      <p className="text-xs text-red-500 flex items-center gap-1">
       <AlertCircle className="w-4 h-4" />
-      Atenção, o e-mail informado deve ser o do paciente ou responsável.
+      Atenção, o e-mail informado deve ser o do médico.
      </p>
     </div>
    )}

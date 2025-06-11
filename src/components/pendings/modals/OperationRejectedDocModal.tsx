@@ -56,20 +56,25 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
 
   const updatedAttachments = item.attachments?.map((attachment) => {
    const docName = attachment.annotationTypeName ?? "";
+
+   const isTerm = docName.toLowerCase().includes("termo");
+   const isPedido = docName.toLowerCase().includes("pedido");
+
+   const isApproved = isTerm ? isTermApproved : isPedido ? isMedicApproved : null;
+
    const rejectionReasonId = rejectionReasonMap[docName];
    const matchedReason = pendencyReasons.find((r) => r.id === rejectionReasonId);
    const rejectionReasonName = matchedReason?.name;
 
    return {
     ...attachment,
+    isApproved,
     pendencyDescription: rejectionReasonName,
    };
   });
 
   const itemWithLogist = {
    ...item,
-   isDocumentTermApproved: isTermApproved === true,
-   isDocumentMedicApproved: isMedicApproved === true,
    logistAttachments,
    attachments: updatedAttachments,
   };

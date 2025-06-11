@@ -455,37 +455,41 @@ export const passwordSchema = z
 export type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export const scheduleSampeSchema = (dataRecebimento: string) =>
- z
-  .object({
-   collectDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
-   desiredDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
-  })
-  .superRefine((data, ctx) => {
-   const coleta = parseISO(data.collectDate);
-   const desejada = parseISO(data.desiredDate);
-   const recebimento = parseISO(dataRecebimento);
-   const hoje = new Date();
-   const doisDiasDepois = addDays(hoje, 2);
+  z
+    .object({
+      collectMaterial: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+      doctorSuggestedDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+    })
+    .superRefine((data, ctx) => {
+      let recebimento;
+      const coleta = parseISO(data.collectMaterial);
+      const desejada = parseISO(data.doctorSuggestedDate);
+      if (dataRecebimento) {
+        recebimento = parseISO(dataRecebimento);
+      } else {
+        recebimento = null;
+      }
+      const hoje = new Date();
+      const doisDiasDepois = addDays(hoje, 2);
 
-   if (!isValid(recebimento)) return;
+      if (!isValid(recebimento)) return;
 
-   if (isBefore(coleta, recebimento) || isAfter(coleta, hoje)) {
-    ctx.addIssue({
-     path: ["collectDate"],
-     message: "Data de coleta inválida: deve ser maior ou igual a recebimento e menor ou igual a hoje",
-     code: z.ZodIssueCode.custom,
+      if (isBefore(coleta, recebimento!) || isAfter(coleta, hoje)) {
+        ctx.addIssue({
+          path: ["collectMaterial"],
+          message: "Data de coleta inválida: deve ser maior ou igual a recebimento e menor ou igual a hoje",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+
+      if (isBefore(desejada, coleta) || isBefore(desejada, recebimento!) || isBefore(desejada, doisDiasDepois) || isFriday(desejada)) {
+        ctx.addIssue({
+          path: ["doctorSuggestedDate"],
+          message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dois dias após hoje, e não pode ser sexta-feira",
+          code: z.ZodIssueCode.custom,
+        });
+      }
     });
-   }
-
-   if (isBefore(desejada, coleta) || isBefore(desejada, recebimento) || isBefore(desejada, doisDiasDepois) || isFriday(desejada)) {
-    ctx.addIssue({
-     path: ["desiredDate"],
-     message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dois dias após hoje, e não pode ser sexta-feira",
-     code: z.ZodIssueCode.custom,
-    });
-   }
-  });
-  
 
 export const diagnosticFilterModelSchema = z
   .object({
@@ -503,9 +507,21 @@ export const diagnosticFilterModelSchema = z
         message:"Informe valores válidos para busca de CPF"
       }),
     examStatus : z.string().optional(),
+    doctor: z.string().optional(),
   });
 
 export type DiagnosticFilterModelSchema = z.infer<typeof diagnosticFilterModelSchema>;
+
+
+export const stockModelSchema = z
+  .object({
+    logisticsStuffId: z.string().min(1,{message:"Selecione o tipo de equipamento"}),
+    expirationDate : z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+    quantity : z.string().min(1,{message:"Informe a quantidade"}),
+    createdOn : z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+  });
+
+export type StockModelSchema = z.infer<typeof stockModelSchema>;
 
 
 export const examCancellationModelSchema = z

@@ -21,6 +21,11 @@ export default function TubeShippingModal({ onClose, item }: TubeShippingProps) 
   validateNoFutureDate(e.target.value, "sendDate", (field, value) => setSendDate(value), "A data de envio não pode ser futura");
  };
 
+ const handleCancel = () => {
+  setSendDate("");
+  onClose();
+ };
+
  const handleConfirm = async () => {
   show();
   await resolve({
@@ -33,21 +38,22 @@ export default function TubeShippingModal({ onClose, item }: TubeShippingProps) 
  };
 
  return (
-  <div className="w-full max-w-sm">
-   <div className="space-y-2">
-    <label className="text-sm text-zinc-700">Data de envio</label>
-    <Input
-     type="date"
-     placeholder="Selecione a data"
-     max={today}
-     value={sendDate}
-     onChange={(e) => setSendDate(e.target.value)}
-     onBlur={handleBlur}
-    />
-   </div>
+  <div className="space-y-2">
+   <Input
+    type="date"
+    placeholder="Data de envio"
+    max={today}
+    value={sendDate}
+    onChange={(e) => setSendDate(e.target.value)}
+    onBlur={handleBlur}
+    className="w-full"
+   />
 
-   <div className="flex justify-right mt-6 gap-2">
-    <Button className="w-1/2" onClick={handleConfirm} disabled={!sendDate}>
+   <div className="flex flex-col md:flex-row justify-between gap-4 pt-2">
+    <Button onClick={handleCancel} variant="outlineMainlilly" className="w-full md:w-1/2">
+     Cancelar
+    </Button>
+    <Button onClick={handleConfirm} disabled={!sendDate} className="w-full md:w-1/2">
      Enviado
     </Button>
    </div>

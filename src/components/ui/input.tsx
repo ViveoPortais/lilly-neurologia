@@ -4,7 +4,7 @@ import { MdInfo, MdOutlineEmail, MdVisibility, MdVisibilityOff } from "react-ico
 import { CiLock, CiLogin } from "react-icons/ci";
 import { InputLoading } from "../custom/InputLoading";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { FiCheck, FiCopy } from "react-icons/fi";
+import { FiCheck, FiCopy, FiSearch } from "react-icons/fi";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
  icon?: React.ReactNode;
@@ -21,7 +21,8 @@ const iconsMap = {
  password: <CiLock size={20} />,
  login: <CiLogin size={20} />,
  copy: <FiCopy size={20}/>,
- copied : <FiCheck size={20} color="green"/>
+ copied : <FiCheck size={20} color="green"/>,
+ search: <FiSearch size={20} />
 };
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(

@@ -42,7 +42,7 @@ export const routes: IRouteProps = {
   { route: "/dashboard/doctor/register-patient", text: "Cadastrar Pacientes", icon: LuUserPlus },
   { route: "/dashboard/schedule-sample", text: "Agendar Retirada da Amostra", icon: LuTestTube },
   { route: "/dashboard/doctor/link-management", text: "Gerenciar Vínculo", icon: LuSlidersHorizontal },
-  { route: "/dashboar/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
+  { route: "/dashboard/files", text: "Biblioteca de conteúdos", icon: LuFolderOpen },
  ],
 
  professional: [
@@ -53,7 +53,7 @@ export const routes: IRouteProps = {
    summary: "Aqui você encontra tudo o que precisa para gerenciar suas solicitações de forma mais rápida e intuitiva.",
   },
   {
-   route: "/dashboard/professional/pendings",
+   route: "/dashboard/doctor/pendings",
    text: "Minhas Pendências",
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
@@ -81,6 +81,7 @@ export const routes: IRouteProps = {
   { route: "/dashboard/operation/manage-files", text: "Gerenciar arquivos", icon: LuFiles, openModal: true },
   { route: "/dashboard/myRequests", text: "Acompanhar Solicitações", icon: LuMousePointerClick },
   { route: "/dashboard/operation/register-patient", text: "Usuários bloqueados", icon: LuUserX },
+  { route: "/dashboard/stock", text: "Estoque", icon: FaBoxArchive },
  ],
 
  logistics: [
@@ -96,7 +97,7 @@ export const routes: IRouteProps = {
    icon: HiOutlineExclamationCircle,
    summary: "Aqui você pode visualizar e gerenciar todas as pendências, acompanhar o status e tomar as ações necessárias para cada uma.",
   },
-  { route: "/dashboard/myRequests", text: "Estoque", icon: FaBoxArchive },
-  { route: "/dashboard/logistics/register-patient", text: "Todas as solicitações", icon: LuMousePointerClick },
+  { route: "/dashboard/stock", text: "Estoque", icon: FaBoxArchive },
+  { route: "/dashboard/myRequests", text: "Todas as solicitações", icon: LuMousePointerClick },
  ],
 };

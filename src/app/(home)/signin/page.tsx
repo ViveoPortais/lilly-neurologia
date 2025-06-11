@@ -124,8 +124,7 @@ export default function SignIn() {
       setStep(3);
       setIsTokenSended(true);
       return;
-     }
-     else{
+     } else {
       authenticate(response);
      }
     }
@@ -153,20 +152,20 @@ export default function SignIn() {
   }
  }
 
- const authenticate = (response : any)=>{
-    const role = handleUserRole(response.role);
-    auth.setProgramsCode(response.programsCode);
-    auth.setName(response.userName);
-    auth.setEmail(response.email);
-    auth.setToken(response.token);
-    api.defaults.headers.Authorization = `Bearer ${response.token}`;
-    auth.setRole(role);
-    auth.setSession(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-    auth.setPrimeiroAcesso(response.primeiroAcesso);
-    auth.setObrigatorioAlterarSenha(response.obrigatorioAlterarSenha);
-    auth.onLogin();
-    router.push("/dashboard/starts");
- }
+ const authenticate = (response: any) => {
+  const role = handleUserRole(response.role);
+  auth.setProgramsCode(response.programsCode);
+  auth.setName(response.userName);
+  auth.setEmail(response.email);
+  auth.setToken(response.token);
+  api.defaults.headers.Authorization = `Bearer ${response.token}`;
+  auth.setRole(role);
+  auth.setSession(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+  auth.setPrimeiroAcesso(response.primeiroAcesso);
+  auth.setObrigatorioAlterarSenha(response.obrigatorioAlterarSenha);
+  auth.onLogin();
+  router.push("/dashboard/starts");
+ };
 
  const handleResendToken = (data: SignInValidationProps) => {
   setIsLoading(true);
@@ -175,11 +174,14 @@ export default function SignIn() {
    email: data.login,
    password: data.password,
    token: data.token,
+   tokenBySms: tokenChannel === "email" || tokenChannel === "" ? false : true,
+   tokenByEmail: tokenChannel === "sms" || tokenChannel === "" ? false : true,
   };
 
   resendToken(dataSend)
    .then((res) => {
     if (res.isValidData) toast.success(res.additionalMessage);
+    else toast.warning(res.additionalMessage);
    })
    .catch((res) => {
     toast.error(res.additionalMessage);

@@ -58,7 +58,7 @@ export const requestStatusIncident = async (data: RequestStatusIncident) => {
 };
 
 export const getMessagesCount = async (programCode: string) => {
-  const res = await api.get("/Incident/getnewmessagescounts", {
+  const res = await api.get("/exam/getCountExamPending", {
     params: {
       programCode: programCode,
     },

@@ -25,8 +25,8 @@ useEffect(() => {
  const grouped: Record<string, ExamPendingModel[]> = {
   Documentação: pendings.documents,
   "Gerar Declaração de Lote": pendings.batchPendingDeclarations,
-  "Confirmar Entrega de Amostra": [],
-  "Concluir Análise": [],
+  "Confirmar Entrega de Amostra": pendings.confirmSampleDeliveries,
+  "Concluir Análise": pendings.analyze,
  };
 
  return <GenericPendingsPage fixedCategories={fixedCategories} grouped={grouped} />;

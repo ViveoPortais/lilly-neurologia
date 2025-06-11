@@ -8,7 +8,11 @@ import { UFlist } from "@/helpers/select-filters";
 import { CustomSelect } from "@/components/custom/CustomSelect";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addHealthProfessionalByProgramDoctorByProgram, fetchDoctorByCrmUf, fetchHealthProfessionalByProgramDoctorByPrograms } from "@/store/slices/linkManagementeSlice";
+import {
+  addHealthProfessionalByProgramDoctorByProgram,
+  fetchDoctorByCrmUf,
+  fetchHealthProfessionalByProgramDoctorByPrograms,
+} from "@/store/slices/linkManagementeSlice";
 import { toast } from "react-toastify";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { Button } from "@/components/ui/button";
@@ -20,54 +24,75 @@ import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { CustomFilterSelect } from "../custom/CustomFilterSelect";
 import { maskedField } from "../custom/MaskedField";
 import { IStringMap } from "@/types";
+import useSession from "@/hooks/useSession";
 
-
-
-export default function Filter({stringMapsFilter} : {stringMapsFilter : IStringMap[]}) {
-
+export default function Filter({ stringMapsFilter, linkedDoctor }: { stringMapsFilter: IStringMap[]; linkedDoctor?: IStringMap[] }) {
   const methods = useForm<DiagnosticFilterModelSchema>({
     resolver: zodResolver(diagnosticFilterModelSchema),
     mode: "onSubmit",
   });
-  
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = methods;
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = methods;
 
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.diagnostic.loading);
+  const session = useSession();
 
   const { show, hide } = useLoading();
 
   useEffect(() => {
-    if (loading)
-      show()
-    else
-      hide()
-  }, [loading])
+    if (loading) show();
+    else hide();
+  }, [loading]);
 
   const onClean = async () => {
-
     setValue("patientCPF", "");
 
     setValue("examStatus", "");
 
-    const filterDiagnostic: IDiagnosticFilterModel = {}
+    setValue("doctor", "");
+
+    const filterDiagnostic: IDiagnosticFilterModel = {};
     await dispatch(fetchMyDiagnostics({ filterDiagnostic: filterDiagnostic }));
-  }
+  };
 
   const onSubmit = async (data: DiagnosticFilterModelSchema) => {
     try {
       await dispatch(fetchMyDiagnostics({ filterDiagnostic: data as IDiagnosticFilterModel }));
-    }
-    catch (error: string | any) {
-
-    }
-  }
+    } catch (error: string | any) {}
+  };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="w-[90vw] md:w-full md:px-5 mx-auto">
-
         <div className="flex flex-col md:flex-row gap-6 py-5">
+          {session.role === "professional" && (
+            <div className="flex flex-col basis-1/2">
+              <Controller
+                name="doctor"
+                control={methods.control}
+                render={({ field }) => (
+                  <div className="w-full">
+                    <CustomFilterSelect
+                      options={linkedDoctor!}
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Selecionar médico..."
+                      name="doctor"
+                      label="Escolher Médico"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+          )}
           <div className="flex flex-col basis-1/2">
             <Controller
               name="examStatus"
@@ -96,7 +121,9 @@ export default function Filter({stringMapsFilter} : {stringMapsFilter : IStringM
                     field.name,
                     "CPF",
                     false,
-                    (e) => { field.onBlur() },
+                    (e) => {
+                      field.onBlur();
+                    },
                     field.value,
                     false,
                     `w-full`,
@@ -109,8 +136,12 @@ export default function Filter({stringMapsFilter} : {stringMapsFilter : IStringM
           </div>
         </div>
         <div className="flex flex-row justify-between md:justify-end py-6 gap-4">
-          <Button variant={"outlineMainlilly"} size="lg" onClick={onClean} className="basis-1/2 md:basis-[17%] font-bold">Limpar Tudo</Button>
-          <Button type="submit" variant={"default"} size="lg" className="basis-1/2 md:basis-[17%] font-bold">Filtrar</Button>
+          <Button variant={"outlineMainlilly"} size="lg" onClick={onClean} className="basis-1/2 md:basis-[17%] font-bold">
+            Limpar Tudo
+          </Button>
+          <Button type="submit" variant={"default"} size="lg" className="basis-1/2 md:basis-[17%] font-bold">
+            Filtrar
+          </Button>
         </div>
         <div className="border-b border-b-gray-400 mb-12"></div>
       </form>

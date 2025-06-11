@@ -22,7 +22,7 @@ const Page = () => {
  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
 
  useEffect(() => {
-  dispatch(fetchGetMessagesCount(auth.programCode));
+  dispatch(fetchGetMessagesCount(auth.programsCode[0]));
  }, []);
 
  const handleCardClick = (route: string, openModal?: boolean) => {

@@ -145,7 +145,7 @@ const callTrackingSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchGetMessagesCount.fulfilled, (state, action: PayloadAction<any>) => {
-        state.messageCount = action.payload;
+        state.messageCount = action.payload.count;
         state.loading = false;
       })
       .addCase(fetchGetMessagesCount.rejected, (state, action) => {

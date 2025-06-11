@@ -89,7 +89,7 @@ export const getAnnotations = async (id: string) => {
   const response = await api.get("/annotation/getAnnotations", {
     params: {
       programcode: programCode,
-      entityMetadataIdName: 'Diagnostic',
+      entityMetadataIdName: 'Exam',
       regardingObjectId : id,
     },
   });

@@ -35,8 +35,8 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
 
     const handleOnClick = async () => {
         try{
-            await dispatch(fetchDiagnosticDetailsById({ id: id }));
-            await dispatch(fetchAnnotations({id: exam?.diagnosticId!}));
+            const examResult = await dispatch(fetchDiagnosticDetailsById({ id: id })).unwrap();
+            await dispatch(fetchAnnotations({id: examResult.id}));
 
             const examNotDoneStringMaps : IStringMap[] = await dispatch(fetchStringMaps({entityName:"Exam", attributeName : "ReasonExamNotDoneStringMap"})).unwrap();
 

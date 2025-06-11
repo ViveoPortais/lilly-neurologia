@@ -15,6 +15,7 @@ interface CustomFilterSelectProps {
     customClass?: string;
     isLoading?: boolean;
     params?: any;
+    placeholder?: string;
 }
 
 const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
@@ -27,6 +28,7 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
     customClass,
     isLoading,
     params,
+    placeholder = "Selecione...",
     ...props
 }) => {
     const [filter, setFilter] = useState("");
@@ -61,7 +63,7 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
                     }}
                     onBlur={onBlur}
                     options={filteredOptions}
-                    placeholder="Selecione..."
+                    placeholder={placeholder}
                     classNamePrefix="react-select"
                     styles={{
                         control: (provided) => ({

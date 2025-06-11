@@ -157,6 +157,8 @@ export interface IResendToken {
   email: string;
   password: string;
   token?: string;
+  tokenByEmail?: boolean;
+  tokenBySms?: boolean;
 }
 
 export interface IPostIncident {

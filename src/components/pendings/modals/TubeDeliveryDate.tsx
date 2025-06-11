@@ -32,28 +32,26 @@ export default function TubeDeliveryDate({ onClose, item }: TubeDeliveryProps) {
  };
 
  const handleNotSent = () => {
+  setSendDate("");
   onClose();
  };
 
  return (
-  <div className="w-full max-w-sm">
-   <div className="space-y-2">
-    <label className="text-sm text-zinc-700">Data de entrega</label>
-    <Input
-     type="date"
-     placeholder="Selecione a data"
-     max={today}
-     value={sendDate}
-     onChange={(e) => setSendDate(e.target.value)}
-     onBlur={handleBlur}
-    />
-   </div>
+  <div className="space-y-2">
+   <Input
+    type="date"
+    placeholder="Data de entrega"
+    max={today}
+    value={sendDate}
+    onChange={(e) => setSendDate(e.target.value)}
+    onBlur={handleBlur}
+   />
 
-   <div className="flex justify-between mt-6 gap-2">
-    <Button variant="outlineMainlilly" className="w-full" onClick={handleNotSent}>
+   <div className="flex flex-col md:flex-row justify-between gap-4 pt-2">
+    <Button variant="outlineMainlilly" className="w-full md:w-1/2" onClick={handleNotSent}>
      Não Enviado
     </Button>
-    <Button className="w-full" onClick={handleConfirm} disabled={!sendDate}>
+    <Button className="w-full md:w-1/2" onClick={handleConfirm} disabled={!sendDate}>
      Enviado
     </Button>
    </div>

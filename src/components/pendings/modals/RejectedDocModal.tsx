@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -16,35 +18,45 @@ interface RejectedDocModalProps {
 }
 
 export default function RejectedDocModal({ open, onClose, item }: RejectedDocModalProps) {
- const [uploadedFile, setUploadedFile] = useState<File | null>(null);
- const [attachmentBase64, setAttachmentBase64] = useState<string | null>(null);
+ const [uploads, setUploads] = useState<Record<string, { file: File; base64: string }>>({});
  const { show } = useLoading();
  const { resolve } = useResolveExamPendency();
- if (!open || !item) return null;
+
+ if (!open || !item?.attachments?.length) return null;
+
+ const handleFileUpload = async (docId: string, file: File) => {
+  const base64 = await fileToBase64(file);
+  setUploads((prev) => ({ ...prev, [docId]: { file, base64 } }));
+ };
 
  const handleConfirm = async () => {
-  if (!uploadedFile || !attachmentBase64) return;
+  const attachments = item
+   .attachments!.map((doc) => {
+    const upload = uploads[doc.annotationTypeStringMapId!];
+    if (!upload) return null;
 
-  const attachment = {
-   fileName: uploadedFile.name,
-   contentType: uploadedFile.type,
-   documentBody: attachmentBase64,
-   fileSize: uploadedFile.size.toString(),
-   fileType: uploadedFile.type,
-  };
+    return {
+     fileName: upload.file.name,
+     contentType: upload.file.type,
+     documentBody: upload.base64,
+     fileSize: upload.file.size.toString(),
+     fileType: upload.file.type,
+     annotationTypeName: doc.annotationTypeName,
+     annotationTypeStringMapId: doc.annotationTypeStringMapId,
+    };
+   })
+   .filter(Boolean);
 
   const updatedModel = {
    ...item,
-   attachments: [attachment],
+   attachments: attachments as any,
   };
 
   show();
-
-  resolve({
-   item: updatedModel,
-   onSuccess: onClose,
-  });
+  resolve({ item: updatedModel, onSuccess: onClose });
  };
+
+ const allDocsUploaded = item.attachments!.every((doc) => uploads[doc.annotationTypeStringMapId!]);
 
  return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
@@ -53,7 +65,7 @@ export default function RejectedDocModal({ open, onClose, item }: RejectedDocMod
     animate={{ scale: 1, opacity: 1 }}
     exit={{ scale: 0.5, opacity: 0 }}
     transition={{ duration: 0.4 }}
-    className="relative bg-white rounded-xl p-6 shadow-lg max-w-sm w-full max-h-screen overflow-y-auto"
+    className="relative bg-white rounded-xl p-6 shadow-lg max-w-md w-full max-h-screen overflow-y-auto"
    >
     <div className="flex items-center justify-between mb-1">
      <h2 className="text-lg font-semibold text-zinc-800">Documentação reprovada</h2>
@@ -63,53 +75,47 @@ export default function RejectedDocModal({ open, onClose, item }: RejectedDocMod
     </div>
     <hr className="mb-4 border-zinc-200" />
 
-    {item.attachments?.[0] && (
-     <FileDownload
-      annotationType={item.attachments[0].annotationTypeName ?? ""}
-      attachment={{
-       contentType: item.attachments[0].contentType ?? "",
-       documentBody: item.attachments[0].documentBody ?? "",
-       fileName: item.attachments[0].fileName ?? "",
-       fileSize: item.attachments[0].fileSize ?? "",
-       fileType: item.attachments[0].fileType ?? "",
-      }}
-     />
-    )}
+    {item.attachments.map((doc) => (
+     <div key={doc.annotationTypeStringMapId} className="mb-6">
+      <p className="text-sm font-semibold text-zinc-800 mb-2">{doc.annotationTypeName}</p>
 
-    <div className="border border-zinc-300 bg-[#efe9e9] mt-4 text-left p-3 rounded-md">
-     <label className="text-sm font-semibold text-zinc-800 mb-1 block">Motivo</label>
-     <div className="text-sm text-zinc-700">{item.reason}</div>
-    </div>
+      <FileDownload
+       annotationType={doc.annotationTypeName!}
+       attachment={{
+        fileName: doc.fileName ?? "",
+        contentType: doc.contentType ?? "",
+        documentBody: doc.documentBody ?? "",
+        fileSize: doc.fileSize ?? "",
+        fileType: doc.fileType ?? "",
+       }}
+      />
 
-    <div className="mt-6 space-y-2">
-     <FileDownload
-      annotationType="Download documento modelo"
-      attachment={{
-       fileName: item.attachments![0].fileName ?? "",
-       contentType: item.attachments![0].contentType ?? "",
-       documentBody: item.attachments![0].documentBody ?? "",
-       fileSize: item.attachments![0].fileSize ?? "",
-       fileType: item.attachments![0].fileType ?? "",
-      }}
-     />
-     <UploadButton
-      fieldName="docUpload"
-      label="Upload Novo Documento"
-      onFileValid={async (file) => {
-       setUploadedFile(file);
-       const base64 = await fileToBase64(file);
-       setAttachmentBase64(base64);
-      }}
-      onError={() => {
-       setUploadedFile(null);
-       setAttachmentBase64(null);
-      }}
-     />
-     <div className="flex py-2 mt-2 justify-center gap-2">
-      <Button type="button" disabled={!uploadedFile || !attachmentBase64} onClick={handleConfirm}>
-       Confirmar
-      </Button>
+      <div className="border border-zinc-300 bg-[#efe9e9] mt-4 text-left p-3 rounded-md">
+       <label className="text-sm font-semibold text-zinc-800 mb-1 block">Motivo</label>
+       <div className="text-sm text-zinc-700">{doc.pendencyDescription}</div>
+      </div>
+
+      <div className="mt-4">
+       <UploadButton
+        fieldName={`upload-${doc.annotationTypeStringMapId}`}
+        label={"Upload novo documento"}
+        onFileValid={(file) => handleFileUpload(doc.annotationTypeStringMapId!, file)}
+        onError={() => {
+         setUploads((prev) => {
+          const updated = { ...prev };
+          delete updated[doc.annotationTypeStringMapId!];
+          return updated;
+         });
+        }}
+       />
+      </div>
      </div>
+    ))}
+
+    <div className="flex py-2 justify-center gap-2">
+     <Button type="button" disabled={!allDocsUploaded} onClick={handleConfirm}>
+      Confirmar
+     </Button>
     </div>
    </motion.div>
   </div>

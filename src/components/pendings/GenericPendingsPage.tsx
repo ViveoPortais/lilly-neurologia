@@ -9,60 +9,79 @@ import useSession from "@/hooks/useSession";
 import { PendingTableColumns } from "./PendingTableColumns";
 import { RenderPendingModal } from "./modals/RenderPendingModal";
 import { MdTaskAlt } from "react-icons/md";
+import { useState } from "react";
+import { Input } from "../ui/input";
+import dayjs from "dayjs";
 
 interface Props {
- grouped: Record<string, ExamPendingModel[]>;
- fixedCategories: string[];
+  grouped: Record<string, ExamPendingModel[]>;
+  fixedCategories: string[];
 }
 
 export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
- const isMobile = useMediaQuery("(max-width: 768px)");
- const auth = useSession();
- const role = auth.role as "doctor" | "operation" | "logistics";
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const auth = useSession();
+  const role = auth.role as "doctor" | "operation" | "logistics" | "professional";
+  const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
 
- const totalPendings = Object.values(grouped).flat().length;
-
- if (totalPendings === 0) {
   return (
-   <div className="pl-4 border-l-4 border-mainlilly rounded-l-2xl text-zinc-700 flex items-center gap-2">
-    <MdTaskAlt className="text-mainlilly" size={20} />
-    <span className="text-sm font-semibold">Você não possui pendências</span>
-   </div>
+    <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+      {fixedCategories.map((category) => {
+        const items = grouped[category] || [];
+        const columns = PendingTableColumns[role]?.[category] || [];
+        const search = searchTerms[category]?.toLowerCase() || "";
+
+        const filteredItems =
+          role === "operation"
+            ? items.filter((item) => {
+                const valuesToSearch: string[] = [];
+
+                for (const val of Object.values(item)) {
+                  if (typeof val === "string" || typeof val === "number") {
+                    valuesToSearch.push(val.toString().toLowerCase());
+                  }
+                }
+
+                if (item.dateCreate) valuesToSearch.push(dayjs(item.dateCreate).format("DD/MM/YYYY"));
+                if (item.dateUpdate) valuesToSearch.push(dayjs(item.dateUpdate).format("DD/MM/YYYY"));
+
+                return valuesToSearch.some((val) => val.includes(search));
+              })
+            : items;
+
+        return (
+          <Accordion key={category} title={category} badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}>
+            {role === "operation" && (
+              <div className="mb-2">
+                <Input
+                  icon="search"
+                  inputPlaceholder="Pesquisar por palavra-chave"
+                  className="!text-sm"
+                  value={searchTerms[category] || ""}
+                  onChange={(e) => setSearchTerms({ ...searchTerms, [category]: e.target.value })}
+                />
+              </div>
+            )}
+            {filteredItems.length > 0 ? (
+              isMobile ? (
+                <PendingsMobilePage
+                  items={filteredItems}
+                  columns={columns}
+                  renderModal={(item, onClose) => (item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null)}
+                />
+              ) : (
+                <PendingsDesktopPage
+                  items={filteredItems}
+                  columns={columns}
+                  renderModal={(item, onClose) => (item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null)}
+                />
+              )
+            ) : (
+              <div className="px-4 py-2 text-sm text-zinc-500">Nenhuma pendência nesta categoria.</div>
+            )}
+          </Accordion>
+        );
+      })}
+    </div>
   );
- }
-
- return (
-  <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
-   {fixedCategories.map((category) => {
-    const items = grouped[category] || [];
-    const columns = PendingTableColumns[role]?.[category] || [];
-
-    return (
-     <Accordion key={category} title={category} badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}>
-      {items.length > 0 ? (
-       isMobile ? (
-        <PendingsMobilePage
-         items={items}
-         columns={columns}
-         renderModal={(item, onClose) =>
-          item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null
-         }
-        />
-       ) : (
-        <PendingsDesktopPage
-         items={items}
-         columns={columns}
-         renderModal={(item, onClose) =>
-          item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null
-         }
-        />
-       )
-      ) : (
-       <div className="px-4 py-2 text-sm text-zinc-500">Nenhuma pendência nesta categoria.</div>
-      )}
-     </Accordion>
-    );
-   })}
-  </div>
- );
 }
