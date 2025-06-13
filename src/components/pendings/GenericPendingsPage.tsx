@@ -9,9 +9,10 @@ import useSession from "@/hooks/useSession";
 import { PendingTableColumns } from "./PendingTableColumns";
 import { RenderPendingModal } from "./modals/RenderPendingModal";
 import { MdTaskAlt } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   grouped: Record<string, ExamPendingModel[]>;
@@ -23,6 +24,43 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
   const auth = useSession();
   const role = auth.role as "doctor" | "operation" | "logistics" | "professional";
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
+  const [selectedItem, setSelectedItem] = useState<ExamPendingModel | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [highlightCategory, setHighlightCategory] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const resolveId = searchParams.get("resolveId");
+  const categoryParam = searchParams.get("category");
+
+  useEffect(() => {
+    if (!resolveId || !categoryParam) return;
+
+    const pendingList = grouped[categoryParam];
+    if (!pendingList || pendingList.length === 0) return;
+
+    const found = pendingList.find((item) => item.id === resolveId);
+    if (found) {
+      setSelectedCategory(categoryParam);
+      setSelectedItem(found);
+      setHighlightCategory(categoryParam);
+
+      setTimeout(() => setHighlightCategory(null), 2000);
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("resolveId");
+    params.delete("category");
+    router.replace(`/dashboard/doctor/pendings?${params.toString()}`, { scroll: false });
+  }, [resolveId, categoryParam, grouped, role, router, searchParams]);
+
+  useEffect(() => {
+    if (categoryParam) {
+      const el = document.getElementById(`accordion-${categoryParam}`);
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [categoryParam]);
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -50,7 +88,13 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
             : items;
 
         return (
-          <Accordion key={category} title={category} badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}>
+          <Accordion
+            id={`accordion-${category}`}
+            key={category}
+            title={category}
+            badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}
+            className={highlightCategory === category ? "ring-2 ring-mainlilly rounded-md" : ""}
+          >
             {role === "operation" && (
               <div className="mb-2">
                 <Input
@@ -82,6 +126,18 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
           </Accordion>
         );
       })}
+
+      {selectedItem && selectedCategory && (
+        <RenderPendingModal
+          item={selectedItem}
+          onClose={() => {
+            setSelectedItem(null);
+            setSelectedCategory(null);
+          }}
+          category={selectedCategory}
+          role={role}
+        />
+      )}
     </div>
   );
 }

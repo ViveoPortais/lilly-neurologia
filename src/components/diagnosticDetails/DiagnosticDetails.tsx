@@ -1,6 +1,11 @@
+"use client";
 import { IDiagnosticExamModel } from "@/types/diagnostic";
 import dayjs from "dayjs";
 import StatusCustom from "../custom/StatusCustom";
+import { getCategoryFromFlag, resolvableFlags } from "@/helpers/resolveHelper";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/store/hooks";
+import { setSelectedDoctorId } from "@/store/slices/registerPatientSlice";
 
 type DiagnosticDetailsProps = {
   data: IDiagnosticExamModel;
@@ -8,6 +13,22 @@ type DiagnosticDetailsProps = {
 };
 
 const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
+  const router = useRouter();
+  const statusFlag = data.examStatusStringMap?.flag ?? "";
+  const dispatch = useAppDispatch();
+
+  const handleRedirectToPendings = () => {
+    const category = getCategoryFromFlag(statusFlag);
+    if (!category) return;
+
+    if (role === "professional" && data.doctorId) {
+      dispatch(setSelectedDoctorId(data.doctorId));
+    }
+
+    const url = `/dashboard/doctor/pendings?resolveId=${data.id}&category=${encodeURIComponent(category)}`;
+
+    router.push(url);
+  };
   return (
     <>
       <div className="flex flex-col md:flex-row gap-10 text-left">
@@ -65,13 +86,21 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
       )}
       <div className="flex flex-col md:flex-row gap-6 text-left">
         <div className="w-full contentDetails">
-          <h1 className="flex flex-row gap-4">
+          <h1 className="flex flex-row gap-4 items-center">
             Dados do Exame
             <StatusCustom type={"ExamStatusStringMap"} statusStringMap={data.examStatusStringMap} />
             {data.reasonExamNotDoneStringMap?.optionName && (
               <div className="flex items-center gap-2">
                 <span>({data.reasonExamNotDoneStringMap?.optionName})</span>
               </div>
+            )}
+            {resolvableFlags.includes(statusFlag) && (
+              <button
+                onClick={handleRedirectToPendings}
+                className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
+              >
+                Resolver
+              </button>
             )}
           </h1>
           <div className="flex flex-col md:flex-row gap-6 py-4">

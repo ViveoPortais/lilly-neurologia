@@ -80,7 +80,7 @@ export const routes: IRouteProps = {
   },
   { route: "/dashboard/operation/manage-files", text: "Gerenciar arquivos", icon: LuFiles, openModal: true },
   { route: "/dashboard/myRequests", text: "Acompanhar Solicitações", icon: LuMousePointerClick },
-  { route: "/dashboard/operation/register-patient", text: "Usuários bloqueados", icon: LuUserX },
+  { route: "/dashboard/operation/blocked-users", text: "Usuários bloqueados", icon: LuUserX },
   { route: "/dashboard/stock", text: "Estoque", icon: FaBoxArchive },
  ],
 

@@ -164,6 +164,7 @@ export interface IDiagnosticExamModel {
   pTauToBA42Ratio?: string | null;
   betaAmyloidPeptide42?: string | null;
   labelAttachment?: AttachmentModel[];
+  pendingExam?: string | null;
 }
 
 export interface LogisticsModel {
@@ -245,6 +246,7 @@ export interface ExamPendingModel {
   flagStatus?: string;
   logistAttachments?: AttachmentModel;
   examCollectionDate?: string;
+  examPickupDate?: string;
   nameHealthProfessional?: string;
   examAnalysis?: IAnalysisSampleModel;
   logistcSuggestedDate1?: string;
@@ -284,7 +286,7 @@ export interface PendingResponse {
   generateBatchDeclarations: ExamPendingModel[];
   pendingAssociations: IPendingAssociationModel[];
   confirmPickupRequests: IPickupRequestModel[];
-  pickupRequests: IPickupRequestModel[];
+  pickupRequest: IPickupRequestModel[];
   problemWithSamples: IProblemWithSampleModel[];
   confirmSampleDeliveries: IConfirmSampleDeliveryModel[];
   analyze: IConfirmSampleDeliveryModel[];

@@ -60,6 +60,7 @@ const ApproveRejectButtons = ({ id, typeRender = "dataTable" }: ApproveReproveBu
     const result = response.payload;
 
     if (result) {
+      setIsDialogOpen(false);
       if (result.isValidData) {
         modal.showModal(
           {

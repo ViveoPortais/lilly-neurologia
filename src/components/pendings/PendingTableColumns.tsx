@@ -2,6 +2,8 @@ import { ExamPendingModel } from "@/types/diagnostic";
 import { formatDate } from "@/helpers/helpers";
 import dayjs from "dayjs";
 import { downloadBase64File } from "@/helpers/fileHelper";
+import { Button } from "../ui/button";
+import { FiDownload } from "react-icons/fi";
 
 export type ColumnConfig = {
   label: string;
@@ -29,12 +31,12 @@ const etiquetaColumn: ColumnConfig = {
     if (!file || !file.documentBody) return "-";
 
     return (
-      <p
+      <Button
+        title="Baixar Etiqueta"
         onClick={() => downloadBase64File(file.documentBody || "", file.fileName || "etiqueta.pdf", file.contentType || "application/pdf")}
-        className="text-mainlilly text-xs font-medium hover:underline cursor-pointer"
       >
-        Etiqueta
-      </p>
+        <FiDownload size={20} />
+      </Button>
     );
   },
 };
@@ -65,6 +67,7 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
     "Aprovação de Vínculo": [
       { label: "Nome do Profissional", render: (item) => item.nameHealthProfessional },
       { label: "Data de Solicitação do Vínculo", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
+      { label: "Data do Registro", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
       motivoColumn,
     ],
   },
@@ -102,7 +105,7 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
     "Solicitações de Envio de Tubo": [
       { label: "Nº Protocolo", render: (item) => item.numberProtocol },
       { label: "Nome do Paciente", render: (item) => item.patientName },
-      { label: "Data da pendência", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
+      { label: "Data de Criação da Pendência", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
       { label: "Data do Pedido", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
       etiquetaColumn,
       motivoColumn,
@@ -116,9 +119,9 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
     ],
     "Solicitações de Retirada": [
       { label: "Nº Protocolo", render: (item) => item.numberProtocol },
-      { label: "Data da pendência", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
-      { label: "Data da Coleta do Exame", render: (item) => item.doctorName || "-" },
-      { label: "Data da Retirada", render: (item) => item.doctorName || "-" },
+      { label: "Data da pendência", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
+      { label: "Data da Coleta do Exame", render: (item) => dayjs(item.examCollectionDate).format("DD/MM/YYYY") || "-" },
+      { label: "Data da Retirada", render: (item) => dayjs(item.examPickupDate).format("DD/MM/YYYY") || "-" },
       motivoColumn,
     ],
     "Concluir Análise": [

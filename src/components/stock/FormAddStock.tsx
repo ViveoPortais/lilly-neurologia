@@ -98,7 +98,9 @@ export default function FormAddStock({ logisticsStuffOptions }: { logisticsStuff
                 </div>
               )}
             />
-            {!isOperation && errors?.logisticsStuffId && <span className="flex text-sm text-red-500 mt-1 block">{errors.logisticsStuffId.message as string}</span>}
+            {!isOperation && errors?.logisticsStuffId && (
+              <span className="flex text-sm text-red-500 mt-1 block">{errors.logisticsStuffId.message as string}</span>
+            )}
           </div>
           <div className="flex flex-col basis-1/4">
             <Input type="number" {...register("quantity")} placeholder="Quantidade" inputPlaceholder="Digite aqui..." />
@@ -119,6 +121,8 @@ export default function FormAddStock({ logisticsStuffOptions }: { logisticsStuff
             size="lg"
             onClick={() => {
               reset();
+              const filterStock: IStockFilterModel = {};
+              dispatch(fetchStocks({ filterStock: filterStock }));
             }}
             className="basis-1/2 md:basis-[17%] font-bold"
           >

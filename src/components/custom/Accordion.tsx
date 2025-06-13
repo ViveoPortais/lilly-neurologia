@@ -2,17 +2,19 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AccordionProps {
- title: string;
- badgeText?: string;
- children: React.ReactNode;
- openByDefault?: boolean;
+  title: string;
+  badgeText?: string;
+  children: React.ReactNode;
+  openByDefault?: boolean;
+  className?: string;
+  id?: string;
 }
 
-export function Accordion({ title, badgeText, children, openByDefault = false }: AccordionProps) {
+export function Accordion({ title, badgeText, children, openByDefault = false, id, className }: AccordionProps) {
  const [isOpen, setIsOpen] = useState(openByDefault);
 
  return (
-  <div className="border border-zinc-200 rounded-xl mb-4 overflow-hidden">
+  <div id={id} className={`border border-zinc-200 rounded-xl mb-4 overflow-hidden ${className ?? ""}`}>
    <button
     onClick={() => setIsOpen(!isOpen)}
     className="flex w-full justify-between items-center px-4 py-3 text-sm font-semibold bg-white border-b border-zinc-200 cursor-pointer"

@@ -79,7 +79,7 @@ const initialState: PendingsState = {
     generateBatchDeclarations: [],
     pendingAssociations: [],
     confirmPickupRequests: [],
-    pickupRequests: [],
+    pickupRequest: [],
     problemWithSamples: [],
     confirmSampleDeliveries: [],
     analyze: [],

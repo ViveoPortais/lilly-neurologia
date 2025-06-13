@@ -25,7 +25,7 @@ export default function PendingsLogisticPage() {
  const grouped: Record<string, ExamPendingModel[]> = {
   "Solicitações de Envio de Tubo": pendings.labels,
   "Confirmar Entrega de Tubo": pendings.tubes,
-  "Solicitações de Retirada": pendings.pickupRequests,
+  "Solicitações de Retirada": pendings.pickupRequest,
   "Confirmar Retirada da Amostra": pendings.confirmPickupRequests,
  };
 

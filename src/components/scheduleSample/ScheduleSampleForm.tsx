@@ -45,6 +45,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
     await resolve({
       item: {
         ...item,
+        deliveryConfirmedAt: data.tubeReceptionDate,
         doctorSuggestedDate: data.doctorSuggestedDate,
         collectMaterial: data.collectMaterial,
       },
