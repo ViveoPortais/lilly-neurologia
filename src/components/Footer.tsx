@@ -34,7 +34,7 @@ export function Footer({ bgColor }: FooterProps) {
       <a href="https://www.lillyprivacy.com/BR-pt/hcp" target="_blank" rel="noopener noreferrer" className="underline">
        Política de Privacidade
       </a>
-      <a href="/files/Termos_de_uso_do_site.pdf" target="_blank" rel="noopener noreferrer" className="underline">
+      <a href="/files/Regulamento Médico_PSD_Neurologia_VFinal.pdf" target="_blank" rel="noopener noreferrer" className="underline">
        Termos de Uso
       </a>
       <a

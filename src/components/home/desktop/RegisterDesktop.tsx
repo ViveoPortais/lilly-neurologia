@@ -117,7 +117,7 @@ export default function RegisterDesktop({
         <span
          onClick={() =>
           openPdfModal({
-           pdfUrl: "/files/Termos_de_uso_do_site.pdf",
+           pdfUrl: "/files/Regulamento Médico_PSD_Neurologia_VFinal.pdf",
            showAgree: true,
            showDisagree: true,
            showDownload: true,
