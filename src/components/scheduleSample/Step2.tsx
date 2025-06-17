@@ -53,7 +53,7 @@ export default function Step2({ register, errors, data }: Step2Props) {
           <strong>Atenção</strong>, a coleta da amostra deve utilizar o tubo de fundo falso CSF Sarstedt 75x13mm enviado pelo programa. Após a coleta do
           material biológico, importante mantê-lo acondicionado refrigerado até a retirada para garantir sua estabilidade de até 14 dias. De acordo com o manual
           de instruções do teste Elecsys β-Amyloid (1-42) CDF II recomenda-se que a amostra seja mantida de 2ºC a 8ºC, por até 14 dias, durante o transporte e
-          armazenamento, até ao momento da medição.
+          armazenamento, até ao momento da análise. Para mais informações sobre o exame e características da amostra acesse a opção Biblioteca de Conteúdos.
         </p>
       </div>
 

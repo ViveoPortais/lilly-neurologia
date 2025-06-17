@@ -31,7 +31,7 @@ export default function SampleIssueModal({ onClose, item }: SampleIssueModalProp
             <Button variant="outlineMainlilly" onClick={() => setStep("cancel")}>
               Cancelar Procedimento
             </Button>
-            <Button onClick={handleRecoleta}>Solicitar Recoleta</Button>
+            <Button onClick={handleRecoleta}>Solicitar Retirada de Nova Amostra</Button>
           </div>
         </div>
       ) : (

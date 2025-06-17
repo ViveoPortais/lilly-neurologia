@@ -86,3 +86,5 @@ export function validateBirthDate(value: string, fieldName: string, setValue: an
   const isValidAge = validateBirthDateRange(value, fieldName, setValue);
   if (!isValidAge) return;
 }
+
+export const allowedSpecialties = ["NEUROLOGIA", "PSIQUIATRIA", "GERIATRIA"];

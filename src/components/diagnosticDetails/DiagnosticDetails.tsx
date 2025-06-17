@@ -86,7 +86,7 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
       )}
       <div className="flex flex-col md:flex-row gap-6 text-left">
         <div className="w-full contentDetails">
-          <h1 className="flex flex-row gap-4 items-center">
+          <h1 className="flex flex-wrap items-center gap-2 md:gap-4">
             Dados do Exame
             <StatusCustom type={"ExamStatusStringMap"} statusStringMap={data.examStatusStringMap} />
             {data.reasonExamNotDoneStringMap?.optionName && (
@@ -94,13 +94,15 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
                 <span>({data.reasonExamNotDoneStringMap?.optionName})</span>
               </div>
             )}
-            {resolvableFlags.includes(statusFlag) && (
-              <button
-                onClick={handleRedirectToPendings}
-                className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
-              >
-                Resolver
-              </button>
+            {resolvableFlags.includes(statusFlag) && (role === "doctor" || role === "professional") && (
+              <div className="w-full md:w-auto mt-1 md:mt-0">
+                <button
+                  onClick={handleRedirectToPendings}
+                  className="border border-red-500 text-red-500 text-xs font-semibold px-2 py-1 rounded-md hover:bg-red-50 transition"
+                >
+                  Resolver
+                </button>
+              </div>
             )}
           </h1>
           <div className="flex flex-col md:flex-row gap-6 py-4">

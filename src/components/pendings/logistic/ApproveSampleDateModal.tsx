@@ -18,6 +18,7 @@ export default function ApproveSampleDateModal({ onClose, item }: ApproveSampleD
     await resolve({
       item: {
         ...item,
+        isPickupRequestApproved: true,
       },
       onSuccess: onClose,
     });

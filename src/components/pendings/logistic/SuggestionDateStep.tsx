@@ -44,6 +44,7 @@ export default function SuggestionDateStep({ onCancel, item }: SuggestionDateSte
         logistcSuggestedDate1: data.suggestion1,
         logistcSuggestedDate2: data.suggestion2,
         logistcSuggestedDate3: data.suggestion3,
+        isPickupRequestApproved: false,
       },
       onSuccess: onCancel,
     });

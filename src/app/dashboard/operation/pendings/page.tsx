@@ -26,7 +26,7 @@ useEffect(() => {
   Documentação: pendings.documents,
   "Gerar Declaração de Lote": pendings.batchPendingDeclarations,
   "Confirmar Entrega de Amostra": pendings.confirmSampleDeliveries,
-  "Concluir Análise": pendings.analyze,
+  "Concluir Análise": pendings.analyzes,
  };
 
  return <GenericPendingsPage fixedCategories={fixedCategories} grouped={grouped} />;

@@ -12,6 +12,7 @@ import DeliverySampleModal from "./DeliverySampleModal";
 import ApproveRejectButtons from "@/components/linkManagement/linkManagement/ApproveRejectButtons";
 import SampleIssueModal from "../doctor/SampleIssueModal";
 import ApproveSampleDateModal from "../logistic/ApproveSampleDateModal";
+import RejectedScheduleModal from "./RejectedScheduleModal";
 
 interface RenderPendingModalProps {
   item: ExamPendingModel | null;
@@ -27,7 +28,7 @@ type Category =
   | "Problema com a Amostra"
   | "Aprovação de Vínculo"
   | "Gerar Declaração de Lote"
-  | "Confirma Entrega de Amostra"
+  | "Confirmar Entrega de Amostra"
   | "Concluir Análise"
   | "Solicitações de Envio de Tubo"
   | "Confirmar Entrega de Tubo"
@@ -39,7 +40,14 @@ type ModalRenderer = (item: ExamPendingModel, onClose: () => void) => JSX.Elemen
 const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
   doctor: {
     Documentação: (item, onClose) => <RejectedDocModal open onClose={onClose} item={item} />,
-    "Solicitações de Retirada de Amostra": (item) => <RedirectToScheduleSample item={item} />,
+    "Solicitações de Retirada de Amostra": (item, onClose) => {
+      if (item.reason === "Agendamento de retirada reprovado") {
+        <GenericModalForm title="Retirada da Amostra" isOpen={true} onClose={onClose}>
+          <RejectedScheduleModal item={item} onClose={onClose} />;
+        </GenericModalForm>;
+      }
+      return <RedirectToScheduleSample item={item} />;
+    },
     "Aprovação de Vínculo": (item, onClose) => (
       <GenericModalForm size={"sm"} title="Aprovação de Vínculo" isOpen={true} onClose={onClose}>
         <ApproveRejectButtons id={item.id} typeRender="modalPending" />
@@ -59,9 +67,9 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
       </GenericModalForm>
     ),
     "Concluir Análise": (item, onClose) => <AnalysisConclusionModal onClose={onClose} item={item} />,
-    "Confirma Entrega de Amostra": (item, onClose) => (
+    "Confirmar Entrega de Amostra": (item, onClose) => (
       <GenericModalForm title="Entrega de Amostra" isOpen onClose={onClose}>
-        <DeliverySampleModal onClose={onClose} />
+        <DeliverySampleModal onClose={onClose} item={item} />
       </GenericModalForm>
     ),
   },
@@ -78,14 +86,21 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
     ),
     "Confirmar Retirada da Amostra": (item, onClose) => (
       <GenericModalForm title="Amostra Retirada" isOpen onClose={onClose}>
-        <DeliverySampleModal onClose={onClose} />
+        <DeliverySampleModal onClose={onClose} item={item} />
       </GenericModalForm>
     ),
     "Solicitações de Retirada": (item, onClose) => <ApproveSampleDateModal item={item} onClose={onClose} />,
   },
   professional: {
     Documentação: (item, onClose) => <RejectedDocModal open onClose={onClose} item={item} />,
-    "Solicitações de Retirada de Amostra": (item) => <RedirectToScheduleSample item={item} />,
+    "Solicitações de Retirada de Amostra": (item, onClose) => {
+      if (item.reason === "Agendamento Reprovado") {
+        <GenericModalForm title="Retirada da Amostra" isOpen={true} onClose={onClose}>
+          <RejectedScheduleModal item={item} onClose={onClose} />;
+        </GenericModalForm>;
+      }
+      return <RedirectToScheduleSample item={item} />;
+    },
     "Problema com a Amostra": (item, onClose) => <SampleIssueModal item={item} onClose={onClose} />,
   },
 };

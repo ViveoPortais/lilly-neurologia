@@ -1,4 +1,4 @@
-import { ExamPendingModel } from "@/types/diagnostic";
+import { ExamPendingModel, IConfirmSampleDeliveryModel } from "@/types/diagnostic";
 import { formatDate } from "@/helpers/helpers";
 import dayjs from "dayjs";
 import { downloadBase64File } from "@/helpers/fileHelper";
@@ -85,10 +85,16 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Data da pendência", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
       motivoColumn,
     ],
-    "Confirma Entrega de Amostra": [
+    "Confirmar Entrega de Amostra": [
       { label: "Número do Protocolo", render: (item) => item.numberProtocol },
       { label: "Data da pendência", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
-      { label: "Data de Envio", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
+      {
+        label: "Data de Envio",
+        render: (item) => {
+          const data = item as IConfirmSampleDeliveryModel;
+          return dayjs(data.sentDate).format("DD/MM/YYYY");
+        },
+      },
       { label: "Nome do Médico/Profissional", render: (item) => item.doctorName || "-" },
       motivoColumn,
     ],

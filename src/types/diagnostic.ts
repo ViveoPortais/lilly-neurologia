@@ -254,6 +254,10 @@ export interface ExamPendingModel {
   logistcSuggestedDate3?: string;
   collectMaterial?: string;
   doctorSuggestedDate?: string;
+  isPickupRequestApproved?: boolean;
+  dateForCollecting?: string;
+  doctorSelectedDate?: string;
+  incidentStatusStringMapId?: string;
 }
 
 export interface ResolveExamPendency {
@@ -289,7 +293,7 @@ export interface PendingResponse {
   pickupRequest: IPickupRequestModel[];
   problemWithSamples: IProblemWithSampleModel[];
   confirmSampleDeliveries: IConfirmSampleDeliveryModel[];
-  analyze: IConfirmSampleDeliveryModel[];
+  analyzes: IConfirmSampleDeliveryModel[];
 }
 
 export interface DocumentPendingModel extends ExamPendingModel {

@@ -82,7 +82,7 @@ const initialState: PendingsState = {
     pickupRequest: [],
     problemWithSamples: [],
     confirmSampleDeliveries: [],
-    analyze: [],
+    analyzes: [],
   },
   collectionScheduleData: null,
   loading: false,

@@ -29,8 +29,8 @@ export default function AnalysisConclusionModal({ onClose, item }: AnalysisConcl
  return (
   <GenericModalForm title={getTitle()} isOpen onClose={onClose}>
    {step === "initial" && <ConclusionOptions onSelect={setStep} />}
-   {/* {step === "problem" && <ReportProblemForm pendencyId={item.id} onClose={onClose} />} */}
-   {step === "conclude" && <ConcludeAnalysisForm pendencyId={item.id} onClose={onClose} />}
+   {step === "problem" && <ReportProblemForm pendencyId={item.id} onClose={onClose} item={item} />}
+   {step === "conclude" && <ConcludeAnalysisForm pendencyId={item.id} onClose={onClose} item={item} />}
   </GenericModalForm>
  );
 }
