@@ -55,7 +55,7 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
             <DiagnosticDetails data={data} role={auth.role} />
             {auth.role !== "logistics" && (
               <div className="flex flex-col w-full space-y-8 mt-2">
-                {auth.role !== "professional" && <MatrixAccess data={data} />}
+                {auth.role === "doctor" && (data.examStatusStringMap?.optionName == "Laudo Disponível") && <MatrixAccess data={data} />}
                 <AttachmentDetails annotations={annotations} />
                 {auth.role === "operation" && data.labelAttachment?.[0] && <LabelDownload file={data.labelAttachment?.[0]!}/>}
                 <HistoryDetails schedulingHistory={data.schedulingHistory ?? []} />

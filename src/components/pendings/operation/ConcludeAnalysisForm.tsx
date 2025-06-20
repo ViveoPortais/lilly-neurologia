@@ -47,6 +47,8 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
           phosphorylatedTau: data.ptau,
           pTauToBA42Ratio: data.ratio,
           totalTau: data.ttau,
+          loginMatrix: data.username,
+          passwordMatrix: data.password,
         },
       },
       onSuccess: onClose,

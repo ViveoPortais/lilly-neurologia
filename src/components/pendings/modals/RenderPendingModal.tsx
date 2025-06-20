@@ -42,9 +42,11 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
     Documentação: (item, onClose) => <RejectedDocModal open onClose={onClose} item={item} />,
     "Solicitações de Retirada de Amostra": (item, onClose) => {
       if (item.reason === "Agendamento de retirada reprovado") {
-        <GenericModalForm title="Retirada da Amostra" isOpen={true} onClose={onClose}>
-          <RejectedScheduleModal item={item} onClose={onClose} />;
-        </GenericModalForm>;
+        return (
+          <GenericModalForm title="Retirada da Amostra" isOpen={true} onClose={onClose}>
+            <RejectedScheduleModal item={item} onClose={onClose} />
+          </GenericModalForm>
+        );
       }
       return <RedirectToScheduleSample item={item} />;
     },

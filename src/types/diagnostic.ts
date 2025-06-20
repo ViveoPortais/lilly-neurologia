@@ -165,6 +165,8 @@ export interface IDiagnosticExamModel {
   betaAmyloidPeptide42?: string | null;
   labelAttachment?: AttachmentModel[];
   pendingExam?: string | null;
+  loginMatrix?: string | null;
+  passwordMatrix?: string | null;
 }
 
 export interface LogisticsModel {
@@ -338,6 +340,8 @@ export interface IAnalysisSampleModel {
   pTauToBA42Ratio?: string;
   totalTau?: string;
   analysisEndDate?: string;
+  loginMatrix?: string;
+  passwordMatrix?: string;
 }
 
 export interface IPatientSampleCollectionViewModel {

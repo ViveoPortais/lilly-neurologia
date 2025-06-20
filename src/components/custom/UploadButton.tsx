@@ -13,9 +13,10 @@ interface UploadButtonProps {
  onFileValid: (file: File) => void;
  onError?: (message: string) => void;
  errorMessage?: string;
+ disabled?: boolean;
 }
 
-export const UploadButton = ({ fieldName, label, onFileValid, onError, errorMessage }: UploadButtonProps) => {
+export const UploadButton = ({ fieldName, label, onFileValid, onError, errorMessage, disabled }: UploadButtonProps) => {
  const fileInputRef = useRef<HTMLInputElement>(null);
  const [fileName, setFileName] = useState("");
 
@@ -49,6 +50,7 @@ export const UploadButton = ({ fieldName, label, onFileValid, onError, errorMess
     variant="ghost"
     className="w-full h-10 bg-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-300"
     onClick={() => fileInputRef.current?.click()}
+    disabled={disabled}
    >
     <Upload className="w-4 h-4 mr-2" />
     {label}

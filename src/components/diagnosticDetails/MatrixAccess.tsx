@@ -53,10 +53,10 @@ const AttachmentDetails = ({ data }: MatrixAccessProps) => {
                     <div className="md:basis-1/3">
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col">
-                                <Input placeholder="E-mail" inputPlaceholder="" className="cursor-pointer" value={data.voucher ?? ''} disabled={true} icon={iconCopy.email} onClickIcon={() => handleCopy("email")} ref={emailRef} />
+                                <Input placeholder="E-mail" inputPlaceholder="" className="cursor-pointer" value={data.loginMatrix ?? ''} disabled={true} icon={iconCopy.email} onClickIcon={() => handleCopy("email")} ref={emailRef} />
                             </div>
                             <div className="flex flex-col">
-                                <Input placeholder="Senha" inputPlaceholder="" className="cursor-pointer" value="1nYoXzKd" disabled={true} icon={iconCopy.password} onClickIcon={() => handleCopy("password")} ref={passwordRef} />
+                                <Input placeholder="Senha" inputPlaceholder="" className="cursor-pointer" value={data.passwordMatrix ?? ''} disabled={true} icon={iconCopy.password} onClickIcon={() => handleCopy("password")} ref={passwordRef} />
                             </div>
                         </div>
                     </div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchStringMaps } from "@/store/slices/basicSlice";
+import { fetchStringMaps, fetchStringMapsList } from "@/store/slices/basicSlice";
 import { postCancellationExam } from "@/store/slices/diagnosticSlice";
 import { IStringMap } from "@/types";
 import { IExamCancellationModel } from "@/types/diagnostic";
@@ -16,14 +16,11 @@ interface CancelProcedureStepProps {
 }
 
 export default function CancelProcedureStep({ onClose, itemId }: CancelProcedureStepProps) {
-  const [reason, setReason] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [optionsCancellation, setOptionsCancellation] = useState<IStringMap[]>([]);
   const { show, hide } = useLoading();
   const modal = useGenericModal();
-
-  const isInvalid = touched && !reason;
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -31,7 +28,10 @@ export default function CancelProcedureStep({ onClose, itemId }: CancelProcedure
         const examNotDoneStringMaps: IStringMap[] = await dispatch(
           fetchStringMaps({ entityName: "Exam", attributeName: "ReasonExamNotDoneStringMap" })
         ).unwrap();
-        setOptionsCancellation(examNotDoneStringMaps);
+        const filtered = examNotDoneStringMaps.filter(
+          (item) => item.optionName === "Médico Recusou Nova Coleta" || item.optionName === "Paciente Recusou Nova Coleta"
+        );
+        setOptionsCancellation(filtered);
       } catch (err) {
         console.error("Erro ao carregar motivos de cancelamento:", err);
       }
@@ -41,14 +41,18 @@ export default function CancelProcedureStep({ onClose, itemId }: CancelProcedure
   }, [dispatch]);
 
   const handleSubmit = async () => {
-    if (!reason) {
-      setTouched(true);
+    if (!selectedReason) {
+      modal.showModal({
+        type: "warning",
+        message: "Selecione um motivo para cancelar o procedimento.",
+        buttonLabel: "Fechar",
+      });
       return;
     }
 
     const payload: IExamCancellationModel = {
       id: itemId,
-      examCancellationReason: reason,
+      examCancellationReason: selectedReason!,
     };
 
     try {
@@ -95,12 +99,10 @@ export default function CancelProcedureStep({ onClose, itemId }: CancelProcedure
       <CustomFilterSelect
         label="Por que está cancelando o procedimento?"
         name="cancelReason"
-        value={reason!}
+        value={selectedReason ?? ""}
         options={optionsCancellation}
-        onChange={setReason}
-        onBlur={() => setTouched(true)}
+        onChange={(value) => setSelectedReason(value)}
       />
-      {isInvalid && <span className="text-xs text-red-500">Campo obrigatório</span>}
 
       <div className="flex justify-between mt-6">
         <Button variant="outlineMainlilly" onClick={onClose}>
