@@ -162,7 +162,7 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Nº Protocolo", render: (item) => item.numberProtocol },
       { label: "Nome do Paciente", render: (item) => item.patientName },
       { label: "Data da pendência", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
-      { label: "Data da Coleta", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
+      { label: "Data da Coleta", render: (item) => dayjs(item.examCollectionDate).format("DD/MM/YYYY") },
       motivoColumn,
     ],
   },

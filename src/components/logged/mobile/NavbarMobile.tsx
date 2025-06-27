@@ -12,13 +12,15 @@ import { FiBell } from "react-icons/fi";
 import { Footer } from "@/components/Footer";
 
 interface NavbarMobileProps {
- changeMobileMenu: (value: boolean) => void;
- generalRoutes: any[];
- pathname: string;
- handleLogout: () => void;
- auth?: any;
- isMobileMenuOpen: boolean;
- handleProtectedRoute: (route: string) => void;
+  changeMobileMenu: (value: boolean) => void;
+  generalRoutes: any[];
+  pathname: string;
+  handleLogout: () => void;
+  auth?: any;
+  isMobileMenuOpen: boolean;
+  handleProtectedRoute: (route: string) => void;
+  onOpenNotificationModal: () => void;
+  unreadCount: number;
 }
 
 export default function NavbarMobile({
@@ -29,6 +31,8 @@ export default function NavbarMobile({
  auth,
  isMobileMenuOpen,
  handleProtectedRoute,
+ onOpenNotificationModal,
+ unreadCount,
 }: NavbarMobileProps) {
  const router = useRouter();
 

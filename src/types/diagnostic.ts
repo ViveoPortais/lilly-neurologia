@@ -154,6 +154,7 @@ export interface IDiagnosticExamModel {
   section?: string | null;
   schedulingHistory?: ISchedulingHistoryResultModel[];
   reasonExamNotDoneStringMap?: IStringMap;
+  resultStringMap?: IStringMap;
   examDefinitionId?: string | null;
   localId?: string | null;
   genderId?: string | null;
@@ -342,6 +343,7 @@ export interface IAnalysisSampleModel {
   analysisEndDate?: string;
   loginMatrix?: string;
   passwordMatrix?: string;
+  resultInconclusive? : boolean;
 }
 
 export interface IPatientSampleCollectionViewModel {

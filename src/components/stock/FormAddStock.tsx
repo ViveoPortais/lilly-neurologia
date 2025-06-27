@@ -13,11 +13,12 @@ import { ILogisticsStuffModel, IStockFilterModel, IStockModel } from "@/types/lo
 import { addStock, fetchStocks } from "@/store/slices/logisticsSlice";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import useSession from "@/hooks/useSession";
+import { validateNoFutureDate } from "@/helpers/helpers";
 
 export default function FormAddStock({ logisticsStuffOptions }: { logisticsStuffOptions: ILogisticsStuffModel[] }) {
   const methods = useForm<StockModelSchema>({
     resolver: zodResolver(stockModelSchema),
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const {
@@ -44,6 +45,11 @@ export default function FormAddStock({ logisticsStuffOptions }: { logisticsStuff
 
   const onSubmit = async (data: StockModelSchema) => {
     try {
+      if (!isOperation) {
+        const isValidDate = validateNoFutureDate(data.createdOn, "createdOn", setValue, "A data de recebimento não pode ser futura.");
+
+        if (!isValidDate) return;
+      }
       const result = await dispatch(addStock({ data: data as IStockModel })).unwrap();
       if (result) {
         if (result.isValidData) {
@@ -121,6 +127,7 @@ export default function FormAddStock({ logisticsStuffOptions }: { logisticsStuff
             size="lg"
             onClick={() => {
               reset();
+              setValue("logisticsStuffId", "");
               const filterStock: IStockFilterModel = {};
               dispatch(fetchStocks({ filterStock: filterStock }));
             }}

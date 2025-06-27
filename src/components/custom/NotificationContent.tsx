@@ -1,6 +1,6 @@
 "use client";
 
-import { HiX } from "react-icons/hi";
+import { HiX, HiCheck } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import dayjs from "dayjs";
@@ -10,14 +10,16 @@ interface Notification {
   id: string;
   content: string;
   createdAt: string;
+  status?: string;
 }
 
 interface NotificationContentProps {
   notifications: Notification[];
-  onDelete: (id: string) => void;
+  onMarkAsRead: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
-export default function NotificationContent({ notifications, onDelete }: NotificationContentProps) {
+export default function NotificationContent({ notifications, onMarkAsRead, onRemove }: NotificationContentProps) {
   const router = useRouter();
 
   const renderContent = useCallback(
@@ -26,7 +28,6 @@ export default function NotificationContent({ notifications, onDelete }: Notific
       if (!match) return text;
 
       const label = match[1].trim();
-
       let matchedRoute: string | undefined;
 
       Object.values(routes).some((profileRoutes) => {
@@ -67,14 +68,25 @@ export default function NotificationContent({ notifications, onDelete }: Notific
         ) : (
           <ul className="space-y-5">
             {notifications.map((n) => (
-              <li key={n.id} className="flex justify-between items-start gap-3">
+              <li key={n.id} className={`flex justify-between items-start gap-3 border-b pb-2 ${n.status === "#READ" ? "opacity-70" : ""}`}>
                 <div className="flex-1 text-sm text-gray-800 leading-snug">
                   <span className="block">{renderContent(n.content)}</span>
-                  <span className="text-xs text-gray-500 mt-1 block">{dayjs(n.createdAt).format("DD [de] MMMM [de] YYYY • HH:mm")}</span>
+                  <div className="mt-3 flex gap-1 text-xs text-gray-500">
+                    <span>{dayjs(n.createdAt).format("DD [de] MMMM [de] YYYY")}</span>
+                    <span>•</span>
+                    <span>{dayjs(n.createdAt).format("HH:mm")}h</span>
+                  </div>
                 </div>
-                <button onClick={() => onDelete(n.id)} className="text-gray-500 hover:text-red-600" aria-label="Remover notificação">
-                  <HiX size={18} />
-                </button>
+
+                <div className="flex gap-2">
+                  <button onClick={() => onMarkAsRead(n.id)} className="text-green-600 hover:text-green-800" title="Marcar como lida">
+                    <HiCheck size={18} />
+                  </button>
+
+                  <button onClick={() => onRemove(n.id)} className="text-red-500 hover:text-red-700" title="Remover notificação">
+                    <HiX size={18} />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

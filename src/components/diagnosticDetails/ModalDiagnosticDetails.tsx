@@ -59,7 +59,7 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
                 <AttachmentDetails annotations={annotations} />
                 {auth.role === "operation" && data.labelAttachment?.[0] && <LabelDownload file={data.labelAttachment?.[0]!}/>}
                 <HistoryDetails schedulingHistory={data.schedulingHistory ?? []} />
-                {!(data.examStatusStringMap?.flag == "EXAM_CANCELED") && (
+                {!(data.examStatusStringMap?.flag == "EXAM_CANCELED" || data.examStatusStringMap?.flag == "EXAM_REPORT_AVAILABLE") && (
                   <div>
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-l-8 w-full border-l-mainlilly rounded-2xl pl-3 pr-4 py-4 shadow-sm gap-4">
                       <div className="flex flex-row">

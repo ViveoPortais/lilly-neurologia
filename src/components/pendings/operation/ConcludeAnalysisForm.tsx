@@ -10,13 +10,21 @@ import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 
 const schema = z.object({
   conclusionDate: z.string().min(1, "Data obrigatória"),
-  ba42: z.string().min(1),
-  ptau: z.string().min(1),
-  ratio: z.string().min(1),
-  ttau: z.string().min(1),
+  ba42: z.string(),
+  ptau: z.string(),
+  ratio: z.string(),
+  ttau: z.string(),
   username: z.string().min(1),
   password: z.string().min(1),
-});
+  resultInconclusive: z.boolean()
+}).refine(
+  (data)=>{
+    if(!data.resultInconclusive){
+      return data.ba42 && data.ptau && data.ratio && data.ttau;
+    }
+    return true;
+  }
+);
 
 type FormData = z.infer<typeof schema>;
 
@@ -31,11 +39,31 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
     formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      resultInconclusive: false,
+    },
+    mode : "onChange"
   });
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     validateNoFutureDate(e.target.value, "conclusionDate", setValue, "A data de conclusão não pode ser futura.");
   };
+
+  const handleChangeResultInconclusive = (value : boolean)=>{
+    setValue("resultInconclusive", value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    if(value){
+      setValue("ba42","");
+      setValue("ptau","");
+      setValue("ratio","");
+      setValue("ttau","");
+    }
+
+
+  }
 
   const onSubmit = async (data: FormData) => {
     await resolve({
@@ -49,6 +77,7 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
           totalTau: data.ttau,
           loginMatrix: data.username,
           passwordMatrix: data.password,
+          resultInconclusive : data.resultInconclusive
         },
       },
       onSuccess: onClose,
@@ -68,10 +97,44 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
       {errors.conclusionDate && <span className="text-red-500 text-sm">{errors.conclusionDate.message}</span>}
 
       <div className="grid gap-4">
-        <Input {...register("ba42")} placeholder="Peptídeo Beta Amiloide 1-42 (BA42)" />
-        <Input {...register("ptau")} placeholder="Proteína Tau Fosforilada (pTau)" />
-        <Input {...register("ratio")} placeholder="Razão pTau/BA42" />
-        <Input {...register("ttau")} placeholder="Proteína Tau Total (tTau)" />
+        <div className="space-y-2">
+          <label className="flex text-base tracking-wide text-black">Resultado inconclusivo?</label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                {...register("resultInconclusive")}
+                onChange={() => handleChangeResultInconclusive(true)}
+                checked={watch("resultInconclusive") === true}
+                className="hidden peer"
+              />
+              <div className="w-4 h-4 rounded-full border border-mainlilly flex items-center justify-center peer-checked:bg-mainlilly">
+                <div className="w-1 h-1 rounded-full bg-white" />
+              </div>
+              <span>Sim</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                {...register("resultInconclusive")}
+                onChange={() => handleChangeResultInconclusive(false)}
+                checked={watch("resultInconclusive") === null ? true : watch("resultInconclusive") === false}
+                className="hidden peer"
+              />  
+              <div className="w-4 h-4 rounded-full border border-mainlilly flex items-center justify-center peer-checked:bg-mainlilly">
+                <div className="w-1 h-1 rounded-full bg-white" />
+              </div>
+              <span>Não</span>
+            </label>
+          </div>
+          {errors.resultInconclusive && (
+            <span className="text-red-500 text-sm">Selecione se o resultado é inconclusivo.</span>
+          )}
+        </div>
+        <Input {...register("ba42")} placeholder="Peptídeo Beta Amiloide 1-42 (BA42)" disabled={watch("resultInconclusive")} />
+        <Input {...register("ptau")} placeholder="Proteína Tau Fosforilada (pTau)" disabled={watch("resultInconclusive")}/>
+        <Input {...register("ratio")} placeholder="Razão pTau/BA42" disabled={watch("resultInconclusive")}/>
+        <Input {...register("ttau")} placeholder="Proteína Tau Total (tTau)" disabled={watch("resultInconclusive")}/>
         <Input {...register("username")} placeholder="Digite o usuário" />
         <Input {...register("password")} placeholder="Digite sua senha" type="password" className="input" />
       </div>

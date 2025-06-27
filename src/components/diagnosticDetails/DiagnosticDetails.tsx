@@ -6,6 +6,8 @@ import { getCategoryFromFlag, resolvableFlags } from "@/helpers/resolveHelper";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/store/hooks";
 import { setSelectedDoctorId } from "@/store/slices/registerPatientSlice";
+import { IStringMap } from "@/types";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 type DiagnosticDetailsProps = {
   data: IDiagnosticExamModel;
@@ -28,6 +30,43 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
     const url = `/dashboard/doctor/pendings?resolveId=${data.id}&category=${encodeURIComponent(category)}`;
 
     router.push(url);
+  };
+
+  const renderResultsByFlag = (data : IDiagnosticExamModel) =>{
+
+    switch (data.resultStringMap?.flag) {
+      case "#RESULTINCONCLUSIVE":
+        return (
+          <div className="md:basis-1/4">
+              <p className="flex flex-row gap-2">
+                Resultado Inconclusivo
+                <FaCircleExclamation size={15} className="flex my-auto text-black bg-white rounded rounded-full" title="O exame foi realizado, porém não foi possível obter um resultado conclusivo nesta análise."/>
+              </p>
+          </div>
+        );
+      default:
+        return (
+          <>
+            <div className="md:basis-1/4">
+              <label>Peptídeo Beta Amiloide 1-42 (BA 42)</label>
+              <p>{data.betaAmyloidPeptide42}</p>
+            </div>
+            <div className="md:basis-1/4">
+              <label>Proteina Tau Fosforilada</label>
+              <p>{data.phosphorylatedTau}</p>
+            </div>
+            <div className="md:basis-1/4">
+              <label>Razão pTau/BA42</label>
+              <p>{data.pTauToBA42Ratio}</p>
+            </div>
+            <div className="md:basis-1/4">
+              <label>Proteina Tau Total(tTau)</label>
+              <p>{data.totalTau}</p>
+            </div>
+          </>
+        );
+    }
+
   };
   return (
     <>
@@ -149,27 +188,12 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
           </div>
         </div>
       </div>
-      {data.betaAmyloidPeptide42 && role === "operation" && (
+      {(role != "logistics" && data.examStatusStringMap?.flag === "EXAM_REPORT_AVAILABLE") && (
         <div className="flex flex-col md:flex-row gap-4 text-left">
           <div className="w-full contentDetails">
-            <h1>Resultado</h1>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="md:basis-1/4">
-                <label>Peptídeo Beta Amiloide 1-42 (BA 42)</label>
-                <p>{data.betaAmyloidPeptide42}</p>
-              </div>
-              <div className="md:basis-1/4">
-                <label>Proteina Tau Fosforilada</label>
-                <p>{data.phosphorylatedTau}</p>
-              </div>
-              <div className="md:basis-1/4">
-                <label>Razão pTau/BA42</label>
-                <p>{data.pTauToBA42Ratio}</p>
-              </div>
-              <div className="md:basis-1/4">
-                <label>Proteina Tau Total(tTau)</label>
-                <p>{data.totalTau}</p>
-              </div>
+            <h1>Resultados</h1>
+            <div className="flex flex-col md:flex-row gap-6">
+              {renderResultsByFlag(data)}
             </div>
           </div>
         </div>
