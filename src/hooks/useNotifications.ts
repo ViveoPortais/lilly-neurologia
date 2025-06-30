@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import useSession from "./useSession";
 import { ICommunicationFilterModel } from "@/types/notifications";
+import { toast } from "react-toastify";
+import { showNotificationToast } from "@/components/custom/ToastNotification";
 
 export function useNotification() {
   const { token, programsCode } = useSession();
@@ -32,14 +34,18 @@ export function useNotification() {
           programCode: programsCode[0],
         };
 
-        connection.invoke("GetNotifications", filter, programsCode[0]);
+        connection.invoke("GetNotifications", filter);
       })
       .catch((err) => console.error("Erro ao conectar SignalR:", err));
 
-    connection.on("ReceiveNotifications", (data) => {
-      console.log(data);
-      setNotifications(data.notifications);
-      // const unread = data?.filter((n: any) => n.status === "#PENDING")?.length ?? 0;
+    connection.on("AddNotification", (data) => {
+      setNotifications((prev) => [data, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+      showNotificationToast("Nova Notificação", data.description);
+    });
+
+    connection.on("AllNotifications",(data) =>{
+      setNotifications(data.data);
       setUnreadCount(data.totalCount);
     });
 
@@ -59,22 +65,22 @@ export function useNotification() {
       programCode: programsCode[0],
     };
 
-    connectionRef.current?.invoke("GetNotifications", filter, programsCode[0]);
+    connectionRef.current?.invoke("GetNotifications", filter);
   };
 
   const markAsRead = async (notificationId: string) => {
-    await connectionRef.current?.invoke("UpdateNotificationStatus", programsCode[0], notificationId, "#READ", {
+    await connectionRef.current?.invoke("UpdateNotificationStatus", notificationId, "#READ", {
       page: 1,
       pageSize: 10,
-      progamCode: programsCode[0],
+      programCode: programsCode[0],
     });
   };
 
   const removeNotification = async (notificationId: string) => {
-    await connectionRef.current?.invoke("UpdateNotificationStatus", programsCode[0], notificationId, "#REMOVED", {
+    await connectionRef.current?.invoke("UpdateNotificationStatus", notificationId, "#REMOVED", {
       page: 1,
       pageSize: 10,
-      progamCode: programsCode[0],
+      programCode: programsCode[0],
     });
   };
 

@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import dayjs from "dayjs";
 import { routes } from "@/helpers/routes";
+import { IStringMap } from "@/types";
+import useSession from "@/hooks/useSession";
 
 interface Notification {
   id: string;
-  content: string;
-  createdAt: string;
-  status?: string;
+  name: string;
+  description: string;
+  createdOn?: string;
+  statusCodeStringMap?: IStringMap;
 }
 
 interface NotificationContentProps {
@@ -21,41 +24,40 @@ interface NotificationContentProps {
 
 export default function NotificationContent({ notifications, onMarkAsRead, onRemove }: NotificationContentProps) {
   const router = useRouter();
+  const { role } = useSession();
 
   const renderContent = useCallback(
     (text: string) => {
-      const match = text.match(/<route>(.*?)<\/route>/);
-      if (!match) return text;
+      const profileRoutes = role ? routes[role] : [];
 
-      const label = match[1].trim();
+      if (!profileRoutes || profileRoutes.length === 0) return text;
+
       let matchedRoute: string | undefined;
+      let matchedText: string | undefined;
 
-      Object.values(routes).some((profileRoutes) => {
-        const found = profileRoutes.find((r) => r.text.toLowerCase() === label.toLowerCase());
-        if (found) {
-          matchedRoute = found.route;
-          return true;
+      for (const route of profileRoutes) {
+        if (text.toLowerCase().includes(route.text.toLowerCase())) {
+          matchedRoute = route.route;
+          matchedText = route.text;
+          break;
         }
-        return false;
-      });
+      }
 
-      const [before, after] = text.split(match[0]);
+      if (!matchedRoute || !matchedText) return text;
+
+      const [before, after] = text.split(new RegExp(matchedText, "i"));
 
       return (
         <>
           {before}
-          {matchedRoute ? (
-            <span onClick={() => router.push(matchedRoute!)} className="text-red-600 underline cursor-pointer">
-              {label}
-            </span>
-          ) : (
-            <span className="text-red-600">{label}</span>
-          )}
+          <span onClick={() => router.push(matchedRoute!)} className="text-red-600 underline cursor-pointer">
+            {matchedText}
+          </span>
           {after}
         </>
       );
     },
-    [router]
+    [router, role]
   );
 
   return (
@@ -68,13 +70,13 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
         ) : (
           <ul className="space-y-5">
             {notifications.map((n) => (
-              <li key={n.id} className={`flex justify-between items-start gap-3 border-b pb-2 ${n.status === "#READ" ? "opacity-70" : ""}`}>
+              <li key={n.id} className={`flex justify-between items-start gap-3 border-b pb-2 ${n.statusCodeStringMap?.flag === "#READ" ? "opacity-70" : ""}`}>
                 <div className="flex-1 text-sm text-gray-800 leading-snug">
-                  <span className="block">{renderContent(n.content)}</span>
+                  <span className="block">{renderContent(n.description)}</span>
                   <div className="mt-3 flex gap-1 text-xs text-gray-500">
-                    <span>{dayjs(n.createdAt).format("DD [de] MMMM [de] YYYY")}</span>
+                    <span>{dayjs(n.createdOn).format("DD [de] MMMM [de] YYYY")}</span>
                     <span>•</span>
-                    <span>{dayjs(n.createdAt).format("HH:mm")}h</span>
+                    <span>{dayjs(n.createdOn).format("HH:mm")}h</span>
                   </div>
                 </div>
 
