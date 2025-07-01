@@ -114,7 +114,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       />
 
       <GenericModalForm title="Notificações" isOpen={notificationModalOpen} onClose={() => setNotificationModalOpen(false)}>
-        <NotificationContent notifications={notifications} onMarkAsRead={(id) => markAsRead(id)} onRemove={(id) => removeNotification(id)} />
+        <NotificationContent notifications={notifications} onMarkAsRead={(id) => markAsRead(id)} onRemove={(id) => removeNotification(id)} onClose={() => setNotificationModalOpen(false)} />
       </GenericModalForm>
     </main>
   );

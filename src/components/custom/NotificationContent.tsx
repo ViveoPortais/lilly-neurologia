@@ -22,9 +22,10 @@ interface NotificationContentProps {
   notifications: Notification[];
   onMarkAsRead: (id: string) => void;
   onRemove: (id: string) => void;
+  onClose: () => void;
 }
 
-export default function NotificationContent({ notifications, onMarkAsRead, onRemove }: NotificationContentProps) {
+export default function NotificationContent({ notifications, onMarkAsRead, onRemove, onClose }: NotificationContentProps) {
   const router = useRouter();
   const { role } = useSession();
 
@@ -52,14 +53,20 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
       return (
         <>
           {before}
-          <span onClick={() => router.push(matchedRoute!)} className="text-gray-800 underline text-red-600 cursor-pointer">
+          <span
+            onClick={() => {
+              router.push(matchedRoute!);
+              onClose();
+            }}
+            className="text-gray-800 underline text-red-600 cursor-pointer"
+          >
             {matchedText}
           </span>
           {after}
         </>
       );
     },
-    [router, role]
+    [router, role, onClose]
   );
 
   return (
