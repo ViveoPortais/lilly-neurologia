@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import { routes } from "@/helpers/routes";
 import { IStringMap } from "@/types";
 import useSession from "@/hooks/useSession";
+import "dayjs/locale/pt-br";
+dayjs.locale("pt-br");
 
 interface Notification {
   id: string;
@@ -50,7 +52,7 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
       return (
         <>
           {before}
-          <span onClick={() => router.push(matchedRoute!)} className="text-red-600 underline cursor-pointer">
+          <span onClick={() => router.push(matchedRoute!)} className="text-gray-800 underline text-red-600 cursor-pointer">
             {matchedText}
           </span>
           {after}
@@ -71,7 +73,7 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
           <ul className="space-y-5">
             {notifications.map((n) => (
               <li key={n.id} className={`flex justify-between items-start gap-3 border-b pb-2 ${n.statusCodeStringMap?.flag === "#READ" ? "opacity-70" : ""}`}>
-                <div className="flex-1 text-sm text-gray-800 leading-snug">
+                <div className="flex-1 text-sm text-gray-800 leading-snug text-left">
                   <span className="block">{renderContent(n.description)}</span>
                   <div className="mt-3 flex gap-1 text-xs text-gray-500">
                     <span>{dayjs(n.createdOn).format("DD [de] MMMM [de] YYYY")}</span>
