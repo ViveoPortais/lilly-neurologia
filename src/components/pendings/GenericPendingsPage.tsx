@@ -27,6 +27,7 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
   const [selectedItem, setSelectedItem] = useState<ExamPendingModel | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [highlightCategory, setHighlightCategory] = useState<string | null>(null);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -35,32 +36,29 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
   const categoryParam = searchParams.get("category");
 
   useEffect(() => {
-    if (!resolveId || !categoryParam) return;
+    if (!resolveId) return;
 
-    const pendingList = grouped[categoryParam];
-    if (!pendingList || pendingList.length === 0) return;
+    let found: ExamPendingModel | undefined;
+    let foundCategory: string | undefined;
 
-    const found = pendingList.find((item) => item.id === resolveId);
-    if (found) {
-      setSelectedCategory(categoryParam);
+    for (const [category, list] of Object.entries(grouped)) {
+      found = list.find((item) => item.id === resolveId);
+      if (found) {
+        foundCategory = category;
+        break;
+      }
+    }
+
+    if (found && foundCategory) {
+      setSelectedCategory(foundCategory);
       setSelectedItem(found);
-      setHighlightCategory(categoryParam);
+      setHighlightCategory(foundCategory);
+      setOpenCategory(foundCategory);
 
       setTimeout(() => setHighlightCategory(null), 2000);
     }
 
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("resolveId");
-    params.delete("category");
-    router.replace(`/dashboard/doctor/pendings?${params.toString()}`, { scroll: false });
   }, [resolveId, categoryParam, grouped, role, router, searchParams]);
-
-  useEffect(() => {
-    if (categoryParam) {
-      const el = document.getElementById(`accordion-${categoryParam}`);
-      el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [categoryParam]);
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -94,6 +92,8 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
             title={category}
             badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}
             className={highlightCategory === category ? "ring-2 ring-mainlilly rounded-md" : ""}
+            isOpen={openCategory  === category}
+            onToggle={() => setOpenCategory(prev => (prev === category ? null : category))}
           >
             {role === "operation" && (
               <div className="mb-2">

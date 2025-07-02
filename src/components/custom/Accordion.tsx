@@ -5,18 +5,18 @@ interface AccordionProps {
   title: string;
   badgeText?: string;
   children: React.ReactNode;
-  openByDefault?: boolean;
+  isOpen?: boolean;
+  onToggle : () => void;
   className?: string;
   id?: string;
 }
 
-export function Accordion({ title, badgeText, children, openByDefault = false, id, className }: AccordionProps) {
- const [isOpen, setIsOpen] = useState(openByDefault);
+export function Accordion({ title, badgeText, children, isOpen, onToggle, id, className }: AccordionProps) {
 
  return (
   <div id={id} className={`border border-zinc-200 rounded-xl mb-4 overflow-hidden ${className ?? ""}`}>
    <button
-    onClick={() => setIsOpen(!isOpen)}
+    onClick={onToggle}
     className="flex w-full justify-between items-center px-4 py-3 text-sm font-semibold bg-white border-b border-zinc-200 cursor-pointer"
    >
     <div className="flex items-center gap-2">
