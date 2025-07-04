@@ -46,7 +46,8 @@ export function useNotification() {
 
     connection.on("AllNotifications",(data) =>{
       setNotifications(data.data);
-      setUnreadCount(data.totalCount);
+      const unread = data?.data.filter((n: any) => n.statusCodeStringMap.flag === "#PENDING")?.length ?? 0;
+      setUnreadCount(unread);
     });
 
     connection.on("ReceiveNotificationError", (errors: string[]) => {

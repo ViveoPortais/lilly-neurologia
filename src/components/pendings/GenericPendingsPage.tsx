@@ -55,7 +55,11 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
       setHighlightCategory(foundCategory);
       setOpenCategory(foundCategory);
 
-      setTimeout(() => setHighlightCategory(null), 2000);
+      
+    setTimeout(() => {
+      setHighlightCategory(null);
+      router.replace(window.location.pathname);
+    }, 2000);
     }
 
   }, [resolveId, categoryParam, grouped, role, router, searchParams]);

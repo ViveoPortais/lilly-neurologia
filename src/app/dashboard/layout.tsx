@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { useNotification } from "@/hooks/useNotifications";
 import NotificationContent from "@/components/custom/NotificationContent";
+import { useNotificationModalStore } from "@/hooks/useNotificationModalStore";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { isMenuOpen } = useLateralMenu();
@@ -26,7 +27,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const { isOpen, closeModal, openModal } = useNotificationModalStore();
   const { notifications, unreadCount, refresh, markAsRead, removeNotification } = useNotification();
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <main className={`h-screen w-screen relative`}>
       <Navbar
         onOpenNotificationModal={() => {
-          setNotificationModalOpen(true);
+          openModal();
           refresh();
         }}
         unreadCount={unreadCount}
@@ -113,8 +114,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         children={<AlterPasswordModal isOpenExternally={isPasswordModalOpen} onCloseExternally={() => setIsPasswordModalOpen(false)} />}
       />
 
-      <GenericModalForm title="Notificações" isOpen={notificationModalOpen} onClose={() => setNotificationModalOpen(false)}>
-        <NotificationContent notifications={notifications} onMarkAsRead={(id) => markAsRead(id)} onRemove={(id) => removeNotification(id)} onClose={() => setNotificationModalOpen(false)} />
+      <GenericModalForm title="Notificações" isOpen={isOpen} onClose={closeModal}>
+        <NotificationContent notifications={notifications} onMarkAsRead={(id) => markAsRead(id)} onRemove={(id) => removeNotification(id)} onClose={closeModal} />
       </GenericModalForm>
     </main>
   );

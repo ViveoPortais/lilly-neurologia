@@ -1,10 +1,18 @@
 import { Slide, toast } from "react-toastify";
 import { FaBell } from "react-icons/fa";
+import { useNotificationModalStore } from "@/hooks/useNotificationModalStore";
 
 export const showNotificationToast = (title: string, description: string) => {
+  const { openModal } = useNotificationModalStore.getState();
   toast(
     ({ closeToast }) => (
-      <div className="flex items-start gap-3">
+      <div
+        className="flex items-start gap-3"
+        onClick={() => {
+          openModal();
+          closeToast?.();
+        }}
+      >
         <div className="text-mainlilly mt-1">
           <FaBell size={22} />
         </div>
@@ -17,7 +25,7 @@ export const showNotificationToast = (title: string, description: string) => {
     {
       position: "top-right",
       autoClose: 8000,
-      closeOnClick: true,
+      closeOnClick: false,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
