@@ -11,23 +11,25 @@ import diagnosticSlice from "./slices/diagnosticSlice";
 import basicSlice from "./slices/basicSlice";
 import manageFileSlice from "./slices/manageFileSlice";
 import logisticsSlice from "./slices/logisticsSlice";
+import blockedUserSlice from "./slices/blockedUserSlice";
 
 export const store = configureStore({
- reducer: {
-  callTracking: callTrackingReducer,
-  call: callSlice,
-  callChat: callChatSlice,
-  registerRepresentative: registerRepresentativeSlice,
-  registerPatient: registerPatientSlice,
-  linkManagement: linkManagementSlice,
-  profile: profileSlice,
-  pending: pendingsSlice,
-  diagnostic: diagnosticSlice,
-  basic: basicSlice,
-  manageFile: manageFileSlice,
-  logistics : logisticsSlice,
- },
- devTools: true,
+  reducer: {
+    callTracking: callTrackingReducer,
+    call: callSlice,
+    callChat: callChatSlice,
+    registerRepresentative: registerRepresentativeSlice,
+    registerPatient: registerPatientSlice,
+    linkManagement: linkManagementSlice,
+    profile: profileSlice,
+    pending: pendingsSlice,
+    diagnostic: diagnosticSlice,
+    basic: basicSlice,
+    manageFile: manageFileSlice,
+    logistics: logisticsSlice,
+    blockedUsers: blockedUserSlice,
+  },
+  devTools: true,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

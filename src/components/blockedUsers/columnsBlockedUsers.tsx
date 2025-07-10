@@ -5,36 +5,28 @@ import { FaCircle } from "react-icons/fa";
 import { useState } from "react";
 import DesbloquearUsuarioModal from "./DesbloquearUsuarioModal";
 import GenericModalForm from "../modals/GenericModalForm";
+import { IBlockedUser } from "@/types/user";
 
-export interface BlockedUser {
-  id: string;
-  email: string;
-  registrationDate: string;
-  attemptDate: string;
-  reason: string;
-  status: "blocked" | "active";
-}
-
-export const columnsBlockedUsers: ColumnDef<BlockedUser>[] = [
+export const columnsBlockedUsers: ColumnDef<IBlockedUser>[] = [
   {
-    accessorKey: "registrationDate",
+    accessorKey: "dateCreate",
     header: "Data do Cadastro",
-    cell: ({ row }) => row.original.registrationDate,
+    cell: ({ row }) => row.original.dateCreate,
   },
   {
-    accessorKey: "email",
+    accessorKey: "userEmail",
     header: "E-mail do Usuário",
-    cell: ({ row }) => row.original.email,
+    cell: ({ row }) => row.original.userEmail,
   },
   {
-    accessorKey: "reason",
+    accessorKey: "reasonStateCode",
     header: "Motivo",
-    cell: ({ row }) => row.original.reason,
+    cell: ({ row }) => row.original.reasonStateCode,
   },
   {
-    accessorKey: "attemptDate",
+    accessorKey: "dateAccessTry",
     header: "Data da Tentativa",
-    cell: ({ row }) => row.original.attemptDate,
+    cell: ({ row }) => row.original.dateAccessTry,
   },
   {
     accessorKey: "status",

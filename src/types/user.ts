@@ -34,3 +34,17 @@ export interface IRegisterRepresentative {
   name: string;
   telephone: string;
 }
+
+export interface IUnblockUserRequest {
+  userId: string;
+  programCode: string;
+}
+
+export interface IBlockedUser {
+  id: string;
+  userEmail: string;
+  dateCreate: string;
+  dateAccessTry: string;
+  reasonStateCode: string;
+  status: string;
+}

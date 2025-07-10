@@ -1,7 +1,7 @@
 import { IUpdateProfessionalData } from "@/types/professions";
 import api from "./api";
 import { IDoctorData, IUpdateDoctorData } from "@/types";
-import { IChangePassword, IRegisterRepresentative } from "@/types/user";
+import { IChangePassword, IRegisterRepresentative, IUnblockUserRequest } from "@/types/user";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
@@ -38,4 +38,16 @@ export const changePassword = async (data: IChangePassword) => {
 export const registerRepresentative = async (data: IRegisterRepresentative) => {
   const res = await api.post("/user/add", data);
   return res.data;
+};
+
+export const getBlockedUsers = async () => {
+  const response = await api.get("/user/blockedusers", {
+    params: { programCode: programCode },
+  });
+  return response.data;
+};
+
+export const unblockUser = async (dto: IUnblockUserRequest) => {
+  const response = await api.post("/user/unblock", dto);
+  return response.data;
 };
