@@ -43,7 +43,7 @@ const blockedUsersSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBlockedUsers.fulfilled, (state, action) => {
-        state.data = action.payload;
+        state.data = action.payload.data;
         state.loading = false;
       })
       .addCase(fetchBlockedUsers.rejected, (state, action) => {

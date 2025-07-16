@@ -72,9 +72,7 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
   const isApproved = approved === true;
   const canSave = (isApproved && attachmentBase64) || (isRejected && !!rejectionReasonId);
 
-  const rejectionOptions = pendencyReasons
-    .filter((reason) => reason.flag === "#TERM_CONSENT_AND_MEDICAL_ORDER")
-    .map((r) => ({ id: r.id, value: r.name }));
+  const rejectionOptions = pendencyReasons.filter((reason) => reason.flag === "#TERM_CONSENT_AND_MEDICAL_ORDER").map((r) => ({ id: r.id, value: r.name }));
 
   return (
     <div className="space-y-4">
@@ -82,20 +80,33 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
         <div className="space-y-2 border border-dashed border-zinc-300 rounded-lg p-4 bg-[#f9f9f9]">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border border-zinc-300 rounded-lg px-4 py-3 bg-white gap-2">
             <div className="flex items-start gap-2 relative w-full sm:w-auto">
-              <AiFillFilePdf className="text-red-600 mt-1 shrink-0" size={20} />
-              <div className="flex flex-col max-w-full sm:max-w-[160px]">
-                <span className="text-sm font-medium text-zinc-800 truncate">{doc.annotationTypeName}</span>
-                <span className="text-xs text-zinc-500 text-left">{doc.fileSize ? `${doc.fileSize} KB` : "Tamanho indefinido"}</span>
-              </div>
-              <FiDownload
-                className="text-zinc-500 absolute right-0 top-1 sm:static sm:ml-2 cursor-pointer"
-                size={16}
+              <div
+                className="text-red-600 mt-1 shrink-0 cursor-pointer sm:cursor-default"
                 onClick={() => {
-                  if (doc.documentBody) {
+                  if (doc.documentBody && window.innerWidth < 640) {
                     downloadBase64File(doc.documentBody, doc.fileName || "documento.pdf", doc.contentType || "application/pdf");
                   }
                 }}
-              />
+              >
+                <AiFillFilePdf size={20} />
+              </div>
+              <div className="flex flex-col w-full pr-6 sm:pr-0 sm:max-w-[160px]">
+                <span className="text-sm font-medium text-zinc-800 truncate" title={doc.annotationTypeName!}>
+                  {doc.annotationTypeName}
+                </span>
+                <span className="text-xs text-zinc-500 text-left">{doc.fileSize ? `${doc.fileSize} KB` : "Tamanho indefinido"}</span>
+              </div>
+              <div className="hidden sm:block sm:ml-2">
+                <FiDownload
+                  className="text-zinc-500 cursor-pointer"
+                  size={16}
+                  onClick={() => {
+                    if (doc.documentBody) {
+                      downloadBase64File(doc.documentBody, doc.fileName || "documento.pdf", doc.contentType || "application/pdf");
+                    }
+                  }}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-between sm:justify-end gap-2">

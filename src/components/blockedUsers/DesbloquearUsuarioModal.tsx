@@ -46,7 +46,6 @@ export default function DesbloquearUsuarioModal({ user, onClose }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <p>Deseja desbloquear este usuário?</p>
       <div className="flex gap-4">
         <Button variant="outlineMainlilly" onClick={onClose}>
           Cancelar
