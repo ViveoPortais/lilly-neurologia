@@ -71,8 +71,8 @@ export function validateBirthDateRange(value: string, fieldName: string, setValu
   const today = dayjs();
   const age = today.diff(birthDate, "year");
 
-  if (age < 60 || age > 85) {
-    toast.warning("Paciente deve ter entre 60 e 85 anos.");
+  if (age < 55 || age > 85) {
+    toast.warning("Paciente deve ter entre 55 e 85 anos.");
     setValue(fieldName, "");
     return false;
   }

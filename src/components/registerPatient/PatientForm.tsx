@@ -75,7 +75,6 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
    responsibleName: "",
    contact: "",
    termConsentAttach: undefined,
-   medicalRequestAttach: undefined,
   });
  };
 
@@ -200,33 +199,39 @@ const validateClinalProfile = () => {
  }
 
  const handleFinish = async () => {
+      const result = await methods.trigger();
+      if (!result) {
+        console.log("Erros de validação:", methods.formState.errors);
+        return;
+      }
   methods.handleSubmit(async (data) => {
+    console.log("Dados do formulário recebidos:", data);
    try {
     if (data.hasResponsible === "no") {
      data.birthDateCaregiver = null;
     }
 
-    const { termConsentAttach, medicalRequestAttach, hasResponsible, ...restData } = data;
+    const { termConsentAttach, hasResponsible, ...restData } = data;
 
     const payload : any = {
      ...restData,
      hasClinicalProfile: true,
      clinicalProfile: selectedProfile,
      doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
-     medicalRequestAttach: {
-      fileName: medicalRequestAttach.name,
-      documentBody: await readFileAsBase64(medicalRequestAttach),
-      fileSize: medicalRequestAttach.size.toString(),
+     termConsentAttach: {
+      fileName: termConsentAttach.name,
+      documentBody: await readFileAsBase64(termConsentAttach),
+      fileSize: termConsentAttach.size.toString(),
      },
     };
 
-    if (termConsentAttach) {
-        payload.termConsentAttach = {
-            fileName: termConsentAttach.name,
-            documentBody: await readFileAsBase64(termConsentAttach),
-            fileSize: termConsentAttach.size.toString(),
-        };
-    }
+    // if (termConsentAttach) {
+    //     payload.termConsentAttach = {
+    //         fileName: termConsentAttach.name,
+    //         documentBody: await readFileAsBase64(termConsentAttach),
+    //         fileSize: termConsentAttach.size.toString(),
+    //     };
+    // }
 
 
     const response = await dispatch(submitPatientRegistration(payload)).unwrap();

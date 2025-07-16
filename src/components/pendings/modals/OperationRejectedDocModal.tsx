@@ -23,27 +23,29 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
   const { resolve } = useResolveExamPendency();
   const pendencyReasons = useAppSelector((state) => state.pending.reasons);
 
-  const [isTermApproved, setIsTermApproved] = useState<boolean | null>(null);
-  const [isMedicApproved, setIsMedicApproved] = useState<boolean | null>(null);
-  const [rejectionReasonMap, setRejectionReasonMap] = useState<Record<string, string>>({});
+  const [approved, setApproved] = useState<boolean | null>(null);
+  const [rejectionReasonId, setRejectionReasonId] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [attachmentBase64, setAttachmentBase64] = useState<string | null>(null);
+
+  const doc = item.attachments?.[0];
 
   useEffect(() => {
     dispatch(fetchPendencyReasons());
   }, [dispatch]);
 
-  const handleDecision = (docType: "termo" | "pedido", decision: "approved" | "rejected") => {
-    if (docType === "termo") {
-      setIsTermApproved(decision === "approved");
-    } else {
-      setIsMedicApproved(decision === "approved");
-    }
-  };
-
   const handleSave = async () => {
+    const matchedReason = pendencyReasons.find((r) => r.id === rejectionReasonId);
+    const rejectionReasonName = matchedReason?.name;
+
+    const updatedAttachment = {
+      ...doc,
+      isApproved: approved,
+      pendencyDescription: rejectionReasonName,
+    };
+
     const logistAttachments =
-      isTermApproved === true && isMedicApproved === true && uploadedFile && attachmentBase64
+      approved && uploadedFile && attachmentBase64
         ? {
             fileName: uploadedFile.name,
             contentType: uploadedFile.type,
@@ -54,129 +56,79 @@ export default function OperationRejectedDocModal({ onClose, item }: OperationRe
           }
         : undefined;
 
-    const updatedAttachments = item.attachments?.map((attachment) => {
-      const docName = attachment.annotationTypeName ?? "";
-
-      const isTerm = docName.toLowerCase().includes("termo");
-      const isPedido = docName.toLowerCase().includes("pedido");
-
-      const isApproved = isTerm ? isTermApproved : isPedido ? isMedicApproved : null;
-
-      const rejectionReasonId = rejectionReasonMap[docName];
-      const matchedReason = pendencyReasons.find((r) => r.id === rejectionReasonId);
-      const rejectionReasonName = matchedReason?.name;
-
-      return {
-        ...attachment,
-        isApproved,
-        pendencyDescription: rejectionReasonName,
-      };
-    });
-
-    const itemWithLogist = {
+    const updatedItem = {
       ...item,
+      attachments: [updatedAttachment],
       logistAttachments,
-      attachments: updatedAttachments,
     };
 
     await resolve({
-      item: itemWithLogist,
+      item: updatedItem,
       onSuccess: onClose,
     });
   };
 
-  const hasUpload = !!attachmentBase64;
+  const isRejected = approved === false;
+  const isApproved = approved === true;
+  const canSave = (isApproved && attachmentBase64) || (isRejected && !!rejectionReasonId);
 
-  const termNeedsReason = isTermApproved === false && !!rejectionReasonMap["Termo de Consentimento"];
-  const medicNeedsReason = isMedicApproved === false && !!rejectionReasonMap["Pedido do Médico"];
-
-  const allDecided = isTermApproved !== null && isMedicApproved !== null;
-  const termHasReason = isTermApproved === false && !!rejectionReasonMap["Termo de Consentimento"];
-  const medicHasReason = isMedicApproved === false && !!rejectionReasonMap["Pedido do Médico"];
-  const hasEtiqueta = isTermApproved === true && isMedicApproved === true && hasUpload;
-
-  const canSave = allDecided && (hasEtiqueta || termHasReason || medicHasReason);
+  const rejectionOptions = pendencyReasons
+    .filter((reason) => reason.flag === "#TERM_CONSENT_AND_MEDICAL_ORDER")
+    .map((r) => ({ id: r.id, value: r.name }));
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2 border border-dashed border-zinc-300 rounded-lg p-4 bg-[#f9f9f9]">
-        {item.attachments?.map((doc) => {
-          const isTerm = doc.annotationTypeName?.toLowerCase().includes("termo");
-          const isPedido = doc.annotationTypeName?.toLowerCase().includes("pedido");
-          const status = isTerm ? isTermApproved : isMedicApproved;
-
-          const rejectionOptions = pendencyReasons
-            .filter((reason) => (isTerm ? reason.flag === "#TERM_CONSENT" : isPedido ? reason.flag === "#MEDICAL_ORDER" : true))
-            .map((reasons) => ({
-              id: reasons.id,
-              value: reasons.name,
-            }));
-
-          return (
-            <div
-              key={doc.fileName}
-              className="flex flex-col sm:flex-row justify-between items-start sm:items-center border border-zinc-300 rounded-lg px-4 py-3 bg-white gap-2"
-            >
-              <div className="flex items-start gap-2 relative w-full sm:w-auto">
-                <AiFillFilePdf className="text-red-600 mt-1 shrink-0" size={20} />
-                <div className="flex flex-col max-w-full sm:max-w-[160px]">
-                  <span className="text-sm font-medium text-zinc-800 truncate">{doc.annotationTypeName}</span>
-                  <span className="text-xs text-zinc-500 text-left">{doc.fileSize ? `${doc.fileSize} KB` : "Tamanho indefinido"}</span>
-                </div>
-                <FiDownload
-                  className="text-zinc-500 absolute right-0 top-1 sm:static sm:ml-2 cursor-pointer"
-                  size={16}
-                  onClick={() => {
-                    if (doc.documentBody) {
-                      downloadBase64File(doc.documentBody, doc.fileName || "documento.pdf", doc.contentType || "application/pdf");
-                    }
-                  }}
-                />
+      {doc && (
+        <div className="space-y-2 border border-dashed border-zinc-300 rounded-lg p-4 bg-[#f9f9f9]">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border border-zinc-300 rounded-lg px-4 py-3 bg-white gap-2">
+            <div className="flex items-start gap-2 relative w-full sm:w-auto">
+              <AiFillFilePdf className="text-red-600 mt-1 shrink-0" size={20} />
+              <div className="flex flex-col max-w-full sm:max-w-[160px]">
+                <span className="text-sm font-medium text-zinc-800 truncate">{doc.annotationTypeName}</span>
+                <span className="text-xs text-zinc-500 text-left">{doc.fileSize ? `${doc.fileSize} KB` : "Tamanho indefinido"}</span>
               </div>
-
-              <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-between sm:justify-end gap-2">
-                {status === true ? (
-                  <span className="flex items-center gap-1 text-green-600 font-semibold border border-green-500 px-3 py-1 rounded-md text-sm w-full sm:w-[100px] justify-center">
-                    <FaCheckCircle size={14} /> Aprovado
-                  </span>
-                ) : status === false ? (
-                  <div className="w-full sm:w-[240px]">
-                    <CustomSelect
-                      name={`reason-${doc.annotationTypeName}`}
-                      label="Motivo"
-                      value={rejectionReasonMap[doc.annotationTypeName ?? ""]}
-                      onChange={(value) =>
-                        setRejectionReasonMap((prev) => ({
-                          ...prev,
-                          [doc.annotationTypeName ?? ""]: value,
-                        }))
-                      }
-                      options={rejectionOptions}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-md border font-semibold transition w-full sm:w-[100px] justify-center border-green-500 text-green-600 hover:bg-green-50"
-                      onClick={() => handleDecision(isTerm ? "termo" : "pedido", "approved")}
-                    >
-                      <FaCheckCircle size={14} /> Aprovar
-                    </button>
-                    <button
-                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-md border font-semibold transition w-full sm:w-[100px] justify-center border-red-500 text-red-600 hover:bg-red-50"
-                      onClick={() => handleDecision(isTerm ? "termo" : "pedido", "rejected")}
-                    >
-                      <FaTimesCircle size={14} /> Reprovar
-                    </button>
-                  </>
-                )}
-              </div>
+              <FiDownload
+                className="text-zinc-500 absolute right-0 top-1 sm:static sm:ml-2 cursor-pointer"
+                size={16}
+                onClick={() => {
+                  if (doc.documentBody) {
+                    downloadBase64File(doc.documentBody, doc.fileName || "documento.pdf", doc.contentType || "application/pdf");
+                  }
+                }}
+              />
             </div>
-          );
-        })}
-      </div>
 
-      {isTermApproved === true && isMedicApproved === true && (
+            <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-between sm:justify-end gap-2">
+              {isApproved ? (
+                <span className="flex items-center gap-1 text-green-600 font-semibold border border-green-500 px-3 py-1 rounded-md text-sm w-full sm:w-[100px] justify-center">
+                  <FaCheckCircle size={14} /> Aprovado
+                </span>
+              ) : isRejected ? (
+                <div className="w-full sm:w-[240px]">
+                  <CustomSelect name="rejectionReason" label="Motivo" value={rejectionReasonId} onChange={setRejectionReasonId} options={rejectionOptions} />
+                </div>
+              ) : (
+                <>
+                  <button
+                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md border font-semibold transition w-full sm:w-[100px] justify-center border-green-500 text-green-600 hover:bg-green-50"
+                    onClick={() => setApproved(true)}
+                  >
+                    <FaCheckCircle size={14} /> Aprovar
+                  </button>
+                  <button
+                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md border font-semibold transition w-full sm:w-[100px] justify-center border-red-500 text-red-600 hover:bg-red-50"
+                    onClick={() => setApproved(false)}
+                  >
+                    <FaTimesCircle size={14} /> Reprovar
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isApproved && (
         <UploadButton
           fieldName="logistLabel"
           label="Upload de Etiqueta para Logística"

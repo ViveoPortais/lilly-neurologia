@@ -395,9 +395,8 @@ export const patientSchema = z
   responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
   contact: z.string().min(1, { message: "Contato é obrigatório" }),
   isSecondSolicitation : z.boolean().optional(),
-  termConsentAttach: z.custom<File>().optional(),
-  medicalRequestAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
-   message: "O pedido médico é obrigatório",
+  termConsentAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
+   message: "O pedido médico e termo de consentimento é obrigatório",
   }),
   saveAddress: z.boolean().default(false),
  })
@@ -412,19 +411,6 @@ export const patientSchema = z
    message: "Preencha os dados do responsável.",
    path: ["nameCaregiver"],
   },
- ).refine(
-  (data) =>{
-    if(!data.isSecondSolicitation && data.medicalRequestAttach.name == "")
-      return false;
-    else if(data.isSecondSolicitation)
-      return true;
-
-      return true;
-  },
-  {
-    message: "O termo de consentimento é obrigatório",
-    path: ["termConsentAttach"],
-  }
  );
 
 export const healthProfessionalByProgramDoctorByProgramSchema = z.object({
