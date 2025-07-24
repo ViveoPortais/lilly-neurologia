@@ -198,73 +198,68 @@ const validateClinalProfile = () => {
   });
  }
 
- const handleFinish = async () => {
-      const result = await methods.trigger();
-      if (!result) {
-        console.log("Erros de validação:", methods.formState.errors);
-        return;
-      }
-  methods.handleSubmit(async (data) => {
-    console.log("Dados do formulário recebidos:", data);
-   try {
-    if (data.hasResponsible === "no") {
-     data.birthDateCaregiver = null;
+  const handleFinish = async () => {
+    const result = await methods.trigger();
+    if (!result) {
+      console.log("Erros de validação:", methods.formState.errors);
+      return;
     }
+    methods.handleSubmit(async (data) => {
+      console.log("Dados do formulário recebidos:", data);
+      try {
+        if (data.hasResponsible === "no") {
+          data.birthDateCaregiver = null;
+        }
 
-    const { termConsentAttach, hasResponsible, ...restData } = data;
+        const { termConsentAttach, hasResponsible, ...restData } = data;
 
-    const payload : any = {
-     ...restData,
-     hasClinicalProfile: true,
-     clinicalProfile: selectedProfile,
-     doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
-     termConsentAttach: {
-      fileName: termConsentAttach.name,
-      documentBody: await readFileAsBase64(termConsentAttach),
-      fileSize: termConsentAttach.size.toString(),
-     },
-    };
+        const payload: any = {
+          ...restData,
+          hasClinicalProfile: true,
+          clinicalProfile: selectedProfile,
+          doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId
+        };
 
-    // if (termConsentAttach) {
-    //     payload.termConsentAttach = {
-    //         fileName: termConsentAttach.name,
-    //         documentBody: await readFileAsBase64(termConsentAttach),
-    //         fileSize: termConsentAttach.size.toString(),
-    //     };
-    // }
+        if (termConsentAttach) {
+            payload.termConsentAttach = {
+                fileName: termConsentAttach.name,
+                documentBody: await readFileAsBase64(termConsentAttach),
+                fileSize: termConsentAttach.size.toString(),
+            };
+        }
 
 
-    const response = await dispatch(submitPatientRegistration(payload)).unwrap();
+        const response = await dispatch(submitPatientRegistration(payload)).unwrap();
 
-    if (response.isValidData) {
-     modal.showModal(
-      {
-       type: "success",
-       title: "Sua solicitação foi enviada.",
-       message: response.additionalMessage,
-      },
-      () => {
-       handleClearForm();
-       setStep(1);
+        if (response.isValidData) {
+          modal.showModal(
+            {
+              type: "success",
+              title: "Sua solicitação foi enviada.",
+              message: response.additionalMessage,
+            },
+            () => {
+              handleClearForm();
+              setStep(1);
+            }
+          );
+        } else {
+          modal.showModal(
+            {
+              type: "error",
+              title: "Erro ao cadastrar paciente.",
+              message: response.additionalMessage,
+            },
+            () => {
+              router.push("/dashboard/starts");
+            }
+          );
+        }
+      } catch (error) {
+        console.log("Erro ao registrar paciente:", error);
       }
-     );
-    } else {
-     modal.showModal(
-      {
-       type: "error",
-       title: "Erro ao cadastrar paciente.",
-       message: response.additionalMessage,
-      },
-      () => {
-       router.push("/dashboard/starts");
-      }
-     );
-    }
-   } catch (error) {
-    console.log("Erro ao registrar paciente:", error);
-   }
-  })();
- };
+    })();
+  };
 
  useEffect(() => {
   dispatch(fetchGenders());

@@ -1,5 +1,6 @@
 import { AnnotationModel, IAnnotationFilterModel } from "@/types/general";
 import api from "./api";
+import { ExamCreateModel } from "@/types/diagnostic";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
@@ -30,4 +31,18 @@ export const updateAnnotation = async (data: AnnotationModel) => {
  });
 
  return response.data;
+};
+
+export const downloadDocumentFilled = async (data: ExamCreateModel) => {
+    const response = await api.post(
+        "/Annotation/documentFilled",
+        {
+            examCreateModel: { ...data },
+            programcode: programCode,
+        },
+        {
+            responseType: "blob",
+        }
+    );
+    return response.data;
 };

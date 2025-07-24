@@ -395,10 +395,10 @@ export const patientSchema = z
   responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
   contact: z.string().min(1, { message: "Contato é obrigatório" }),
   isSecondSolicitation : z.boolean().optional(),
-  termConsentAttach: z.custom<File>((file) => file instanceof File && file.name !== "", {
-   message: "O pedido médico e termo de consentimento é obrigatório",
-  }),
+  termConsentAttach: z.any().optional(),
   saveAddress: z.boolean().default(false),
+  hasDigitalSignature : z.boolean().default(false),
+  emailAddress : z.string().email({ message: `Insira um e-mail válido` }).optional(),
  })
  .refine(
   (data) => {
@@ -411,6 +411,30 @@ export const patientSchema = z
    message: "Preencha os dados do responsável.",
    path: ["nameCaregiver"],
   },
+ )
+ .refine(
+    (data) => {
+      if (!data.hasDigitalSignature) {
+        return data.termConsentAttach instanceof File && data.termConsentAttach.name !== "";
+      }
+      return true;
+    },
+    {
+      message: "O pedido médico e termo de consentimento é obrigatório",
+      path: ["termConsentAttach"],
+    },
+ )
+ .refine(
+    (data) => {
+      if (data.hasDigitalSignature) {
+        return data.emailAddress !== "";
+      }
+      return true;
+    },
+    {
+      message: "Insira o e-mail do paciente",
+      path: ["emailAddress"],
+    },
  );
 
 export const healthProfessionalByProgramDoctorByProgramSchema = z.object({

@@ -39,6 +39,9 @@ export interface ExamCreateModel {
   saveAddress?: boolean | null;
   clinicalProfile?: string | null;
   hasClinicalProfile?: boolean | null;
+  hasDigitalSignature? : boolean | null;
+  email? : string | null;
+  emailAddress? : string | null;
 }
 
 export interface IDiagnosticExamModel {

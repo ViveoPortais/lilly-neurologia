@@ -1,8 +1,9 @@
 import { IAnnotationModel, IPaginationResult, IReturnMessage} from "@/types/general";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IChangePassword, IUserData } from "@/types/user";
-import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel } from "@/types/diagnostic";
+import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel } from "@/types/diagnostic";
 import { getAnnotations, getDiagnosticById, historyDiagnostics, informexamcancellation } from "@/services/diagnostic";
+import { downloadDocumentFilled } from "@/services/annotation";
 
 interface DiagnosticSliceState {
     loading: boolean;
@@ -45,6 +46,15 @@ export const fetchDiagnosticDetailsById = createAsyncThunk("/diagnostic/getdiagn
 export const fetchAnnotations = createAsyncThunk("/annotation/getAnnotations", async ({ id }: { id: string; }, thunkAPI) => {
     try {
         const result = await getAnnotations(id);
+        return result;
+    } catch (error) {
+        return thunkAPI.rejectWithValue("Erro ao carregar dados");
+    }
+});
+
+export const fetchTermAttachFilled = createAsyncThunk("/annotation/documentFilled", async ({ data }: { data: ExamCreateModel; }, thunkAPI) => {
+    try {
+        const result = await downloadDocumentFilled(data);
         return result;
     } catch (error) {
         return thunkAPI.rejectWithValue("Erro ao carregar dados");
@@ -115,6 +125,18 @@ const diagnosticSlice = createSlice({
                 state.loading = false;
             })
             .addCase(postCancellationExam.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            .addCase(fetchTermAttachFilled.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchTermAttachFilled.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(fetchTermAttachFilled.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })
