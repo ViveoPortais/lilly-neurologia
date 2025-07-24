@@ -9,7 +9,7 @@ interface PdfViewerMobileProps {
   pdfUrl: string;
 }
 
-export function PdfViewerMobile({ pdfUrl }: PdfViewerMobileProps) {
+export default function PdfViewerMobile({ pdfUrl }: PdfViewerMobileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isRenderingRef = useRef(false);
 
