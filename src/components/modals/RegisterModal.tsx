@@ -262,6 +262,28 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
     }
   }, [isValid, errors, getValues]);
 
+
+useEffect(() => {
+  const subscription = watch((value, { name }) => {
+    if (name === 'licenseNumber' && value.licenseNumber) {
+
+      setValue("doctorName", "");
+      setValue("emailAddress", "");
+      setValue("telephoneNumber", "");
+      setValue("medicalSpecialty", "");
+      setValue("addressCity","");
+      setValue("addressPostalCode","");
+      setValue("cpf","");
+      setValue("addressState","");
+
+      setValue("licenseState", "");
+      clearErrors(["doctorName", "emailAddress", "telephoneNumber", "medicalSpecialty", "licenseState"]);
+    }
+  });
+  
+  return () => subscription.unsubscribe();
+}, [watch, setValue, clearErrors]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 mt-20 md:p-10 md:mt-0">
