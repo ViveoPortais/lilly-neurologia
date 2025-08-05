@@ -361,58 +361,67 @@ export const getRegisterSignUpSchema = (role: string) =>
   });
 
 export const patientSchema = z
- .object({
-  cpf: z
-   .string()
-   .min(1, { message: "Insira seu CPF" })
-   .regex(cpfRegex, { message: "CPF inválido" })
-   .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
-  name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
-  birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
-  hasResponsible: z.enum(["yes", "no"]).optional().nullable(),
-  nameCaregiver: z
-   .string()
-   .optional()
-   .refine((val) => !val || nameRegex.test(val), { message: "Nome deve conter apenas letras" }),
-  cpfCaregiver: z
-   .string()
-   .optional()
-   .refine((val) => !val || cpfRegex.test(val), {
-    message: "CPF inválido",
-   })
-   .refine((val) => !val || isValidCPF(val), {
-    message: "CPF inválido",
-   }),
-  birthDateCaregiver: z.string().optional(),
-  disease: z.string().min(1, { message: "Informe a doença" }),
-  examDefinition: z.string().min(1, { message: "Descreva o exame" }),
-  laboratoryAnalysis: z.string().min(1, { message: "Informe o laboratório" }),
-  genderId: z.string().min(1, { message: "Informe o gênero" }),
-  addressPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
-  addressName: z.string().min(1, { message: "Endereço é obrigatório" }),
-  addressNumber: z.string().min(1, { message: "Número é obrigatório" }),
-  sector: z.string().min(1, { message: "Bairro/Setor é obrigatório" }),
-  responsibleName: z.string().min(1, { message: "Nome do responsável pelo exame é obrigatório" }),
-  contact: z.string().min(1, { message: "Contato é obrigatório" }),
-  isSecondSolicitation : z.boolean().optional(),
-  termConsentAttach: z.any().optional(),
-  saveAddress: z.boolean().default(false),
-  hasDigitalSignature : z.boolean().default(false),
-  emailAddress : z.string().email({ message: `Insira um e-mail válido` }).optional(),
- })
- .refine(
-  (data) => {
-   if (data.hasResponsible === "yes") {
-    return data.nameCaregiver && data.cpfCaregiver && data.birthDateCaregiver;
-   }
-   return true;
-  },
-  {
-   message: "Preencha os dados do responsável.",
-   path: ["nameCaregiver"],
-  },
- )
- .refine(
+  .object({
+    cpf: z
+      .string()
+      .min(1, { message: "Insira seu CPF" })
+      .regex(cpfRegex, { message: "CPF inválido" })
+      .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+    name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
+    birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
+    hasResponsible: z.enum(["yes", "no"]).optional().nullable(),
+    nameCaregiver: z
+      .string()
+      .optional()
+      .refine((val) => !val || nameRegex.test(val), { message: "Nome deve conter apenas letras" }),
+    cpfCaregiver: z
+      .string()
+      .optional()
+      .refine((val) => !val || cpfRegex.test(val), {
+        message: "CPF inválido",
+      })
+      .refine((val) => !val || isValidCPF(val), {
+        message: "CPF inválido",
+      }),
+    birthDateCaregiver: z.string().optional(),
+    disease: z.string().min(1, { message: "Informe a doença" }),
+    examDefinition: z.string().min(1, { message: "Descreva o exame" }),
+    laboratoryAnalysis: z.string().min(1, { message: "Informe o laboratório" }),
+    genderId: z.string().min(1, { message: "Informe o gênero" }),
+    addressPostalCode: z.string().optional(),
+    addressName: z.string().optional(),
+    addressNumber: z.string().optional(),
+    addressComplement: z.string().optional(),
+    addressDistrict: z.string().optional(),
+    addressCity: z.string().optional(),
+    addressState: z.string().optional(),
+    pickupPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
+    pickupAddressName: z.string().min(1, { message: "Rua é obrigatória" }),
+    pickupNumber: z.string().min(1, { message: "Número é obrigatório" }),
+    pickupAddressComplement: z.string().optional(),
+    pickupAddressDistrict: z.string().min(1, { message: "Bairro é obrigatório" }),
+    pickupAddressCity: z.string().min(1, { message: "Cidade é obrigatória" }),
+    pickupAddressState: z.string().min(1, { message: "Estado é obrigatório" }),
+    useSameAddress: z.boolean().optional(),
+    isSecondSolicitation: z.boolean().optional(),
+    termConsentAttach: z.any().optional(),
+    saveAddress: z.boolean().default(false),
+    hasDigitalSignature: z.boolean().default(false),
+    emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.hasResponsible === "yes") {
+        return data.nameCaregiver && data.cpfCaregiver && data.birthDateCaregiver;
+      }
+      return true;
+    },
+    {
+      message: "Preencha os dados do responsável.",
+      path: ["nameCaregiver"],
+    }
+  )
+  .refine(
     (data) => {
       if (!data.hasDigitalSignature) {
         return data.termConsentAttach instanceof File && data.termConsentAttach.name !== "";
@@ -422,9 +431,9 @@ export const patientSchema = z
     {
       message: "O pedido médico e termo de consentimento é obrigatório",
       path: ["termConsentAttach"],
-    },
- )
- .refine(
+    }
+  )
+  .refine(
     (data) => {
       if (data.hasDigitalSignature) {
         return data.emailAddress !== "";
@@ -434,8 +443,30 @@ export const patientSchema = z
     {
       message: "Insira o e-mail do paciente",
       path: ["emailAddress"],
-    },
- );
+    }
+  )
+  .superRefine((data, ctx) => {
+    if (!data.useSameAddress) {
+      if (!data.addressPostalCode) {
+        ctx.addIssue({ path: ["addressPostalCode"], code: z.ZodIssueCode.custom, message: "CEP é obrigatório" });
+      }
+      if (!data.addressName) {
+        ctx.addIssue({ path: ["addressName"], code: z.ZodIssueCode.custom, message: "Rua é obrigatória" });
+      }
+      if (!data.addressNumber) {
+        ctx.addIssue({ path: ["addressNumber"], code: z.ZodIssueCode.custom, message: "Número é obrigatório" });
+      }
+      if (!data.addressDistrict) {
+        ctx.addIssue({ path: ["addressDistrict"], code: z.ZodIssueCode.custom, message: "Bairro é obrigatório" });
+      }
+      if (!data.addressCity) {
+        ctx.addIssue({ path: ["addressCity"], code: z.ZodIssueCode.custom, message: "Cidade é obrigatória" });
+      }
+      if (!data.addressState) {
+        ctx.addIssue({ path: ["addressState"], code: z.ZodIssueCode.custom, message: "Estado é obrigatório" });
+      }
+    }
+  });
 
 export const healthProfessionalByProgramDoctorByProgramSchema = z.object({
   licenseNumber: z.string().min(1, { message: "Insira o CRM" }),

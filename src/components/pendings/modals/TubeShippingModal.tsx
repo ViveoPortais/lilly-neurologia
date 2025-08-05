@@ -4,59 +4,75 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { today, validateNoFutureDate } from "@/helpers/helpers";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { useAppDispatch } from "@/store/hooks";
-import { ExamPendingModel } from "@/types/diagnostic";
+import { ExamPendingModel, LabelPendingModel } from "@/types/diagnostic";
 import { useState } from "react";
 
 interface TubeShippingProps {
- onClose: () => void;
- item: ExamPendingModel;
+  onClose: () => void;
+  item: ExamPendingModel;
 }
 
 export default function TubeShippingModal({ onClose, item }: TubeShippingProps) {
- const [sendDate, setSendDate] = useState("");
- const { show } = useLoading();
- const { resolve } = useResolveExamPendency();
+  const [sendDate, setSendDate] = useState("");
+  const { show } = useLoading();
+  const { resolve } = useResolveExamPendency();
 
- const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-  validateNoFutureDate(e.target.value, "sendDate", (field, value) => setSendDate(value), "A data de envio não pode ser futura");
- };
+  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    validateNoFutureDate(e.target.value, "sendDate", (field, value) => setSendDate(value), "A data de envio não pode ser futura");
+  };
 
- const handleCancel = () => {
-  setSendDate("");
-  onClose();
- };
+  const handleCancel = () => {
+    setSendDate("");
+    onClose();
+  };
 
- const handleConfirm = async () => {
-  show();
-  await resolve({
-   item: {
-    ...item,
-    sentAt: sendDate,
-   },
-   onSuccess: onClose,
-  });
- };
+  const handleConfirm = async () => {
+    show();
+    await resolve({
+      item: {
+        ...item,
+        sentAt: sendDate,
+      },
+      onSuccess: onClose,
+    });
+  };
 
- return (
-  <div className="space-y-2">
-   <Input
-    type="date"
-    placeholder="Data de envio"
-    max={today}
-    value={sendDate}
-    onChange={(e) => setSendDate(e.target.value)}
-    onBlur={handleBlur}
-    className="w-full"
-   />
+  const labelItem = item as LabelPendingModel;
 
-   <div className="flex flex-col md:flex-row justify-between gap-4 pt-2">
-    <Button onClick={handleCancel} variant="outlineMainlilly" className="w-full md:w-1/2">
-     Cancelar
-    </Button>
-    <Button onClick={handleConfirm} disabled={!sendDate} className="w-full md:w-1/2">
-     Enviado
-    </Button>
-   </div>
-  </div>
- );
+  return (
+    <div className="space-y-4">
+      <div className="space-y-4">
+        <h3 className="font-semibold text-gray-700">Endereço de Envio do Tubo</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <Input value={labelItem.addressName ?? ""} readOnly placeholder="Rua" />
+          <Input value={labelItem.addressComplement ?? ""} readOnly placeholder="Complemento" />
+          <Input value={labelItem.addressDistrict ?? ""} readOnly placeholder="Bairro" />
+          <Input value={labelItem.addressCity ?? ""} readOnly placeholder="Cidade" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <Input value={labelItem.addressPostalCode ?? ""} readOnly placeholder="CEP" />
+          <Input value={labelItem.addressNumber ?? ""} readOnly placeholder="Número" />
+          <Input value={labelItem.addressState ?? ""} readOnly placeholder="Estado" />
+        </div>
+      </div>
+      <Input
+        type="date"
+        placeholder="Data de envio"
+        max={today}
+        value={sendDate}
+        onChange={(e) => setSendDate(e.target.value)}
+        onBlur={handleBlur}
+        className="w-full"
+      />
+
+      <div className="flex flex-col md:flex-row justify-between gap-4 pt-2">
+        <Button onClick={handleCancel} variant="outlineMainlilly" className="w-full md:w-1/2">
+          Cancelar
+        </Button>
+        <Button onClick={handleConfirm} disabled={!sendDate} className="w-full md:w-1/2">
+          Enviado
+        </Button>
+      </div>
+    </div>
+  );
 }

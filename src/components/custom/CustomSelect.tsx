@@ -24,14 +24,15 @@ interface CustomSelectProps {
  isLoading?: boolean;
  params?: any;
  title?: string;
+ disabled? : boolean;
 }
 
 const CustomSelect = forwardRef<ElementRef<typeof SelectPrimitive.Trigger>, CustomSelectProps>(
- ({ name, label, options, value, onChange, onBlur, customClass, isLoading, params, title, ...props }, ref) => {
+ ({ name, label, options, value, onChange, onBlur, customClass, isLoading, params, title,disabled, ...props }, ref) => {
   if (isLoading) return <InputLoading />;
 
   return (
-   <Select name={name} value={value} onValueChange={onChange} {...props}>
+   <Select name={name} value={value} onValueChange={onChange} disabled={disabled == true} {...props}>
     <div className="w-full">
      <label title={title} className="w-full text-start text-base trackin-wide text-black">
       {label}

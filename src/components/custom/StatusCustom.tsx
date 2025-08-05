@@ -15,6 +15,7 @@ const StatusCustom = ({ type, statusStringMap }: StatusCustomProps) => {
             case "EXAM_PENDING_SIGNATURE_DOCUMENTATION":
             case "EXAM_DOCUMENTATION_APROVATION":
             case "EXAM_WITHDRAWAL_WAITING_APROVATION":
+            case "EXAM_WAITING_DIGITAL_SIGNATURE":
                 color = "bg-yellow-400";
                 break;
             case "EXAM_CANCELED":

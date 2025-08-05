@@ -311,6 +311,13 @@ export interface DocumentPendingModel extends ExamPendingModel {
 
 export interface LabelPendingModel extends ExamPendingModel {
   attachments: AttachmentModel[];
+  addressPostalCode?: string;
+  addressComplement?: string;
+  addressName?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressNumber?: string;
+  addressDistrict?: string;
 }
 
 export interface IExamCancellationModel {
