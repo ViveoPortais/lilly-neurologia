@@ -116,12 +116,14 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
                   items={filteredItems}
                   columns={columns}
                   renderModal={(item, onClose) => (item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null)}
+                  role={role}
                 />
               ) : (
                 <PendingsDesktopPage
                   items={filteredItems}
                   columns={columns}
                   renderModal={(item, onClose) => (item ? <RenderPendingModal item={item} onClose={onClose} category={category} role={role} /> : null)}
+                  role={role}
                 />
               )
             ) : (

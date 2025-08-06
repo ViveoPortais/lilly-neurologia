@@ -165,7 +165,7 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
           {
             type: "success",
             title: res.additionalMessage,
-            message: "Agora você pode acessar e gerenciar as informações conforme necessário",
+            message: "Enviamos para o e-mail informado os dados de acesso: login e uma senha temporária. A senha deverá ser alterada no primeiro acesso.",
           },
           () => {
             router.push("/signin");

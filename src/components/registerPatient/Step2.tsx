@@ -14,11 +14,11 @@ export function Step2({ control, errors, setValue }: any) {
 
   const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>, type: "pickup" | "address") => {
     const rawCep = e.target.value.replace(/\D/g, "");
+    const prefix = type === "pickup" ? "pickupAddress" : "address";
     if (rawCep.length === 8) {
       setIsFetchingCep(true);
       const data = await AddressData(rawCep);
       if (data && !data.erro) {
-        const prefix = type === "pickup" ? "pickupAddress" : "address";
         setValue(`${prefix}Name`, data.logradouro || "");
         setValue(`${prefix}District`, data.bairro || "");
         setValue(`${prefix}City`, data.localidade || "");
@@ -27,11 +27,26 @@ export function Step2({ control, errors, setValue }: any) {
         toast.error("CEP inválido ou não encontrado");
       }
       setIsFetchingCep(false);
+    } else {
+      toast.warning("CEP inválido ou não encontrado");
+      setValue(`${type}PostalCode`, "");
+      setValue(`${prefix}Name`, "");
+      setValue(`${prefix}District`, "");
+      setValue(`${prefix}City`, "");
+      setValue(`${prefix}State`, "");
     }
   };
 
   useEffect(() => {
     if (useSameAddress) {
+      setValue("addressPostalCode", watch("pickupPostalCode") || "");
+      setValue("addressName", watch("pickupAddressName") || "");
+      setValue("addressNumber", watch("pickupNumber") || "");
+      setValue("addressComplement", watch("pickupAddressComplement") || "");
+      setValue("addressDistrict", watch("pickupAddressDistrict") || "");
+      setValue("addressCity", watch("pickupAddressCity") || "");
+      setValue("addressState", watch("pickupAddressState") || "");
+    } else {
       setValue("addressPostalCode", "");
       setValue("addressName", "");
       setValue("addressNumber", "");
@@ -40,7 +55,7 @@ export function Step2({ control, errors, setValue }: any) {
       setValue("addressCity", "");
       setValue("addressState", "");
     }
-  }, [useSameAddress, setValue]);
+  }, [useSameAddress, setValue, watch]);
 
   return (
     <div className="space-y-8">
@@ -58,7 +73,7 @@ export function Step2({ control, errors, setValue }: any) {
             )}
           />
           <div className="w-full">
-            <Input {...register("pickupAddressName")} placeholder="Rua" />
+            <Input {...register("pickupAddressName")} placeholder="Rua" isLoading={isFetchingCep} />
             {errors?.pickupAddressName && <span className="text-sm text-red-500 block mt-1">{errors.pickupAddressName.message}</span>}
           </div>
           <div className="w-full">
@@ -90,7 +105,7 @@ export function Step2({ control, errors, setValue }: any) {
         <h2 className="font-semibold text-lg text-gray-600 mb-2">Endereço de Retirada da Amostra</h2>
         <label className="flex items-center gap-2 text-sm text-zinc-700 mb-3">
           <input type="checkbox" className="accent-mainlilly w-4 h-4" {...register("useSameAddress")} />
-          Utilizar o mesmo endereço da coleta
+          Utilizar o Endereço da Entrega para retirada da amostra
         </label>
 
         <div className="grid md:grid-cols-4 gap-4">

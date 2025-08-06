@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const suggestionSchema = z
   .object({
@@ -26,6 +28,7 @@ export default function SuggestionDateStep({ onCancel, item }: SuggestionDateSte
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid },
   } = useForm<SuggestionForm>({
     resolver: zodResolver(suggestionSchema),
@@ -50,11 +53,57 @@ export default function SuggestionDateStep({ onCancel, item }: SuggestionDateSte
     });
   };
 
+  function validateSuggestionDate<T>(dateStr: string, item: ExamPendingModel, fieldName: keyof T, setValue: (name: keyof T, value: string) => void): boolean {
+    if (!dateStr) return true;
+
+    const selected = dayjs(dateStr);
+    const now = dayjs().startOf("day");
+    const minDate = now.add(2, "day");
+
+    const doctorDate = item.doctorSuggestedDate ? dayjs(item.doctorSuggestedDate) : null;
+    const deliveryDate = item.deliveryConfirmedAt ? dayjs(item.deliveryConfirmedAt) : null;
+
+    const clearField = () => setValue(fieldName, "");
+
+    if (selected.isBefore(minDate)) {
+      toast.warning(`A data deve ser a partir de ${minDate.format("DD/MM/YYYY")}`);
+      clearField();
+      return false;
+    }
+
+    if (selected.day() === 5) {
+      toast.warning("Não é permitido selecionar sextas-feiras.");
+      clearField();
+      return false;
+    }
+
+    if (doctorDate && !selected.isAfter(doctorDate)) {
+      toast.warning("A data deve ser após a data da coleta.");
+      clearField();
+      return false;
+    }
+
+    if (deliveryDate && selected.isBefore(deliveryDate)) {
+      toast.warning("A data deve ser igual ou posterior à data de recebimento do tubo.");
+      clearField();
+      return false;
+    }
+
+    return true;
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
       {(["suggestion1", "suggestion2", "suggestion3"] as const).map((key, index) => (
         <div key={key}>
-          <Input placeholder={`Sugestão 0${index + 1}`} inputPlaceholder="Escolha a data" type="date" {...register(key)} />
+          <Input
+            placeholder={`Sugestão 0${index + 1}`}
+            inputPlaceholder="Escolha a data"
+            type="date"
+            {...register(key)}
+            onBlur={(e) => validateSuggestionDate(e.target.value, item, key, setValue)}
+            onChange={(e) => validateSuggestionDate(e.target.value, item, key, setValue)}
+          />
         </div>
       ))}
 

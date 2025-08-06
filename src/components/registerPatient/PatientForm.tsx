@@ -9,14 +9,7 @@ import { patientSchema } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
- fetchDiseases,
- fetchExams,
- fetchGenders,
- fetchLabs,
- getDoctorInfo,
- submitPatientRegistration,
-} from "@/store/slices/registerPatientSlice";
+import { fetchDiseases, fetchExams, fetchGenders, fetchLabs, getDoctorInfo, submitPatientRegistration } from "@/store/slices/registerPatientSlice";
 import useSession from "@/hooks/useSession";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
@@ -100,17 +93,9 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
     const hasResponsible = methods.watch("hasResponsible") === "yes";
     const useSameAddress = methods.watch("useSameAddress") === true;
 
-    const pickupFields = [
-      "pickupPostalCode",
-      "pickupAddressName",
-      "pickupNumber",
-      "pickupAddressComplement",
-      "pickupAddressDistrict",
-      "pickupAddressCity",
-      "pickupAddressState",
-    ];
+    const pickupFields = ["pickupPostalCode", "pickupAddressName", "pickupNumber", "pickupAddressDistrict", "pickupAddressCity", "pickupAddressState"];
 
-    const addressFields = ["addressPostalCode", "addressName", "addressNumber", "addressComplement", "addressDistrict", "addressCity", "addressState"];
+    const addressFields = ["addressPostalCode", "addressName", "addressNumber", "addressDistrict", "addressCity", "addressState"];
 
     if (!isMobile && step === 1) {
       return [
@@ -192,9 +177,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   };
 
   const handleBack = () => {
-    if (!isMobile && step === 3) {
-      setStep(1);
-    } else if (step > 1) {
+    if (step > 1) {
       setStep((prev) => prev - 1);
     }
   };
@@ -364,18 +347,12 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           </motion.div>
         )}
 
-    {step === 3 && (
-     <motion.div
-      key="step3"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.2 }}
-     >
-      <Step3 examExistent={examExistent}/>
-     </motion.div>
-    )}
-   </AnimatePresence>
+        {step === 3 && (
+          <motion.div key="step3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>
+            <Step3 examExistent={examExistent} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ButtonsNavigation
         isMobile={isMobile}
