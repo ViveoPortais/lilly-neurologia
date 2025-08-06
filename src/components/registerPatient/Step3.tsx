@@ -44,14 +44,14 @@ export const Step3 = ({ examExistent }: Step3DoctorProps) => {
           <div className="flex justify-center">
             <div className="w-[300px]">
               <CustomSelect
-                onChange={(value) => {handleTypeOfSignature(value)}}
+                onChange={(value) => { handleTypeOfSignature(value) }}
                 options={[
                   { id: "false", value: "Manual", icon: Pen },
                   { id: "true", value: "Assinatura Digital (via DocuSign)", icon: LinkIcon },
                 ]}
                 label="Selecione o tipo de assinatura"
                 name="hasDigitalSignature"
-                value={auth.role == "professional"? "false" : ""}
+                value={watch("hasDigitalSignature") === false ? "false" : watch("hasDigitalSignature") === true ? "true" : ""}
                 disabled={auth.role == "professional" ? true : false}
               />
             </div>
