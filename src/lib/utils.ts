@@ -515,10 +515,10 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
 
       if (!isValid(recebimento)) return;
 
-      if (isBefore(coleta, recebimento!) || isAfter(coleta, hoje)) {
+      if (isBefore(coleta, recebimento!)) {
         ctx.addIssue({
           path: ["collectMaterial"],
-          message: "Data de coleta inválida: deve ser maior ou igual a recebimento e menor ou igual a hoje",
+          message: "Data de coleta inválida: deve ser maior ou igual a recebimento",
           code: z.ZodIssueCode.custom,
         });
       }
