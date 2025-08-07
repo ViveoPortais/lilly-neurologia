@@ -334,6 +334,13 @@ export interface IPendingAssociationModel extends ExamPendingModel {
 
 export interface IPickupRequestModel extends ExamPendingModel {
   examPickupDate?: string;
+  addressPostalCode?: string;
+  addressComplement?: string;
+  addressName?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressNumber?: string;
+  addressDistrict?: string;
 }
 
 export interface IProblemWithSampleModel extends ExamPendingModel {

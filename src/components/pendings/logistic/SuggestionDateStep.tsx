@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
-import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { CustomDatePicker } from "@/components/custom/CustomDatepicker";
+import React from "react";
 
 const suggestionSchema = z
   .object({
@@ -14,7 +14,9 @@ const suggestionSchema = z
     suggestion2: z.string().optional(),
     suggestion3: z.string().optional(),
   })
-  .refine((data) => !!(data.suggestion1 || data.suggestion2 || data.suggestion3), { message: "Preencha pelo menos uma sugestão de data." });
+  .refine((data) => !!(data.suggestion1 || data.suggestion2 || data.suggestion3), {
+    message: "Preencha pelo menos uma sugestão de data.",
+  });
 
 type SuggestionForm = z.infer<typeof suggestionSchema>;
 
@@ -26,9 +28,9 @@ interface SuggestionDateStepProps {
 export default function SuggestionDateStep({ onCancel, item }: SuggestionDateStepProps) {
   const { resolve } = useResolveExamPendency();
   const {
-    register,
-    handleSubmit,
     setValue,
+    handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm<SuggestionForm>({
     resolver: zodResolver(suggestionSchema),
@@ -40,71 +42,51 @@ export default function SuggestionDateStep({ onCancel, item }: SuggestionDateSte
     },
   });
 
+  const now = dayjs().startOf("day");
+  const minSelectable = now.add(now.day() === 4 ? 4 : 2, "day");
+
+  const filterSuggestionDates = (date: Date) => {
+    const selected = dayjs(date);
+
+    const isWeekend = [5, 6, 0].includes(selected.day());
+    if (isWeekend) return false;
+
+    if (selected.isBefore(minSelectable)) return false;
+
+    return true;
+  };
+
   const onSubmit = async (data: SuggestionForm) => {
     await resolve({
       item: {
         ...item,
-        logistcSuggestedDate1: data.suggestion1,
-        logistcSuggestedDate2: data.suggestion2,
-        logistcSuggestedDate3: data.suggestion3,
+        logistcSuggestedDate1: data.suggestion1 || undefined,
+        logistcSuggestedDate2: data.suggestion2 || undefined,
+        logistcSuggestedDate3: data.suggestion3 || undefined,
         isPickupRequestApproved: false,
       },
       onSuccess: onCancel,
     });
   };
 
-  function validateSuggestionDate<T>(dateStr: string, item: ExamPendingModel, fieldName: keyof T, setValue: (name: keyof T, value: string) => void): boolean {
-    if (!dateStr) return true;
-
-    const selected = dayjs(dateStr);
-    const now = dayjs().startOf("day");
-    const minDate = now.add(2, "day");
-
-    const doctorDate = item.doctorSuggestedDate ? dayjs(item.doctorSuggestedDate) : null;
-    const deliveryDate = item.deliveryConfirmedAt ? dayjs(item.deliveryConfirmedAt) : null;
-
-    const clearField = () => setValue(fieldName, "");
-
-    if (selected.isBefore(minDate)) {
-      toast.warning(`A data deve ser a partir de ${minDate.format("DD/MM/YYYY")}`);
-      clearField();
-      return false;
-    }
-
-    if (selected.day() === 5) {
-      toast.warning("Não é permitido selecionar sextas-feiras.");
-      clearField();
-      return false;
-    }
-
-    if (doctorDate && !selected.isAfter(doctorDate)) {
-      toast.warning("A data deve ser após a data da coleta.");
-      clearField();
-      return false;
-    }
-
-    if (deliveryDate && selected.isBefore(deliveryDate)) {
-      toast.warning("A data deve ser igual ou posterior à data de recebimento do tubo.");
-      clearField();
-      return false;
-    }
-
-    return true;
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
       {(["suggestion1", "suggestion2", "suggestion3"] as const).map((key, index) => (
-        <div key={key}>
-          <Input
-            placeholder={`Sugestão 0${index + 1}`}
-            inputPlaceholder="Escolha a data"
-            type="date"
-            {...register(key)}
-            onBlur={(e) => validateSuggestionDate(e.target.value, item, key, setValue)}
-            onChange={(e) => validateSuggestionDate(e.target.value, item, key, setValue)}
-          />
-        </div>
+        <React.Fragment key={key}>
+          <div className="flex gap-1">
+            <label className="text-base tracking-wide text-black">Sugestão 0{index + 1}</label>
+          </div>
+          <div className="w-full">
+            <CustomDatePicker
+              selected={watch(key) ? dayjs(watch(key)).toDate() : undefined}
+              onChange={(date) => setValue(key, date ? dayjs(date).format("YYYY-MM-DD") : undefined, { shouldValidate: true })}
+              placeholder="dd/mm/aaaa"
+              filterDate={filterSuggestionDates}
+              minDate={minSelectable.toDate()}
+              name={key}
+            />
+          </div>
+        </React.Fragment>
       ))}
 
       {errors?.root?.message && <p className="text-xs text-red-500 -mt-2">{errors.root.message}</p>}

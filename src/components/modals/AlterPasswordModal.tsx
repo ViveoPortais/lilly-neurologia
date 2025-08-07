@@ -86,7 +86,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
      <div className="relative">
       <Input
        type="password"
-       placeholder="Digite a senha"
+       placeholder="Digite a senha atual"
        {...register("oldPassword")}
        className={errors.oldPassword ? "border-red-500" : ""}
       />

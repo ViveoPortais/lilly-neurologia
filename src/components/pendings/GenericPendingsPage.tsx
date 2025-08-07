@@ -95,6 +95,7 @@ export function GenericPendingsPage({ fixedCategories, grouped }: Props) {
             key={category}
             title={category}
             badgeText={`${String(items.length).padStart(2, "0")} ${isMobile ? "" : "pendentes"}`}
+            badgeIsZero={items.length === 0}
             className={highlightCategory === category ? "ring-2 ring-mainlilly rounded-md" : ""}
             isOpen={openCategory  === category}
             onToggle={() => setOpenCategory(prev => (prev === category ? null : category))}

@@ -59,8 +59,7 @@ export default function Step2({ register, errors, data }: Step2Props) {
 
       <div className="border border-dashed border-gray-300 rounded-lg p-4 space-y-4 bg-gray-50">
         <p className="text-center text-sm text-zinc-700">
-          Os documentos abaixo deverão ser entregues à logística no dia da retirada da amostra. Faça a impressão e preencha a ficha de emergência e declaração
-          de transporte de maneira apropriada.
+          Os documentos abaixo deverão ser entregues à logística no dia da retirada da amostra. Faça a impressão e preencha os documentos de maneira apropriada.
         </p>
         <div className="flex flex-col items-center gap-2">
           {filesMap.map(({ flag, label }) => {

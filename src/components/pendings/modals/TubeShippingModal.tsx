@@ -42,7 +42,6 @@ export default function TubeShippingModal({ onClose, item }: TubeShippingProps) 
   return (
     <div className="space-y-4">
       <div className="space-y-4">
-        <h3 className="font-semibold text-gray-700">Endereço de Envio do Tubo</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <Input value={labelItem.addressName ?? ""} readOnly placeholder="Rua" />
           <Input value={labelItem.addressComplement ?? ""} readOnly placeholder="Complemento" />

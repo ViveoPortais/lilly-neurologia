@@ -63,10 +63,5 @@ export default function PdfViewerMobile({ pdfUrl }: PdfViewerMobileProps) {
     return () => resizeObserver.disconnect();
   }, [pdfUrl]);
 
-  return (
-    <div
-      ref={containerRef}
-      className="overflow-y-auto max-h-[60vh] px-2 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]"
-    />
-  );
+  return <div ref={containerRef} className="overflow-y-auto max-h-[60vh] px-2 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]" />;
 }

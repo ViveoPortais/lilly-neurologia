@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import 'keen-slider/keen-slider.min.css';
+@import "react-datepicker/dist/react-datepicker.css";
 
 @layer base {
   :root {
@@ -220,4 +221,15 @@
 .scrollbar-hidden {
   -ms-overflow-style: none; 
   scrollbar-width: none;
+}
+
+.react-datepicker {
+  font-family: inherit;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  border-color: #d4d4d8;
+}
+
+.react-datepicker__day--disabled {
+  color: #9ca3af !important;
 }

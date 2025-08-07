@@ -64,12 +64,12 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-l-8 w-full border-l-mainlilly rounded-2xl pl-3 pr-4 py-4 shadow-sm gap-4">
                       <div className="flex flex-row">
                         <FaCircleExclamation size={30} className="text-red-200 bg-mainlilly rounded rounded-full" />
-                        <p className="text-base md:text-xl text-gray-800 px-4">Deseja Cancelar o Protocolo?</p>
+                        <p className="text-base md:text-xl text-gray-800 px-4">Deseja Cancelar a Solicitação?</p>
                       </div>
                       <Button className="ml-4 px-10 py-2 font-semibold text-base" onClick={() => handleCancelProtocol()}>
-                        Cancelar Protocolo
+                        Cancelar Solicitação
                       </Button>
-                      <GenericModalForm title="Cancelar Protocolo" isOpen={isOpenCancelModal} onClose={() => setIsOpenCancelModal(false)}>
+                      <GenericModalForm title="Cancelar Solicitação" isOpen={isOpenCancelModal} onClose={() => setIsOpenCancelModal(false)}>
                         <FormCancelDiagnostic
                           onClose={() => {
                             setIsOpenCancelModal(false);
