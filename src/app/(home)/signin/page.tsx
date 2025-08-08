@@ -22,6 +22,8 @@ import { CustomSelect } from "@/components/custom/CustomSelect";
 import Link from "next/link";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { Checkbox } from "@/components/ui/checkbox";
+import { clearAllConsentCaches } from "@/lib/consentCache";
+
 
 const signInValidationSchema = z.object({
  login: z.string().min(1, { message: "Informe o login" }),
@@ -133,6 +135,7 @@ export default function SignIn() {
     const response = await login(loginData);
     const role = handleUserRole(response.role);
     if (role === "") {
+     clearAllConsentCaches();
      auth.onLogout();
      toast.warning("Usuário sem acesso a este programa");
      router.push("/signin");

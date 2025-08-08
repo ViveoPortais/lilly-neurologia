@@ -5,6 +5,7 @@ import SuggestionDateStep from "./SuggestionDateStep";
 import { ExamPendingModel, IPickupRequestModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { Input } from "@/components/ui/input";
+import dayjs from "dayjs";
 
 interface ApproveSampleDateModalProps {
   onClose: () => void;
@@ -42,6 +43,9 @@ export default function ApproveSampleDateModal({ onClose, item }: ApproveSampleD
               <Input value={labelItem.addressPostalCode ?? ""} readOnly placeholder="CEP" />
               <Input value={labelItem.addressNumber ?? ""} readOnly placeholder="Número" />
               <Input value={labelItem.addressState ?? ""} readOnly placeholder="Estado" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <Input value={dayjs(labelItem.examPickupDate).format("DD/MM/YYYY") ?? ""} readOnly placeholder="Data sugerida" />
             </div>
           </div>
           <div className="flex justify-center gap-4 p-4">

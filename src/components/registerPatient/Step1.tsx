@@ -55,6 +55,7 @@ export const Step1 = ({
   const { show, hide } = useLoading();
   const loading = useAppSelector((state) => state.registerPatient.loadingSearchPatient);
   const [selectedProfileLabel, setSelectedProfileLabel] = useState("");
+  const eighteenYearsAgo = dayjs().subtract(18, "years").format("YYYY-MM-DD");
 
   const profileCheckMap: Record<string, string[]> = {
     "Demência Leve": dlChecks,
@@ -264,8 +265,7 @@ export const Step1 = ({
               {...register("birthDateCaregiver")}
               type="date"
               placeholder="Nascimento do Cuidador"
-              max={today}
-              onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue, "Não é permitido cadastrar data futura")}
+              max={eighteenYearsAgo}
             />
             {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
           </div>

@@ -6,6 +6,7 @@ import { maskedField } from "@/components/custom/MaskedField";
 import { useEffect, useState } from "react";
 import { AddressData } from "@/services/api";
 import { toast } from "react-toastify";
+import { isValidPhoneNumber } from "@/helpers/helpers";
 
 export function Step2({ control, errors, setValue }: any) {
   const { register, watch } = useFormContext();
@@ -46,6 +47,8 @@ export function Step2({ control, errors, setValue }: any) {
       setValue("addressDistrict", watch("pickupAddressDistrict") || "");
       setValue("addressCity", watch("pickupAddressCity") || "");
       setValue("addressState", watch("pickupAddressState") || "");
+      setValue("sector", watch("pickupSector") || "");
+      setValue("contact", watch("pickupContact") || "");
     } else {
       setValue("addressPostalCode", "");
       setValue("addressName", "");
@@ -54,6 +57,8 @@ export function Step2({ control, errors, setValue }: any) {
       setValue("addressDistrict", "");
       setValue("addressCity", "");
       setValue("addressState", "");
+      setValue("sector", "");
+      setValue("contact", "");
     }
   }, [useSameAddress, setValue, watch]);
 
@@ -97,6 +102,31 @@ export function Step2({ control, errors, setValue }: any) {
           <div className="w-full">
             <Input {...register("pickupAddressState")} placeholder="Estado" />
             {errors?.pickupAddressState && <span className="text-sm text-red-500 block mt-1">{errors.pickupAddressState.message}</span>}
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 mt-4">
+          <div className="w-full">
+            <Input {...register("pickupSector")} placeholder="Nome do Responsável/Setor" disabled={useSameAddress} />
+            {errors?.pickupSector && <span className="text-sm text-red-500 block mt-1">{errors.pickupSector.message}</span>}
+          </div>
+          <div className="w-full">
+            <Controller
+              name="pickupContact"
+              control={control}
+              render={({ field }) => {
+                const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  const cleanPhone = value.replace(/\D/g, "");
+                  if (isValidPhoneNumber(cleanPhone)) {
+                    field.onChange(value);
+                  } else {
+                    field.onChange(value);
+                  }
+                };
+                return maskedField("cellphone", handlePhoneChange, field.name, "Telefone de Contato", false, () => {}, field.value, false);
+              }}
+            />
+            {errors?.pickupContact && <span className="text-sm text-red-500 block mt-1">{errors.pickupContact.message}</span>}
           </div>
         </div>
       </div>
@@ -144,6 +174,31 @@ export function Step2({ control, errors, setValue }: any) {
           <div className="w-full">
             <Input {...register("addressState")} disabled={useSameAddress} placeholder="Estado" />
             {errors?.addressState && <span className="text-sm text-red-500 block mt-1">{errors.addressState.message}</span>}
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 mt-4">
+          <div className="w-full">
+            <Input {...register("sector")} disabled={useSameAddress} placeholder="Nome do Responsável/Setor" />
+            {errors?.sector && <span className="text-sm text-red-500 block mt-1">{errors.sector.message}</span>}
+          </div>
+          <div className="w-full">
+            <Controller
+              name="contact"
+              control={control}
+              render={({ field }) => {
+                const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  const cleanPhone = value.replace(/\D/g, "");
+                  if (isValidPhoneNumber(cleanPhone)) {
+                    field.onChange(value);
+                  } else {
+                    field.onChange(value);
+                  }
+                };
+                return maskedField("cellphone", handlePhoneChange, field.name, "Telefone de Contato", false, () => {}, field.value, useSameAddress);
+              }}
+            />
+            {errors?.contact && <span className="text-sm text-red-500 block mt-1">{errors.contact.message}</span>}
           </div>
         </div>
       </div>

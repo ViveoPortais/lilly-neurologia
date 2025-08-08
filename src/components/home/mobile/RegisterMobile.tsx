@@ -5,7 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { usePdfModal } from "@/contexts/PdfModalContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Controller } from "react-hook-form";
-
+import { base64ToBlobUrl } from "@/helpers/fileHelper";
+import { ensureConsentDoc } from "@/lib/consentCache";
 interface RegisterProps {
  role: string;
  errors: any;
@@ -56,6 +57,27 @@ export default function RegisterMobile({
  clearErrors,
 }: RegisterProps) {
  const { openPdfModal, closePdfModal } = usePdfModal();
+
+const handleOpenConsent = async (onChange: (v: boolean) => void) => {
+  try {
+    const doc = await ensureConsentDoc(); 
+    if (!doc?.documentBody) return;
+
+    const pdfUrl = base64ToBlobUrl(doc.documentBody, doc.contentType || "application/pdf");
+
+    openPdfModal({
+      pdfUrl,
+      showAgree: true,
+      showDisagree: true,
+      showDownload: true,
+      disableClose: false,
+      onAgree: () => { onChange(true); closePdfModal(); },
+      onDisagree: () => { onChange(false); closePdfModal(); },
+    });
+  } catch (e) {
+    console.error("Erro ao carregar termo:", e);
+  }
+};
  return (
   <AnimatePresence mode="wait">
    {role === "medico" && step === 1 && (
@@ -143,25 +165,10 @@ export default function RegisterMobile({
          />
          <span className="text-sm text-[#82786F] leading-snug">
           LI E ACEITO O{" "}
-          <span
-           onClick={() =>
-            openPdfModal({
-             pdfUrl: "/files/Regulamento_PSD_Neurologia_vfinal.pdf",
-             showAgree: true,
-             showDisagree: true,
-             showDownload: true,
-             onAgree: () => {
-              field.onChange(true);
-              closePdfModal();
-             },
-             onDisagree: () => {
-              field.onChange(false);
-              closePdfModal();
-             },
-            })
-           }
-           className="underline cursor-pointer text-[#666666] font-bold"
-          >
+                <span
+                  onClick={() => handleOpenConsent(field.onChange)}
+                  className="underline cursor-pointer text-[#666666] font-bold"
+                >
            TERMO DE CONSENTIMENTO PARA PARTICIPAÇÃO NO PROGRAMA
           </span>
           <span className="text-mainlilly"> *</span>

@@ -1,10 +1,11 @@
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchAnnotations, fetchDiagnosticDetailsById } from "@/store/slices/diagnosticSlice";
+import { fetchAnnotations, fetchDiagnosticDetailsById, fetchDigitalSignatureDetails } from "@/store/slices/diagnosticSlice";
 import { useEffect, useState } from "react";
 import ModalDiagnosticDetails from "../diagnosticDetails/ModalDiagnosticDetails";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { IStringMap } from "@/types";
+import { IRequestSignerModel, IRequestSignModel } from "@/types/diagnostic";
 
 type DetailsButtonProps = {
   id: string;
@@ -16,7 +17,7 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
   const annotations = useAppSelector((state) => state.diagnostic.data.annotations);
   const [optionsCancellation, setOptionsCancellation] = useState<IStringMap[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-
+  const [digitalSignatureDetails, setDigitalSignatureDetails] = useState<IRequestSignModel | null>(null);
   const { show, hide } = useLoading();
 
   useEffect(() => {
@@ -37,6 +38,11 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
         (item) => item.optionName !== "Médico Recusou Nova Coleta" && item.optionName !== "Paciente Recusou Nova Coleta"
       );
 
+      if(examResult.hasDigitalSignature){
+          const digitalSignatureDetails = await dispatch(fetchDigitalSignatureDetails({id:id})).unwrap();
+          setDigitalSignatureDetails(digitalSignatureDetails)
+      }
+      
       setOptionsCancellation(filteredOptions);
       setIsOpen(true);
     } catch (error) {}
@@ -56,6 +62,7 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
           data={exam}
           annotations={annotations}
           optionsCancellation={optionsCancellation}
+          digitalSignatureDetails={digitalSignatureDetails}
         />
       </div>
     </>

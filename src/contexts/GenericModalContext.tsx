@@ -6,55 +6,68 @@ import { createContext, useContext, useState, ReactNode, useCallback } from "rea
 type ModalType = "success" | "warning" | "error";
 
 interface ModalState {
- type: ModalType;
- title?: string;
- message: string;
- buttonLabel?: string;
+    type: ModalType;
+    title?: string;
+    message: string;
+    buttonLabel?: string;
 }
 
 interface ModalContextProps {
- showModal: (modal: ModalState, onClose?: () => void) => void;
- closeModal: () => void;
+    showModal: (modal: ModalState, onClose?: () => void) => void;
+    closeModal: () => void;
 }
 
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
 export function GenericModalProvider({ children }: { children: ReactNode }) {
- const [isOpen, setIsOpen] = useState(false);
- const [modalState, setModalState] = useState<ModalState | null>(null);
- const [onCloseCallback, setOnCloseCallback] = useState<(() => void) | undefined>();
+    const [isOpen, setIsOpen] = useState(false);
+    const [modalState, setModalState] = useState<ModalState | null>(null);
+    const [onCloseCallback, setOnCloseCallback] = useState<(() => void) | undefined>();
 
- const showModal = useCallback((modal: ModalState, onClose?: () => void) => {
-  setModalState(modal);
-  setIsOpen(true);
-  setOnCloseCallback(() => onClose);
- }, []);
+    const formatMessage = (message: string) => {
+        if (typeof message === 'string') {
+            return message.replace(/\/n/g, '\n');
+        }
 
- const closeModal = useCallback(() => {
-  setIsOpen(false);
-  setModalState(null);
-  if (onCloseCallback) onCloseCallback();
- }, [onCloseCallback]);
+        return message;
+    }
 
- return (
-  <ModalContext.Provider value={{ showModal, closeModal }}>
-   {children}
-   <GenericModal
-    type={modalState?.type ?? "success"}
-    title={modalState?.title}
-    message={modalState?.message ?? ""}
-    buttonLabel={modalState?.buttonLabel}
-    isOpen={isOpen}
-    onClose={closeModal}
-   />
-  </ModalContext.Provider>
- );
+    const showModal = useCallback((modal: ModalState, onClose?: () => void) => {
+
+        const formatedModal = {
+            ...modal,
+            message: formatMessage(modal.message)
+        }
+        setModalState(modal);
+        setIsOpen(true);
+        setOnCloseCallback(() => onClose);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setIsOpen(false);
+        setModalState(null);
+        if (onCloseCallback) onCloseCallback();
+    }, [onCloseCallback]);
+
+    return (
+        <ModalContext.Provider value={{ showModal, closeModal }}>
+            {children}
+            <GenericModal
+                type={modalState?.type ?? "success"}
+                title={modalState?.title}
+                message={modalState?.message ?? ""}
+                buttonLabel={modalState?.buttonLabel}
+                isOpen={isOpen}
+                onClose={closeModal}
+            />
+        </ModalContext.Provider>
+    );
 }
 
 export function useGenericModal() {
- const context = useContext(ModalContext);
- if (!context) {
-  throw new Error("useGenericModal deve ser usado dentro de um GenericModalProvider");
- }
- return context;
+    const context = useContext(ModalContext);
+    if (!context) {
+        throw new Error("useGenericModal deve ser usado dentro de um GenericModalProvider");
+    }
+    return context;
 }

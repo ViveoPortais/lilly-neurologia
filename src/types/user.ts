@@ -48,3 +48,12 @@ export interface IBlockedUser {
   reasonStateCode: string;
   status: string;
 }
+
+export interface IConsentStatusRequest {
+  programCode: string;
+}
+
+export interface IUpdateConsentRequest {
+  programCode: string;
+  consent: boolean;
+}

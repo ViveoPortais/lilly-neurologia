@@ -11,6 +11,7 @@ interface PdfViewerModalProps {
   showAgree?: boolean;
   showDisagree?: boolean;
   showDownload?: boolean;
+  disableClose?: boolean;
   onAgree?: () => void;
   onDisagree?: () => void;
 }
@@ -22,6 +23,7 @@ export function PdfViewerModal({
   showAgree = false,
   showDisagree = false,
   showDownload = false,
+  disableClose = false,
   onAgree,
   onDisagree,
 }: PdfViewerModalProps) {
@@ -31,8 +33,18 @@ export function PdfViewerModal({
   const PdfViewerMobile = dynamic(() => import("@/components/modals/PdfViewerMobile"), { ssr: false });
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl w-full h-[80vh] flex flex-col">
+    <Dialog open={open} 
+       onOpenChange={(nextOpen) => {
+        if (disableClose && !nextOpen) return;
+        if (!nextOpen) onClose();
+      }}
+    >
+       <DialogContent
+        className="max-w-5xl w-full h-[80vh] flex flex-col"
+        onEscapeKeyDown={(e) => { if (disableClose) e.preventDefault(); }}
+        onPointerDownOutside={(e) => { if (disableClose) e.preventDefault(); }}
+        onInteractOutside={(e) => { if (disableClose) e.preventDefault(); }}
+      >
         <DialogHeader>
           <DialogTitle>Visualização do Documento</DialogTitle>
         </DialogHeader>

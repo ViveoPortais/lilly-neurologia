@@ -31,6 +31,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(scheduleSampeSchema(data.tubeReceptionDate!)),
@@ -78,13 +79,13 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                <Step2 register={register} errors={errors} data={data} />
+                <Step2 register={register} errors={errors} data={data} control={control} />
               </motion.div>
             )
           ) : (
             <>
               <Step1 data={data} />
-              <Step2 register={register} errors={errors} data={data} />
+              <Step2 register={register} errors={errors} data={data} control={control}/>
             </>
           )}
         </AnimatePresence>

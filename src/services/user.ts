@@ -1,7 +1,7 @@
 import { IUpdateProfessionalData } from "@/types/professions";
 import api from "./api";
 import { IDoctorData, IUpdateDoctorData } from "@/types";
-import { IChangePassword, IRegisterRepresentative, IUnblockUserRequest } from "@/types/user";
+import { IChangePassword, IRegisterRepresentative, IUnblockUserRequest,IConsentStatusRequest,IUpdateConsentRequest} from "@/types/user";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
@@ -50,4 +50,16 @@ export const getBlockedUsers = async () => {
 export const unblockUser = async (dto: IUnblockUserRequest) => {
   const response = await api.post("/user/unblock", dto);
   return response.data;
+};
+
+export const getConsentStatus = async () => {
+  const res = await api.get("/user/consent-status", {
+    params: { programCode },
+  });
+  return res.data;
+};
+
+export const updateConsentStatus = async (consent: boolean = true) => {
+  const res = await api.post<void>("/user/consent-status", { programCode, consent });
+  return res.data;
 };

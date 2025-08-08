@@ -170,3 +170,13 @@ export const getDiagnosticByCpf = async (programCode: string, cpf: string) => {
   });
   return response;
 }
+
+export const getDigitalSignatureDetails= async (id: string) => {
+  const response = await api.get("/DocuSign/Get", {
+    params: {
+      programcode: programCode,
+      examId: id
+    },
+  });
+  return response.data.value;
+};

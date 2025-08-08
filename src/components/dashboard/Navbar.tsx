@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import GenericModalForm from "../modals/GenericModalForm";
 import OperationPasswordModal from "../manageFiles/OperationPasswordModal";
+import {clearAllConsentCaches } from "@/lib/consentCache";
 
 type NotificationProps = {
   onOpenNotificationModal: () => void;
@@ -38,6 +39,7 @@ export function Navbar(props: NotificationProps) {
  };
 
  function handleLogout() {
+  clearAllConsentCaches();
   router.push("/");
   auth.onLogout();
   api.defaults.headers.Authorization = "";

@@ -1,13 +1,32 @@
 "use client";
 
 import { useCookieModal } from "@/contexts/CookieModalContext";
-
+import { useEffect, useState } from "react";
+import { getLatestRegistrationConsent } from "@/services/annotation";
+import { base64ToBlobUrl } from "@/helpers/fileHelper";
+import { primeConsentDoc } from "@/lib/consentCache";
 interface FooterProps {
  bgColor?: string;
 }
 
 export function Footer({ bgColor }: FooterProps) {
  const { openCookieModal } = useCookieModal();
+const  [termsUrl, setTermsUrl] = useState<string | null>(null);
+
+useEffect(() => {
+  (async () => {
+    try {
+      const doc = await getLatestRegistrationConsent();   
+      if (doc?.documentBody) {
+        primeConsentDoc(doc);                          
+        const url = base64ToBlobUrl(doc.documentBody, doc.contentType || "application/pdf");
+        setTermsUrl(url);                  
+      }
+    } catch (e) {
+      console.error("Footer: falha ao carregar Termos", e);
+    }
+  })();
+}, []);
  return (
   <footer className={`w-full ${bgColor} text-xs px-4 py-4 text-muted-foreground`}>
    <div className="flex items-center justify-between w-full">
@@ -34,9 +53,11 @@ export function Footer({ bgColor }: FooterProps) {
       <a href="https://www.lillyprivacy.com/BR-pt/hcp" target="_blank" rel="noopener noreferrer" className="underline">
        Política de Privacidade
       </a>
-      <a href="/files/Regulamento_PSD_Neurologia_vfinal.pdf" target="_blank" rel="noopener noreferrer" className="underline">
-       Termos de Uso
-      </a>
+            <a
+              href={termsUrl ?? "/files/Regulamento_PSD_Neurologia_vfinal.pdf"} target="_blank" rel="noopener noreferrer" className="underline"
+            >
+              Termos de Uso
+            </a>
       <a
        href="https://www.lilly.com/br/declaracao-de-privacidade?redirect-referrer=https%3A%2F%2Fwww.diagnosticocorreto.com.br%2F"
        target="_blank"

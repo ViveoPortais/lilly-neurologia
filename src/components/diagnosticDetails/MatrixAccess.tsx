@@ -52,7 +52,7 @@ const AttachmentDetails = ({ data }: MatrixAccessProps) => {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <Input
-                  placeholder="E-mail"
+                  placeholder="Usuário Matrix"
                   inputPlaceholder=""
                   className="cursor-pointer"
                   value={data.loginMatrix ?? ""}

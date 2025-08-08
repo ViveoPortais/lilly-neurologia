@@ -6,7 +6,7 @@ import AttachmentDetails from "./AttachmentDetails";
 import HistoryDetails from "./HistoryDetails";
 import { Button } from "../ui/button";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { IDiagnosticExamModel } from "@/types/diagnostic";
+import { IDiagnosticExamModel, IRequestSignModel } from "@/types/diagnostic";
 import { IAnnotationModel } from "@/types/general";
 import GenericModalForm from "../modals/GenericModalForm";
 import FormCancelDiagnostic from "./FormCancelDiagnostic";
@@ -14,6 +14,7 @@ import { IStringMap } from "@/types";
 import MatrixAccess from "./MatrixAccess";
 import useSession from "@/hooks/useSession";
 import LabelDownload from "./LabelDownload";
+import DigitalSignatureDetails from "./DigitalSignatureDetails";
 
 interface ModalDiagnosticDetailsFormProps {
   isOpen: boolean;
@@ -21,9 +22,10 @@ interface ModalDiagnosticDetailsFormProps {
   data: IDiagnosticExamModel | undefined;
   annotations: IAnnotationModel[];
   optionsCancellation: IStringMap[];
+  digitalSignatureDetails : IRequestSignModel | null;
 }
 
-export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotations, optionsCancellation }: ModalDiagnosticDetailsFormProps) {
+export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotations, optionsCancellation , digitalSignatureDetails}: ModalDiagnosticDetailsFormProps) {
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
 
   const auth = useSession();
@@ -56,7 +58,8 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
             {auth.role !== "logistics" && (
               <div className="flex flex-col w-full space-y-8 mt-2">
                 {auth.role === "doctor" && (data.examStatusStringMap?.optionName == "Laudo Disponível") && <MatrixAccess data={data} />}
-                <AttachmentDetails annotations={annotations} />
+                {annotations.length > 0 && <AttachmentDetails annotations={annotations} />}
+                {data.hasDigitalSignature && <DigitalSignatureDetails data={digitalSignatureDetails}/>}
                 {auth.role === "operation" && data.labelAttachment?.[0] && <LabelDownload file={data.labelAttachment?.[0]!}/>}
                 <HistoryDetails schedulingHistory={data.schedulingHistory ?? []} />
                 {!(data.examStatusStringMap?.flag == "EXAM_CANCELED" || data.examStatusStringMap?.flag == "EXAM_REPORT_AVAILABLE") && (

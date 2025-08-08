@@ -1,4 +1,4 @@
-import { AnnotationModel, IAnnotationFilterModel } from "@/types/general";
+import { AnnotationModel, IAnnotationFilterModel,IAttachmentModel } from "@/types/general";
 import api from "./api";
 import { ExamCreateModel } from "@/types/diagnostic";
 
@@ -45,4 +45,11 @@ export const downloadDocumentFilled = async (data: ExamCreateModel) => {
         }
     );
     return response.data;
+};
+
+export const getLatestRegistrationConsent = async () => {
+  const res = await api.get<IAttachmentModel>("/Annotation/consent/registration/latest-attachment", {
+    params: { programCode: process.env.NEXT_PUBLIC_PROGRAM_CODE },
+  });
+  return res.data;
 };

@@ -93,9 +93,18 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
     const hasResponsible = methods.watch("hasResponsible") === "yes";
     const useSameAddress = methods.watch("useSameAddress") === true;
 
-    const pickupFields = ["pickupPostalCode", "pickupAddressName", "pickupNumber", "pickupAddressDistrict", "pickupAddressCity", "pickupAddressState"];
+    const pickupFields = [
+      "pickupPostalCode",
+      "pickupAddressName",
+      "pickupNumber",
+      "pickupAddressDistrict",
+      "pickupAddressCity",
+      "pickupAddressState",
+      "pickupSector",
+      "pickupContact",
+    ];
 
-    const addressFields = ["addressPostalCode", "addressName", "addressNumber", "addressDistrict", "addressCity", "addressState"];
+    const addressFields = ["addressPostalCode", "addressName", "addressNumber", "addressDistrict", "addressCity", "addressState", "sector", "contact"];
 
     if (!isMobile && step === 1) {
       return [
@@ -218,6 +227,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           pickupAddressDistrict,
           pickupAddressCity,
           pickupAddressState,
+          pickupSector,
+          pickupContact,
           ...restData
         } = data;
 
@@ -229,6 +240,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           addressDistrict: pickupAddressDistrict,
           addressCity: pickupAddressCity,
           addressState: pickupAddressState,
+          sector: data.sector,
+          contact: data.contact,
         };
 
         const commonAddressFields = useSameAddress
@@ -240,6 +253,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
               addressDistrict: pickupAddressDistrict,
               addressCity: pickupAddressCity,
               addressState: pickupAddressState,
+              sector: pickupSector,
+              contact: pickupContact,
             }
           : {};
 
@@ -281,9 +296,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
               title: "Erro ao cadastrar paciente.",
               message: response.additionalMessage,
             },
-            () => {
-              router.push("/dashboard/starts");
-            }
+            () => {}
           );
         }
       } catch (error) {

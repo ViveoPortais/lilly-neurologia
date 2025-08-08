@@ -8,6 +8,7 @@ interface PdfModalProps {
  showAgree?: boolean;
  showDisagree?: boolean;
  showDownload?: boolean;
+ disableClose?: boolean;
  onAgree?: () => void;
  onDisagree?: () => void;
 }

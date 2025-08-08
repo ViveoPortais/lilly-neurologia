@@ -3,14 +3,21 @@ import { Download } from "lucide-react";
 import { Button } from "../ui/button";
 import { IPatientSampleCollectionViewModel } from "@/types/diagnostic";
 import { downloadBase64File } from "@/helpers/fileHelper";
+import { Controller } from "react-hook-form";
+import { CustomDatePicker } from "../custom/CustomDatepicker";
 
 interface Step2Props {
   register: any;
   errors: any;
+  control: any;
   data: IPatientSampleCollectionViewModel;
 }
 
-export default function Step2({ register, errors, data }: Step2Props) {
+export default function Step2({ register, errors, control, data }: Step2Props) {
+  const isWeekdayAllowed = (date: Date) => {
+    const day = date.getDay();
+    return day !== 5 && day !== 6 && day !== 0;
+  };
   const downloadFichaEmergencia = () => {
     const link = document.createElement("a");
     link.href = "/files/FICHA DE EMERGENCIA - UN3373 LCT.XLS";
@@ -41,9 +48,21 @@ export default function Step2({ register, errors, data }: Step2Props) {
           {errors.collectMaterial && <p className="text-red-500 text-sm mt-1">{errors.collectMaterial.message?.toString()}</p>}
         </div>
 
-        <div>
+        <div className="space-y-1">
           <label className="text-sm text-zinc-700">Data Desejada da Retirada da Amostra</label>
-          <Input type="date" {...register("doctorSuggestedDate")} />
+          <Controller
+            control={control}
+            name="doctorSuggestedDate"
+            render={({ field }) => (
+              <CustomDatePicker
+                selected={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => field.onChange(date)}
+                placeholder="Selecione uma data"
+                filterDate={isWeekdayAllowed}
+                name="doctorSuggestedDate"
+              />
+            )}
+          />
           {errors.doctorSuggestedDate && <p className="text-red-500 text-sm mt-1">{errors.doctorSuggestedDate.message?.toString()}</p>}
         </div>
       </div>

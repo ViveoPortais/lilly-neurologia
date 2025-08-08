@@ -135,8 +135,8 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
         <Input {...register("ptau")} placeholder="Proteína Tau Fosforilada (pTau)" disabled={watch("resultInconclusive")}/>
         <Input {...register("ratio")} placeholder="Razão pTau/BA42" disabled={watch("resultInconclusive")}/>
         <Input {...register("ttau")} placeholder="Proteína Tau Total (tTau)" disabled={watch("resultInconclusive")}/>
-        <Input {...register("username")} placeholder="Digite o usuário" />
-        <Input {...register("password")} placeholder="Digite sua senha" type="password" className="input" />
+        <Input {...register("username")} placeholder="Usuário Matrix" />
+        <Input {...register("password")} placeholder="Senha" type="password" className="input" />
       </div>
 
       <Button type="submit" className="w-full" disabled={!watch("conclusionDate") || !isValid}>

@@ -28,6 +28,16 @@ export const ChangeFileModal = ({ onClose, onConfirm, data }: ChangeFileModalPro
  const { show, hide } = useLoading();
  const modal = useGenericModal();
  const dispatch = useAppDispatch();
+const annotationTypeStringMapId = data.annotationTypeStringMapId ?? data.annotationTypeStringMap?.id; 
+debugger;
+if (!annotationTypeStringMapId) {
+  modal.showModal({
+    type: "warning",
+    message: "Tipo do documento (AnnotationTypeStringMapId) não encontrado.",
+  });
+  hide();
+  return;
+}
 
  const handleConfirm = async () => {
   if (!newFile || !evidenceFile) return;
@@ -38,6 +48,7 @@ export const ChangeFileModal = ({ onClose, onConfirm, data }: ChangeFileModalPro
 
    const payload: AnnotationModel = {
     id: data.id,
+    annotationTypeStringMapId,
     attachments: [
      {
       fileName: newFile.name,

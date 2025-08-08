@@ -133,6 +133,11 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
                 <span>({data.reasonExamNotDoneStringMap?.optionName})</span>
               </div>
             )}
+            {(data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' && data.withdrawalDate != null)&& (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")}</strong></span>
+              </div>
+            )}
             {resolvableFlags.includes(statusFlag) && (role === "doctor" || role === "professional") && (
               <div className="w-full md:w-auto mt-1 md:mt-0">
                 <button

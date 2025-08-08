@@ -128,6 +128,7 @@ export interface IStringMapData {
 }
 
 export interface IStringMap {
+  id?: string;  
   stringMapId: string;
   entityMetadataId?: string;
   entityMetadataIdName?: string;

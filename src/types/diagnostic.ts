@@ -171,7 +171,9 @@ export interface IDiagnosticExamModel {
   pendingExam?: string | null;
   loginMatrix?: string | null;
   passwordMatrix?: string | null;
+  hasDigitalSignature? : boolean | null;
 }
+
 
 export interface LogisticsModel {
   InstitutionName?: string | null;
@@ -370,4 +372,18 @@ export interface IPatientSampleCollectionViewModel {
   examRequestDate?: string;
   tubeReceptionDate?: string;
   attachments?: AttachmentModel[];
+}
+
+export interface IRequestSignModel {
+  systemClientId? : string;
+  externalId? : string;
+  templateId? : string;
+  signers? : IRequestSignerModel[];
+}
+
+export interface IRequestSignerModel {
+    name?:string;
+    email?:string;
+    role?:string;
+    status?:string;
 }

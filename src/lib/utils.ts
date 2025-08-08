@@ -395,6 +395,8 @@ export const patientSchema = z
     addressDistrict: z.string().optional(),
     addressCity: z.string().optional(),
     addressState: z.string().optional(),
+    sector: z.string().optional(),
+    contact: z.string().optional(),
     pickupPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
     pickupAddressName: z.string().min(1, { message: "Rua é obrigatória" }),
     pickupNumber: z.string().min(1, { message: "Número é obrigatório" }),
@@ -402,6 +404,8 @@ export const patientSchema = z
     pickupAddressDistrict: z.string().min(1, { message: "Bairro é obrigatório" }),
     pickupAddressCity: z.string().min(1, { message: "Cidade é obrigatória" }),
     pickupAddressState: z.string().min(1, { message: "Estado é obrigatório" }),
+    pickupSector: z.string().min(1, { message: "Nome do responsável/setor é obrigatório" }),
+    pickupContact: z.string().min(1, { message: "Telefone de contato é obrigatório" }),
     useSameAddress: z.boolean().optional(),
     isSecondSolicitation: z.boolean().optional(),
     termConsentAttach: z.any().optional(),
@@ -499,12 +503,12 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
   z
     .object({
       collectMaterial: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
-      doctorSuggestedDate: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+      doctorSuggestedDate: z.date({ required_error: "Informe a data desejada" }),
     })
     .superRefine((data, ctx) => {
       let recebimento;
       const coleta = parseISO(data.collectMaterial);
-      const desejada = parseISO(data.doctorSuggestedDate);
+      const desejada = data.doctorSuggestedDate;
       if (dataRecebimento) {
         recebimento = parseISO(dataRecebimento);
       } else {
@@ -512,6 +516,12 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       }
       const hoje = new Date();
       const doisDiasDepois = addDays(hoje, 2);
+
+      console.log({
+  coleta: data.collectMaterial,
+  desejada: data.doctorSuggestedDate,
+  recebimento: dataRecebimento
+});
 
       if (!isValid(recebimento)) return;
 
@@ -526,7 +536,7 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       if (isBefore(desejada, coleta) || isBefore(desejada, recebimento!) || isBefore(desejada, doisDiasDepois) || isFriday(desejada)) {
         ctx.addIssue({
           path: ["doctorSuggestedDate"],
-          message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dois dias após hoje, e não pode ser sexta-feira",
+          message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dias úteis, e não pode ser sexta-feira",
           code: z.ZodIssueCode.custom,
         });
       }

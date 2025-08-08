@@ -2,7 +2,7 @@ import { IAnnotationModel, IPaginationResult, IReturnMessage} from "@/types/gene
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IChangePassword, IUserData } from "@/types/user";
 import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel } from "@/types/diagnostic";
-import { getAnnotations, getDiagnosticById, historyDiagnostics, informexamcancellation } from "@/services/diagnostic";
+import { getAnnotations, getDiagnosticById, getDigitalSignatureDetails, historyDiagnostics, informexamcancellation } from "@/services/diagnostic";
 import { downloadDocumentFilled } from "@/services/annotation";
 
 interface DiagnosticSliceState {
@@ -64,6 +64,15 @@ export const fetchTermAttachFilled = createAsyncThunk("/annotation/documentFille
 export const postCancellationExam = createAsyncThunk("/exam/cancelExam", async ({ examCancellationModel }: { examCancellationModel: IExamCancellationModel; }, thunkAPI) => {
     try {
         const result = await informexamcancellation(examCancellationModel);
+        return result;
+    } catch (error) {
+        return thunkAPI.rejectWithValue("Erro ao carregar dados");
+    }
+});
+
+export const fetchDigitalSignatureDetails = createAsyncThunk("/DocuSign/Get", async ({ id }: { id: string; }, thunkAPI) => {
+    try {
+        const result = await getDigitalSignatureDetails(id);
         return result;
     } catch (error) {
         return thunkAPI.rejectWithValue("Erro ao carregar dados");
@@ -137,6 +146,18 @@ const diagnosticSlice = createSlice({
                 state.loading = false;
             })
             .addCase(fetchTermAttachFilled.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            .addCase(fetchDigitalSignatureDetails.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchDigitalSignatureDetails.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(fetchDigitalSignatureDetails.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })

@@ -59,7 +59,7 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
       <Input
         type="date"
         placeholder="Data da entrega"
-        inputPlaceholder="Informe a data"
+        inputPlaceholder="Informe da entrega"
         {...register("deliveryDate")}
         onChange={handleDateChange}
         className="w-full"
@@ -67,7 +67,7 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
       />
       {touchedFields.deliveryDate && errors.deliveryDate && <p className="text-red-500 text-sm mt-1">{errors.deliveryDate.message}</p>}
 
-      <Input type="time" placeholder="Horário da entrega" {...register("deliveryTime")} inputPlaceholder="Informe o horário" className="w-full" />
+      <Input type="time" placeholder="Horário da retirada" {...register("deliveryTime")} inputPlaceholder="Informe o horário" className="w-full" />
       {touchedFields.deliveryTime && errors.deliveryTime && <p className="text-red-500 text-sm mt-1">{errors.deliveryTime.message}</p>}
 
       <Button type="submit" className="w-full" disabled={!isValid}>
