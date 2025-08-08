@@ -42,6 +42,30 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
             if (payload.birthDateCaregiver == "")
                 payload.birthDateCaregiver = null;
 
+            const {
+                pickupPostalCode,
+                pickupAddressName,
+                pickupNumber,
+                pickupAddressComplement,
+                pickupAddressDistrict,
+                pickupAddressCity,
+                pickupAddressState,
+            } = payload;
+
+            const logistics = {
+                addressPostalCode: pickupPostalCode,
+                addressName: pickupAddressName,
+                addressNumber: pickupNumber,
+                addressComplement: pickupAddressComplement,
+                addressDistrict: pickupAddressDistrict,
+                addressCity: pickupAddressCity,
+                addressState: pickupAddressState,
+                sector: payload.sector,
+                contact: payload.contact,
+            };
+
+            payload.logistics = logistics;
+
             const res = await dispatch(fetchTermAttachFilled({ data: payload })).unwrap();
             if (res) {
                 const url = window.URL.createObjectURL(new Blob([res], { type: "application/pdf" }));
