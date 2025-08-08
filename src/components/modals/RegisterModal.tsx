@@ -79,14 +79,10 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
           toast.warning("O CRM informado pode estar irregular ou inativo");
           setValue("licenseState", "");
           setValue("doctorName", "");
-          setValue("emailAddress", "");
-          setValue("telephoneNumber", "");
           return;
         }
 
         setValue("doctorName", response.name);
-        setValue("emailAddress", response.email);
-        setValue("telephoneNumber", response.telephone);
 
         const specialties = response.medicalSpecialty ? response.medicalSpecialty.split("|") : [];
 
