@@ -266,6 +266,7 @@ export const Step1 = ({
               type="date"
               placeholder="Nascimento do Cuidador"
               max={eighteenYearsAgo}
+              onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue, "Não é permitido cadastrar data futura")}
             />
             {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
           </div>

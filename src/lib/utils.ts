@@ -1,6 +1,7 @@
 import isValidCPF, { cpfRegex, mobilephoneRegex, nameRegex } from "@/helpers/helpers";
 import { type ClassValue, clsx } from "clsx";
 import { addDays, isAfter, isBefore, isFriday, isValid, parseISO } from "date-fns";
+import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
 import { any, z } from "zod";
 
@@ -383,7 +384,28 @@ export const patientSchema = z
       .refine((val) => !val || isValidCPF(val), {
         message: "CPF inválido",
       }),
-    birthDateCaregiver: z.string().optional(),
+    birthDateCaregiver: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val) return true;
+          return dayjs(val).isValid();
+        },
+        {
+          message: "Data inválida",
+        }
+      )
+      .refine(
+        (val) => {
+          if (!val) return true;
+          const age = dayjs().diff(dayjs(val), "year");
+          return age >= 18;
+        },
+        {
+          message: "O cuidador deve ter 18 anos ou mais",
+        }
+      ),
     disease: z.string().min(1, { message: "Informe a doença" }),
     examDefinition: z.string().min(1, { message: "Descreva o exame" }),
     laboratoryAnalysis: z.string().min(1, { message: "Informe o laboratório" }),

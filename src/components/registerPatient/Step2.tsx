@@ -12,6 +12,8 @@ export function Step2({ control, errors, setValue }: any) {
   const { register, watch } = useFormContext();
   const [isFetchingCep, setIsFetchingCep] = useState(false);
   const useSameAddress = watch("useSameAddress");
+  const [pickupContactError, setPickupContactError] = useState<string | null>(null);
+  const [contactError, setContactError] = useState<string | null>(null);
 
   const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>, type: "pickup" | "address") => {
     const rawCep = e.target.value.replace(/\D/g, "");
@@ -106,7 +108,7 @@ export function Step2({ control, errors, setValue }: any) {
         </div>
         <div className="grid md:grid-cols-2 gap-4 mt-4">
           <div className="w-full">
-            <Input {...register("pickupSector")} placeholder="Nome do Responsável/Setor" disabled={useSameAddress} />
+            <Input {...register("pickupSector")} placeholder="Nome do Responsável/Setor" />
             {errors?.pickupSector && <span className="text-sm text-red-500 block mt-1">{errors.pickupSector.message}</span>}
           </div>
           <div className="w-full">
@@ -117,16 +119,21 @@ export function Step2({ control, errors, setValue }: any) {
                 const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value;
                   const cleanPhone = value.replace(/\D/g, "");
-                  if (isValidPhoneNumber(cleanPhone)) {
-                    field.onChange(value);
+                  if (!value) {
+                    setPickupContactError("Telefone de contato é obrigatório");
+                  } else if (!isValidPhoneNumber(cleanPhone)) {
+                    setPickupContactError("Telefone inválido");
                   } else {
-                    field.onChange(value);
+                    setPickupContactError(null);
                   }
+
+                  field.onChange(value);
                 };
                 return maskedField("cellphone", handlePhoneChange, field.name, "Telefone de Contato", false, () => {}, field.value, false);
               }}
             />
             {errors?.pickupContact && <span className="text-sm text-red-500 block mt-1">{errors.pickupContact.message}</span>}
+            {pickupContactError && <span className="text-sm text-red-500 block mt-1">{pickupContactError}</span>}
           </div>
         </div>
       </div>
@@ -189,16 +196,18 @@ export function Step2({ control, errors, setValue }: any) {
                 const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value;
                   const cleanPhone = value.replace(/\D/g, "");
-                  if (isValidPhoneNumber(cleanPhone)) {
-                    field.onChange(value);
+                  if (!isValidPhoneNumber(cleanPhone)) {
+                    setContactError("Telefone inválido");
                   } else {
-                    field.onChange(value);
+                    setContactError(null);
                   }
+                  field.onChange(value);
                 };
                 return maskedField("cellphone", handlePhoneChange, field.name, "Telefone de Contato", false, () => {}, field.value, useSameAddress);
               }}
             />
             {errors?.contact && <span className="text-sm text-red-500 block mt-1">{errors.contact.message}</span>}
+            {contactError && <span className="text-sm text-red-500 block mt-1">{contactError}</span>}
           </div>
         </div>
       </div>
