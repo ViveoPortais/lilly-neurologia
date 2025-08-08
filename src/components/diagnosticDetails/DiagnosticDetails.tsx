@@ -180,11 +180,11 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
           <div className="flex flex-col md:flex-row gap-6 py-4">
             <div className="md:basis-1/6">
               <label>Local de Retirada</label>
-              <p>{data.section}</p>
+              {/* <p>{}</p> */} {/* TIRAR ESSE CAMPO AQUI, Ó */}
             </div>
             <div className="md:basis-1/6">
               <label>Nome do Responsável/Setor</label>
-              <p>{data.mainContact}</p>
+              <p>{data.section}</p>
             </div>
             <div className="md:basis-1/6">
               <label>Telefone de Contato</label>
