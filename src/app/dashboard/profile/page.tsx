@@ -7,10 +7,10 @@ import { PersonalDataSection } from "@/components/profile/PersonalDataSection";
 import { Button } from "@/components/ui/button";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import useSession from "@/hooks/useSession";
-import { doctorProfileSchema, professionalProfileSchema } from "@/lib/utils";
+import { doctorProfileSchema, generalProfileSchema, professionalProfileSchema } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchMedicalSpecialties, fetchUserData, putUpdateDoctor, putUpdateProfessional } from "@/store/slices/profileSlice";
-import { IUpdateDoctorData } from "@/types";
+import { fetchMedicalSpecialties, fetchUserData, putUpdateDoctor, putUpdateProfessional, putUpdateUserGeneral } from "@/store/slices/profileSlice";
+import { IUpdateDoctorData, IUpdateUserGeneral } from "@/types";
 import { IUpdateProfessionalData } from "@/types/professions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -27,7 +27,19 @@ export default function Profile() {
   const profile = useAppSelector((state) => state.profile.data.userInfo);
   const medicalSpecialties = useAppSelector((state) => state.profile.data.medicalSpecialties);
 
-  const schema = auth.role === 'doctor' ? doctorProfileSchema : professionalProfileSchema;
+  let schema;
+  
+  switch(auth.role){
+    case 'doctor':
+      schema = doctorProfileSchema;
+      break;
+    case 'professional':
+      schema = professionalProfileSchema;
+      break;
+    default :
+      schema = generalProfileSchema;
+      break;
+  }
 
   const methods = useForm<any>({
     resolver: zodResolver(schema),
@@ -74,6 +86,13 @@ export default function Profile() {
       dataUpdate.mobilePhone1 = data.mobilenumber;
 
       result = await dispatch(putUpdateProfessional({ professional: dataUpdate })).unwrap();
+    }
+    else{
+      const dataUpdate = data as IUpdateUserGeneral;
+      
+      dataUpdate.userMobilephone = data.mobilenumber;
+
+      result = await dispatch(putUpdateUserGeneral({data:dataUpdate})).unwrap();
     }
 
     if (result) {
@@ -136,15 +155,18 @@ export default function Profile() {
             setValue={setValue}
           />
 
-          <AddressSection
-            control={control}
-            errors={errors}
-            addressPostalCode={profile?.value.addressPostalCode ?? ''}
-            addressCity={profile?.value.addressCity ?? ''}
-            addressState={profile?.value.addressState ?? ''}
-            setValue={setValue}
-            setFocus={setFocus}
-          />
+          {(auth.role === 'doctor' || auth.role === 'professional') && (
+            <AddressSection
+              control={control}
+              errors={errors}
+              addressPostalCode={profile?.value.addressPostalCode ?? ''}
+              addressCity={profile?.value.addressCity ?? ''}
+              addressState={profile?.value.addressState ?? ''}
+              setValue={setValue}
+              setFocus={setFocus}
+            />
+          )}
+
           <AccessSection
             emailAddress={profile?.value.emailAddress ?? ''}
             control={control}

@@ -3,6 +3,7 @@ import {
  LuFiles,
  LuFolderOpen,
  LuLayoutDashboard,
+ LuLineChart,
  LuMousePointerClick,
  LuSlidersHorizontal,
  LuTestTube,
@@ -100,4 +101,18 @@ export const routes: IRouteProps = {
   { route: "/dashboard/stock", text: "Estoque", icon: FaBoxArchive },
   { route: "/dashboard/myRequests", text: "Todas as solicitações", icon: LuMousePointerClick },
  ],
+ client:[
+    {
+        route: "/dashboard/starts",
+        text: "Início",
+        icon: LuLayoutDashboard,
+        summary: "Aqui você encontra tudo o que precisa para gerenciar suas solicitações de forma mais rápida e intuitiva.",
+    },
+    {
+        route: "/dashboard/client/report",
+        text: "Relatórios",
+        icon: LuLineChart,
+        summary: "Aqui você encontra tudo referente aos relatórios do programa.",
+    },
+ ]
 };

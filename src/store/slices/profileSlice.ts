@@ -1,8 +1,8 @@
 import { IReturnMessage} from "@/types/general";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IChangePassword, IUserData } from "@/types/user";
-import { changePassword, getUserInfo, updateProfessional } from "@/services/user";
-import { IMedicalSpecialty, IUpdateDoctorData } from "@/types";
+import { changePassword, getUserInfo, updateProfessional, updateUserGeneral } from "@/services/user";
+import { IMedicalSpecialty, IUpdateDoctorData, IUpdateUserGeneral } from "@/types";
 import { getListSpecialties, updateDoctor } from "@/services/doctor";
 import { AddressData } from "@/services/api";
 import { IUpdateProfessionalData } from "@/types/professions";
@@ -64,6 +64,15 @@ export const putUpdateDoctor = createAsyncThunk("doctor/update", async ({ doctor
 export const putUpdateProfessional = createAsyncThunk("healthprofessional/updatehealthprofessional", async ({ professional }: { professional: IUpdateProfessionalData; }, thunkAPI) => {
     try {
         const result = await updateProfessional(professional);
+        return result;
+    } catch (error) {
+        return thunkAPI.rejectWithValue("Erro ao atualizar dados");
+    }
+});
+
+export const putUpdateUserGeneral = createAsyncThunk("user/update", async ({ data }: { data: IUpdateUserGeneral; }, thunkAPI) => {
+    try {
+        const result = await updateUserGeneral(data);
         return result;
     } catch (error) {
         return thunkAPI.rejectWithValue("Erro ao atualizar dados");
@@ -144,6 +153,18 @@ const profileSlice = createSlice({
                 state.loading = false;
             })
             .addCase(putUpdateProfessional.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            .addCase(putUpdateUserGeneral.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(putUpdateUserGeneral.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(putUpdateUserGeneral.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })

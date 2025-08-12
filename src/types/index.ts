@@ -184,3 +184,8 @@ export interface IPostIncident {
   availabilityStart3?: string | null;
   availabilityEnd3?: string | null;
 }
+
+
+export interface IUpdateUserGeneral {
+  userMobilephone: string | undefined
+}

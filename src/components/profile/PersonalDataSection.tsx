@@ -100,30 +100,33 @@ export const PersonalDataSection = ({
                         placeholder="Nome completo"
                     />
                 </div>
-                <div className="basis-1/3">
-                    <Controller
-                        name="cpf"
-                        control={control}
-                        defaultValue={cpf}
-                        render={({ field }) =>
-                            maskedField(
-                                "cpf",
-                                field.onChange,
-                                field.name,
-                                "CPF",
-                                false,
-                                () => { },
-                                field.value,
-                                true
-                            )
-                        }
-                    />
-                    {errors.cpf && (
-                        <span className="text-xs text-red-400 mt-1">
-                            {errors.cpf.message}
-                        </span>
-                    )}
-                </div>
+                {(profileType === 'doctor' || profileType == 'professional') && (
+                    <div className="basis-1/3">
+                        <Controller
+                            name="cpf"
+                            control={control}
+                            defaultValue={cpf}
+                            render={({ field }) =>
+                                maskedField(
+                                    "cpf",
+                                    field.onChange,
+                                    field.name,
+                                    "CPF",
+                                    false,
+                                    () => { },
+                                    field.value,
+                                    true
+                                )
+                            }
+                        />
+                        {errors.cpf && (
+                            <span className="text-xs text-red-400 mt-1">
+                                {errors.cpf.message}
+                            </span>
+                        )}
+                    </div>
+                )}
+                
                 <div className="basis-1/3">
                     <Controller
                         name="mobilenumber"

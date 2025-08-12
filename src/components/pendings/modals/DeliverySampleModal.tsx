@@ -58,8 +58,8 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         type="date"
-        placeholder="Data da entrega"
-        inputPlaceholder="Informe da entrega"
+        placeholder="Data da retirada"
+        inputPlaceholder="Informe a data da retirada"
         {...register("deliveryDate")}
         onChange={handleDateChange}
         className="w-full"

@@ -46,3 +46,8 @@ export interface IAnnotationFilterModel {
   regardingObjectId?: string;
   programCode?: string;
 }
+
+export interface IPowerBIDashboardRequestModel{
+    reportId : string | null;
+    groupId : string | null;
+}

@@ -87,6 +87,9 @@ export default function SignIn() {
   if (role.toLowerCase().includes("logistics")) {
    return "logistics";
   }
+  if (role.toLowerCase().includes("client")) {
+   return "client";
+  }
   return "";
  }
 

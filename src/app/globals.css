@@ -233,3 +233,8 @@
 .react-datepicker__day--disabled {
   color: #9ca3af !important;
 }
+
+.powerbi-container{
+  width: 95%;
+  height: 100vh;
+}

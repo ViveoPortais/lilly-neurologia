@@ -1,6 +1,6 @@
 import { IUpdateProfessionalData } from "@/types/professions";
 import api from "./api";
-import { IDoctorData, IUpdateDoctorData } from "@/types";
+import { IDoctorData, IUpdateDoctorData, IUpdateUserGeneral } from "@/types";
 import { IChangePassword, IRegisterRepresentative, IUnblockUserRequest,IConsentStatusRequest,IUpdateConsentRequest} from "@/types/user";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
@@ -21,6 +21,14 @@ export const updateDoctorInfo = async (data: IUpdateDoctorData) => {
 
 export const updateProfessional = async (data: IUpdateProfessionalData) => {
   const res = await api.put("/healthProfessional/updatehealthprofessional", {
+    ...data,
+    programCode: programCode,
+  });
+  return res.data;
+};
+
+export const updateUserGeneral = async (data: IUpdateUserGeneral) => {
+  const res = await api.post("/user/update", {
     ...data,
     programCode: programCode,
   });

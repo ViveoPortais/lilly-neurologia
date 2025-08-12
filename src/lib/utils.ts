@@ -66,6 +66,13 @@ export const professionalProfileSchema = z.object({
  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 
+export const generalProfileSchema = z.object({
+ name: z.string(),
+ mobilenumber: z.string(),
+ emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+});
+
+export type GeneralProfileValidationProps = z.infer<typeof generalProfileSchema>;
 export type DoctorProfileValidationProps = z.infer<typeof doctorProfileSchema>;
 export type ProfessionalProfileValidationProps = z.infer<typeof professionalProfileSchema>;
 
