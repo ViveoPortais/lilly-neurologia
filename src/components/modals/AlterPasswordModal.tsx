@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useState } from "react";
 import { changePasswordSlice } from "@/store/slices/profileSlice";
+import useSession from "@/hooks/useSession";
 
 interface AlterPasswordModalProps {
  isOpenExternally?: boolean;
@@ -26,6 +27,8 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
   mode: "onChange",
  });
 
+ const auth = useSession();
+ 
  const {
   handleSubmit,
   register,
@@ -62,6 +65,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
      () => {
       closeModal();
       reset();
+      auth.setObrigatorioAlterarSenha(false);
      }
     );
    } else {
