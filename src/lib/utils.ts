@@ -43,7 +43,8 @@ export const doctorProfileSchema = z.object({
   .min(1, { message: "Insira seu CPF" })
   .regex(cpfRegex, { message: "CPF inválido" })
   .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
- mobilenumber: z.string(),
+mobilenumber: z.string()
+  .regex(mobilephoneRegex, "Telefone inválido").min(2, 'Insira o número de celular'),
  addressPostalCode: z.string(),
  addressCity: z.string(),
  addressState: z.string(),
@@ -59,7 +60,8 @@ export const professionalProfileSchema = z.object({
   .min(1, { message: "Insira seu CPF" })
   .regex(cpfRegex, { message: "CPF inválido" })
   .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
- mobilenumber: z.string(),
+ mobilenumber: z.string()
+  .regex(mobilephoneRegex, "Número inválido").min(2, 'Insira o número de celular'),
  addressPostalCode: z.string(),
  addressCity: z.string(),
  addressState: z.string(),
@@ -68,7 +70,8 @@ export const professionalProfileSchema = z.object({
 
 export const generalProfileSchema = z.object({
  name: z.string(),
- mobilenumber: z.string(),
+ mobilenumber: z.string()
+  .regex(mobilephoneRegex, "Número inválido").min(2, 'Insira o número de celular'),
  emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
 });
 

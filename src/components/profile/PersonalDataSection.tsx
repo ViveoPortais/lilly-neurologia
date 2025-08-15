@@ -5,7 +5,6 @@ import { maskedField } from "../custom/MaskedField";
 import { IMedicalSpecialty, IStringMap } from "@/types";
 import { useEffect, useState } from "react";
 import { DoctorProfileValidationProps, ProfessionalProfileValidationProps } from "@/lib/utils";
-import { cpfRegex, isValidPhoneNumber } from "@/helpers/helpers";
 
 type PersonalData = {
     licenseNumber: string; // CRM ou NRO de registro
@@ -20,6 +19,7 @@ type PersonalData = {
     cpf?: string;
     profileType: string
     setValue: (name: keyof DoctorProfileValidationProps | keyof ProfessionalProfileValidationProps, value: any) => void;
+    trigger : (name : string | string[]) => Promise<boolean>;
 }
 
 export const PersonalDataSection = ({
@@ -35,6 +35,7 @@ export const PersonalDataSection = ({
     cpf,
     profileType,
     setValue,
+    trigger,
 }: PersonalData) => {
 
     useEffect(() => {
@@ -53,8 +54,6 @@ export const PersonalDataSection = ({
         optionName: item.name
     }));
 
-
-    const [cellphoneError, setCellphoneError] = useState<string | null>(null);
 
     return (
         <>
@@ -135,15 +134,8 @@ export const PersonalDataSection = ({
                         render={({ field }) => {
                             const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                                 let value = e.target.value;
-
-                                const cleanPhone = value.replace(/\D/g, '');
-                                if (isValidPhoneNumber(cleanPhone)) {
-                                    field.onChange(value);
-                                    setCellphoneError(null);
-                                } else {
-                                    setCellphoneError("Telefone inválido");
-                                    field.onChange(value);
-                                }
+                                field.onChange(value);
+                                trigger('mobilenumber');
                             }
                             return (
                                 maskedField(
@@ -152,15 +144,12 @@ export const PersonalDataSection = ({
                                     field.name,
                                     "Celular",
                                     false,
-                                    () => { },
+                                    () => { trigger('mobilenumber')},
                                     field.value
                                 )
                             )
                         }}
                     />
-                    {cellphoneError && (
-                        <span className="text-xs text-red-400 mt-1 mr-1">{cellphoneError}</span>
-                    )}
                     {errors.mobilenumber && (
                         <span className="text-xs text-red-400 mt-1">
                             {errors.mobilenumber.message}

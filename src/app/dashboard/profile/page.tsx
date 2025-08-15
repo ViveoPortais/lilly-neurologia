@@ -46,7 +46,7 @@ export default function Profile() {
     mode: "onChange",
   });
 
-  const { register, control, handleSubmit, setValue, setFocus, watch, formState: { errors } } = methods;
+  const { register, control, handleSubmit, setValue, setFocus, watch, trigger, formState: { errors } } = methods;
 
   const modal = useGenericModal();
 
@@ -129,15 +129,24 @@ export default function Profile() {
   };
 
   const handleFormSubmit = (data: any) => {
-    setIsDialogOpen(true);
+      setIsDialogOpen(true);
   };
+
+  const onError = (errors: any) => {
+    modal.showModal({
+      type: "error",
+      title: "Campos obrigatórios",
+      buttonLabel: "Fechar",
+      message: "Por favor, preencha todos os campos antes de continuar."
+    },() => { })
+  }
 
   return (
     <div className="h-full w-full md:px-6">
       <FormProvider {...methods}>
         <form
           className="flex flex-col gap-4 h-full pb-12"
-          onSubmit={handleSubmit(handleFormSubmit)}
+          onSubmit={handleSubmit(handleFormSubmit, onError)}
         >
 
           <PersonalDataSection
@@ -153,6 +162,7 @@ export default function Profile() {
             cpf={profile?.value.cpf ?? ''}
             medicalSpecialty={profile?.value.medicalSpecialty ?? ''}
             setValue={setValue}
+            trigger={trigger}
           />
 
           {(auth.role === 'doctor' || auth.role === 'professional') && (
