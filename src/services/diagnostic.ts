@@ -2,7 +2,7 @@ import { ExamCreateModel, IDiagnosticFilterModel, IExamCancellationModel } from 
 import { api } from "./api";
 import { DiagnosticData, TreatmentData } from "@/types";
 
-const programCode = "1001";
+const programCode = process.env.NEXT_PUBLIC_PROGRAM_CODE;
 
 export const addDiagnostic = async (data: DiagnosticData) => {
   const response = await api.post("/Diagnostic/add", {

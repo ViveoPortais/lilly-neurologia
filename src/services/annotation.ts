@@ -1,6 +1,6 @@
 import { AnnotationModel, IAnnotationFilterModel,IAttachmentModel } from "@/types/general";
 import api from "./api";
-import { ExamCreateModel } from "@/types/diagnostic";
+import { ExamCreateModel, IDocumentFilledRequestModel } from "@/types/diagnostic";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
 
@@ -33,11 +33,11 @@ export const updateAnnotation = async (data: AnnotationModel) => {
  return response.data;
 };
 
-export const downloadDocumentFilled = async (data: ExamCreateModel) => {
+export const downloadDocumentFilled = async (data: IDocumentFilledRequestModel) => {
     const response = await api.post(
         "/Annotation/documentFilled",
         {
-            examCreateModel: { ...data },
+            ...data,
             programcode: programCode,
         },
         {

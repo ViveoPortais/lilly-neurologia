@@ -1,4 +1,4 @@
-import { ExamPendingModel, IConfirmSampleDeliveryModel } from "@/types/diagnostic";
+import { ExamPendingModel, IConfirmSampleDeliveryModel, IPrintDocumentsModel } from "@/types/diagnostic";
 import { formatDate } from "@/helpers/helpers";
 import dayjs from "dayjs";
 import { downloadBase64File } from "@/helpers/fileHelper";
@@ -69,6 +69,25 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Data do Registro", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
       motivoColumn,
     ],
+    "Impressão de Documentos de Retirada": [
+      { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+      { label: "Nome do paciente", render: (item) => item.patientName },
+      {
+        label: "Data da pendência",
+        render: (item) => {
+          const data = item as IPrintDocumentsModel;
+          return dayjs(data.sentDate).format("DD/MM/YYYY")
+        }
+      },
+      {
+        label: "Data da coleta",
+        render: (item) => {
+          const data = item as IPrintDocumentsModel;
+          return dayjs(data.dateForCollecting).format("DD/MM/YYYY")
+        }
+      },
+      motivoColumn,
+    ]
   },
 
   operation: {
@@ -165,5 +184,24 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Data da Coleta", render: (item) => dayjs(item.examCollectionDate).format("DD/MM/YYYY") },
       motivoColumn,
     ],
+    "Impressão de Documentos de Retirada": [
+      { label: "Nº Protocolo", render: (item) => item.numberProtocol },
+      { label: "Nome do paciente", render: (item) => item.patientName },
+      {
+        label: "Data da pendência",
+        render: (item) => {
+          const data = item as IPrintDocumentsModel;
+          return dayjs(data.sentDate).format("DD/MM/YYYY")
+        }
+      },
+      {
+        label: "Data da coleta",
+        render: (item) => {
+          const data = item as IPrintDocumentsModel;
+          return dayjs(data.dateForCollecting).format("DD/MM/YYYY")
+        }
+      },
+      motivoColumn,
+    ]
   },
 };

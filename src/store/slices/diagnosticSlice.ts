@@ -1,7 +1,7 @@
 import { IAnnotationModel, IPaginationResult, IReturnMessage} from "@/types/general";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IChangePassword, IUserData } from "@/types/user";
-import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel } from "@/types/diagnostic";
+import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel, IDocumentFilledRequestModel } from "@/types/diagnostic";
 import { getAnnotations, getDiagnosticById, getDigitalSignatureDetails, historyDiagnostics, informexamcancellation } from "@/services/diagnostic";
 import { downloadDocumentFilled } from "@/services/annotation";
 
@@ -52,7 +52,7 @@ export const fetchAnnotations = createAsyncThunk("/annotation/getAnnotations", a
     }
 });
 
-export const fetchTermAttachFilled = createAsyncThunk("/annotation/documentFilled", async ({ data }: { data: ExamCreateModel; }, thunkAPI) => {
+export const fetchTermAttachFilled = createAsyncThunk("/annotation/documentFilled", async ({ data }: { data: IDocumentFilledRequestModel; }, thunkAPI) => {
     try {
         const result = await downloadDocumentFilled(data);
         return result;

@@ -76,6 +76,7 @@ const initialState: PendingsState = {
     labels: [],
     tubes: [],
     batchPendingDeclarations: [],
+    printDocuments:[],
     generateBatchDeclarations: [],
     pendingAssociations: [],
     confirmPickupRequests: [],

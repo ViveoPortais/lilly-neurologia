@@ -534,12 +534,12 @@ export type PasswordFormData = z.infer<typeof passwordSchema>;
 export const scheduleSampeSchema = (dataRecebimento: string) =>
   z
     .object({
-      collectMaterial: z.string().refine((val) => isValid(parseISO(val)), "Data inválida"),
+      collectMaterial: z.date({ required_error: "Informe a data de coleta" }),
       doctorSuggestedDate: z.date({ required_error: "Informe a data desejada" }),
     })
     .superRefine((data, ctx) => {
       let recebimento;
-      const coleta = parseISO(data.collectMaterial);
+      const coleta = data.collectMaterial;
       const desejada = data.doctorSuggestedDate;
       if (dataRecebimento) {
         recebimento = parseISO(dataRecebimento);
@@ -550,10 +550,10 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       const doisDiasDepois = addDays(hoje, 2);
 
       console.log({
-  coleta: data.collectMaterial,
-  desejada: data.doctorSuggestedDate,
-  recebimento: dataRecebimento
-});
+        coleta: data.collectMaterial,
+        desejada: data.doctorSuggestedDate,
+        recebimento: dataRecebimento
+      });
 
       if (!isValid(recebimento)) return;
 

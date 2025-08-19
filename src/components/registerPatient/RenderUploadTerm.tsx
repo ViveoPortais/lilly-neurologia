@@ -7,6 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "../ui/button";
 import { Download, Upload } from "lucide-react";
+import { IDocumentFilledRequestModel } from "@/types/diagnostic";
 
 type RenderUploadTermProps = {
     label: string,
@@ -37,10 +38,10 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
 
         show();
         try {
-            const payload = getValues();
+            const formValues = getValues();
 
-            if (payload.birthDateCaregiver == "")
-                payload.birthDateCaregiver = null;
+            if (formValues.birthDateCaregiver == "")
+                formValues.birthDateCaregiver = null;
 
             const {
                 pickupPostalCode,
@@ -50,7 +51,7 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
                 pickupAddressDistrict,
                 pickupAddressCity,
                 pickupAddressState,
-            } = payload;
+            } = formValues;
 
             const logistics = {
                 addressPostalCode: pickupPostalCode,
@@ -60,13 +61,18 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
                 addressDistrict: pickupAddressDistrict,
                 addressCity: pickupAddressCity,
                 addressState: pickupAddressState,
-                sector: payload.sector,
-                contact: payload.contact,
+                sector: formValues.sector,
+                contact: formValues.contact,
             };
 
-            payload.logistics = logistics;
+            formValues.logistics = logistics;
 
-            const res = await dispatch(fetchTermAttachFilled({ data: payload })).unwrap();
+            const payload : IDocumentFilledRequestModel = {
+                examModel : formValues,
+                annotationTypeStringMapFlag : "#CONSENT_TERM_NEURO_AND_MED_PRESC"
+            }
+
+            const res = await dispatch(fetchTermAttachFilled({ data: payload})).unwrap();
             if (res) {
                 const url = window.URL.createObjectURL(new Blob([res], { type: "application/pdf" }));
                 const a = document.createElement("a");

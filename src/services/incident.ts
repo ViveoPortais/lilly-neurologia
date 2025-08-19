@@ -1,7 +1,7 @@
 import { Filters, RequestStatusIncident } from "@/types/incident";
 import { api } from "./api";
 
-const programCode = "150";
+const programCode = process.env.NEXT_PUBLIC_PROGRAM_CODE;
 
 export const addDocumentation = async (data: any, documentationAttach?: any) => {
   const res = await api.post("/Incident/adddocumentation", {

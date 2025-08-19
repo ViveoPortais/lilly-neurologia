@@ -46,13 +46,14 @@ export default function PendingsDoctorPage() {
     };
   }, [dispatch]);
 
-  const fixedCategories = ["Documentação", "Solicitações de Retirada de Amostra", "Problema com a Amostra", "Aprovação de Vínculo"];
+  const fixedCategories = ["Documentação", "Solicitações de Retirada de Amostra", "Problema com a Amostra", "Aprovação de Vínculo", "Impressão de Documentos de Retirada"];
 
   const grouped: Record<string, ExamPendingModel[]> = {
     Documentação: pendings.documents,
     "Solicitações de Retirada de Amostra": pendings.generateBatchDeclarations,
     "Problema com a Amostra": pendings.problemWithSamples,
     "Aprovação de Vínculo": pendings.pendingAssociations,
+    "Impressão de Documentos de Retirada":pendings.printDocuments
   };
 
   return (

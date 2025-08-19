@@ -295,6 +295,7 @@ export interface PendingResponse {
   labels: LabelPendingModel[];
   tubes: ExamPendingModel[];
   batchPendingDeclarations: ExamPendingModel[];
+  printDocuments : IPrintDocumentsModel[];
   generateBatchDeclarations: ExamPendingModel[];
   pendingAssociations: IPendingAssociationModel[];
   confirmPickupRequests: IPickupRequestModel[];
@@ -308,6 +309,12 @@ export interface DocumentPendingModel extends ExamPendingModel {
   examId: string;
   voucher: string;
   doctorName?: string;
+  attachments: AttachmentModel[];
+}
+
+export interface IPrintDocumentsModel extends ExamPendingModel {
+  sentDate: string;
+  dateForCollecting: string;
   attachments: AttachmentModel[];
 }
 
@@ -386,4 +393,10 @@ export interface IRequestSignerModel {
     email?:string;
     role?:string;
     status?:string;
+}
+
+export interface IDocumentFilledRequestModel{
+    examModel?: ExamCreateModel;
+    annotationTypeStringMapFlag?:string;
+    examId?:string;
 }

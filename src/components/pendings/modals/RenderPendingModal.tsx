@@ -1,4 +1,4 @@
-import { ExamPendingModel } from "@/types/diagnostic";
+import { ExamPendingModel, IPrintDocumentsModel } from "@/types/diagnostic";
 import { formatFileSize } from "@/helpers/helpers";
 import GenericModalForm from "@/components/modals/GenericModalForm";
 import OperationRejectedDocModal from "./OperationRejectedDocModal";
@@ -13,6 +13,7 @@ import ApproveRejectButtons from "@/components/linkManagement/linkManagement/App
 import SampleIssueModal from "../doctor/SampleIssueModal";
 import ApproveSampleDateModal from "../logistic/ApproveSampleDateModal";
 import RejectedScheduleModal from "./RejectedScheduleModal";
+import PrintDocumentsModal from "./PrintDocumentsModal";
 
 interface RenderPendingModalProps {
   item: ExamPendingModel | null;
@@ -33,7 +34,8 @@ type Category =
   | "Solicitações de Envio de Tubo"
   | "Confirmar Entrega de Tubo"
   | "Solicitações de Retirada"
-  | "Confirmar Retirada da Amostra";
+  | "Confirmar Retirada da Amostra"
+  | "Impressão de Documentos de Retirada";
 
 type ModalRenderer = (item: ExamPendingModel, onClose: () => void) => JSX.Element;
 
@@ -56,6 +58,11 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
       </GenericModalForm>
     ),
     "Problema com a Amostra": (item, onClose) => <SampleIssueModal item={item} onClose={onClose} />,
+    "Impressão de Documentos de Retirada": (item, onClose) => (
+      <GenericModalForm title="Impressão de Documentos" isOpen={true} onClose={onClose}>
+        <PrintDocumentsModal item={item as IPrintDocumentsModel} onClose={onClose} />
+      </GenericModalForm>
+    )
   },
   operation: {
     Documentação: (item, onClose) => (

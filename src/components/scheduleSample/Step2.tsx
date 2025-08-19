@@ -42,9 +42,24 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <label className="text-sm text-zinc-700">Data Coleta do Material Biológico</label>
-          <Input type="date" {...register("collectMaterial")} />
+        <div className="space-y-1">
+          <label className="text-sm text-zinc-700">Data e Hora da Coleta do Material Biológico</label>
+          <Controller
+            control={control}
+            name="collectMaterial"
+            render={({ field }) => (
+              <CustomDatePicker
+                selected={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => field.onChange(date)}
+                placeholder="Selecione data e hora"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={30}
+                dateFormat="dd/MM/yyyy HH:mm"
+                name="collectMaterial"
+              />
+            )}
+          />
           {errors.collectMaterial && <p className="text-red-500 text-sm mt-1">{errors.collectMaterial.message?.toString()}</p>}
         </div>
 
@@ -74,40 +89,6 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
           de instruções do teste Elecsys β-Amyloid (1-42) CDF II recomenda-se que a amostra seja mantida de 2ºC a 8ºC, por até 14 dias, durante o transporte e
           armazenamento, até ao momento da análise. Para mais informações sobre o exame e características da amostra acesse a opção Biblioteca de Conteúdos.
         </p>
-      </div>
-
-      <div className="border border-dashed border-gray-300 rounded-lg p-4 space-y-4 bg-gray-50">
-        <p className="text-center text-sm text-zinc-700">
-          Os documentos abaixo deverão ser entregues à logística no dia da retirada da amostra. Faça a impressão e preencha os documentos de maneira apropriada.
-        </p>
-        <div className="flex flex-col items-center gap-2">
-          {filesMap.map(({ flag, label }) => {
-            const file = attachments.find((att) => att.flag === flag);
-            return (
-              file && (
-                <Button
-                  key={flag}
-                  type="button"
-                  variant="ghost"
-                  onClick={() => downloadBase64File(file.documentBody!, file.fileName!, file.contentType!)}
-                  className="w-[250px] md:w-[600px] h-10 bg-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-300"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  {label}
-                </Button>
-              )
-            );
-          })}
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={downloadFichaEmergencia}
-            className="w-[250px] md:w-[600px] h-10 bg-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-300"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Ficha de emergência
-          </Button>
-        </div>
       </div>
     </>
   );

@@ -16,6 +16,7 @@ import Step1 from "./Step1";
 import StepIndicator from "../custom/StepIndicator";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { clearSelectedExamItem } from "@/store/slices/pendingsSlice";
+import router from "next/router";
 
 interface ScheduleSampleFormProps {
   data: IPatientSampleCollectionViewModel;
@@ -42,15 +43,18 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (dataForm: any) => {
     await resolve({
       item: {
         ...item,
-        deliveryConfirmedAt: data.tubeReceptionDate,
-        doctorSuggestedDate: data.doctorSuggestedDate,
-        collectMaterial: data.collectMaterial,
+        deliveryConfirmedAt: dataForm.tubeReceptionDate,
+        doctorSuggestedDate: dataForm.doctorSuggestedDate,
+        collectMaterial: dataForm.collectMaterial,
+        id : data.examId,
       },
-      onSuccess: () => {clearSelectedExamItem()},
+      onSuccess: () => {
+        clearSelectedExamItem();
+      },
     });
   };
 
