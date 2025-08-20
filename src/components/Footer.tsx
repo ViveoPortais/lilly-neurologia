@@ -54,7 +54,7 @@ useEffect(() => {
        Política de Privacidade
       </a>
             <a
-              href={termsUrl ?? "/files/Regulamento_PSD_Neurologia_vfinal.pdf"} target="_blank" rel="noopener noreferrer" className="underline"
+              href={termsUrl ?? "/files/Termo de Uso Neurologia.pdf"} target="_blank" rel="noopener noreferrer" className="underline"
             >
               Termos de Uso
             </a>

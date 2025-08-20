@@ -5,7 +5,7 @@ export const contents: ContentItem[] = [
   id: "1",
   title: "Termos de Uso",
   type: "pdf",
-  url: "/files/Regulamento_PSD_Neurologia_vfinal.pdf",
+  url: "/files/Termo de Uso Neurologia.pdf",
  },
  {
   id: "2",
