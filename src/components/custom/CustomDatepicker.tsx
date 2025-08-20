@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import { forwardRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { cn } from "@/lib/utils";
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 interface CustomDatePickerProps {
   selected?: Date;
@@ -37,12 +38,25 @@ export const CustomDatePicker = ({
 }: CustomDatePickerProps) => {
 
   const finalDateFormat = showTimeSelect ? "dd/MM/yyyy HH:mm" : dateFormat;
+  const timeZone = 'America/Sao_Paulo'; 
+
+  const displayDate = selected ? toZonedTime(selected, timeZone) : undefined;
+  
+
+  const handleDateChange = (date: Date | null) => {
+    if (date && showTimeSelect) {
+      const utcDate = fromZonedTime(date, timeZone);
+      onChange(utcDate);
+    } else {
+      onChange(date);
+    }
+  };
   
   return (
     <DatePicker
       locale={ptBR}
-      selected={selected}
-      onChange={onChange}
+      selected={displayDate}
+      onChange={handleDateChange}
       minDate={minDate}
       maxDate={maxDate}
       filterDate={filterDate}

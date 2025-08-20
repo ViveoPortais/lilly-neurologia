@@ -167,7 +167,7 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
             <div className="flex flex-col md:flex-row gap-6 py-4">
               <div className="md:basis-1/6">
                 <label>Data da Coleta do Material Biológico</label>
-                <p>{dayjs(data.scheduledDate).format('DD/MM/YYYY hh:mm')}</p>
+                <p>{dayjs(data.scheduledDate).format('DD/MM/YYYY HH:mm')}</p>
               </div>
             </div>
           )}

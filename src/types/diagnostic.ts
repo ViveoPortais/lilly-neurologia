@@ -396,7 +396,7 @@ export interface IRequestSignerModel {
 }
 
 export interface IDocumentFilledRequestModel{
-    examModel?: ExamCreateModel;
+    examCreateModel?: ExamCreateModel;
     annotationTypeStringMapFlag?:string;
     examId?:string;
 }

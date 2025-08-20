@@ -68,7 +68,7 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
             formValues.logistics = logistics;
 
             const payload : IDocumentFilledRequestModel = {
-                examModel : formValues,
+                examCreateModel : formValues,
                 annotationTypeStringMapFlag : "#CONSENT_TERM_NEURO_AND_MED_PRESC"
             }
 
