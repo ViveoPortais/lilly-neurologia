@@ -4,11 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import GenericModalForm from "@/components/modals/GenericModalForm";
 import { ExamPendingModel, IPatientSampleCollectionViewModel, PatientData } from "@/types/diagnostic";
 import { scheduleSampeSchema } from "@/lib/utils";
-import { Download } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Step2 from "./Step2";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,7 +13,6 @@ import Step1 from "./Step1";
 import StepIndicator from "../custom/StepIndicator";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { clearSelectedExamItem } from "@/store/slices/pendingsSlice";
-import router from "next/router";
 
 interface ScheduleSampleFormProps {
   data: IPatientSampleCollectionViewModel;
@@ -43,6 +39,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
     },
   });
 
+
   const onSubmit = async (dataForm: any) => {
     await resolve({
       item: {
@@ -55,6 +52,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
       onSuccess: () => {
         clearSelectedExamItem();
       },
+      redirectUrlOnSuccess : "/dashboard/doctor/pendings"
     });
   };
 

@@ -7,62 +7,66 @@ import { useRouter } from "next/navigation";
 import useSession from "./useSession";
 
 interface ResolvePendencyParams {
- item: ExamPendingModel;
- onSuccess?: () => void;
+    item: ExamPendingModel;
+    onSuccess?: () => void;
+    redirectUrlOnSuccess?: string;
 }
 
 export function useResolveExamPendency() {
- const dispatch = useAppDispatch();
- const { showModal } = useGenericModal();
- const { show, hide } = useLoading();
- const router = useRouter();
- const auth = useSession();
+    const dispatch = useAppDispatch();
+    const { showModal } = useGenericModal();
+    const { show, hide } = useLoading();
+    const router = useRouter();
+    const auth = useSession();
 
- const resolve = async ({ item, onSuccess }: ResolvePendencyParams) => {
-  show();
+    const resolve = async ({ item, onSuccess, redirectUrlOnSuccess }: ResolvePendencyParams) => {
+        show();
 
-  try {
-   const response = await dispatch(
-    examResolvePendency({
-     ...item,
-    } as ExamPendingModel)
-   );
+        try {
+            const response = await dispatch(
+                examResolvePendency({
+                    ...item,
+                } as ExamPendingModel)
+            );
 
-   if (examResolvePendency.fulfilled.match(response)) {
-    const payload = response.payload;
-    if (payload.isValidData) {
-     const role = auth.role;
-     showModal(
-      {
-       type: "success",
-       message: payload.additionalMessage ?? "Pendência resolvida com sucesso.",
-      },
-      () => {
-       onSuccess?.();
-       window.location.reload();
-      }
-     );
-    } else {
-     showModal({
-      type: "warning",
-      message: payload.additionalMessage ?? "Não foi possível salvar as decisões.",
-     });
-    }
-   } else {
-    showModal({
-     type: "error",
-     message: "Erro ao resolver pendência.",
-    });
-   }
-  } catch {
-   showModal({
-    type: "error",
-    message: "Erro inesperado ao tentar salvar.",
-   });
-  } finally {
-   hide();
-  }
- };
+            if (examResolvePendency.fulfilled.match(response)) {
+                const payload = response.payload;
+                if (payload.isValidData) {
+                    const role = auth.role;
+                    showModal(
+                        {
+                            type: "success",
+                            message: payload.additionalMessage ?? "Pendência resolvida com sucesso.",
+                        },
+                        () => {
+                            onSuccess?.();
+                            if (redirectUrlOnSuccess)
+                                router.push(redirectUrlOnSuccess);
+                            else
+                                window.location.reload();
+                        }
+                    );
+                } else {
+                    showModal({
+                        type: "warning",
+                        message: payload.additionalMessage ?? "Não foi possível salvar as decisões.",
+                    });
+                }
+            } else {
+                showModal({
+                    type: "error",
+                    message: "Erro ao resolver pendência.",
+                });
+            }
+        } catch {
+            showModal({
+                type: "error",
+                message: "Erro inesperado ao tentar salvar.",
+            });
+        } finally {
+            hide();
+        }
+    };
 
- return { resolve };
+    return { resolve };
 }

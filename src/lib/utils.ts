@@ -568,7 +568,7 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       if (isBefore(desejada, coleta) || isBefore(desejada, recebimento!) || isBefore(desejada, doisDiasDepois) || isFriday(desejada)) {
         ctx.addIssue({
           path: ["doctorSuggestedDate"],
-          message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dias úteis, e não pode ser sexta-feira",
+          message: "Data desejada inválida: deve ser maior que coleta, maior ou igual a dois dias úteis, e não pode ser sexta-feira",
           code: z.ZodIssueCode.custom,
         });
       }
