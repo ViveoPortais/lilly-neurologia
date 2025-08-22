@@ -1,4 +1,4 @@
-import { IForgetPasswordData, IForgetPasswordDataProfessional, ILoginData, IResendToken } from "@/types";
+import { IForgetPasswordData, IForgetPasswordDataOthers, ILoginData, IResendToken } from "@/types";
 import api from "./api";
 
 const programCode = `${process.env.NEXT_PUBLIC_PROGRAM_CODE}`;
@@ -19,10 +19,10 @@ export const forgetPassword = async (data: IForgetPasswordData) => {
   return res.data;
 };
 
-export const forgetPasswordProfessional = async (data: IForgetPasswordDataProfessional) => {
-  const res = await api.post("/forgotpassword", {
+export const forgetPasswordOthers = async (data: IForgetPasswordDataOthers) => {
+  const res = await api.post("/user/forgotpassword", {
     ...data,
-    code: programCode,
+    programCode: programCode,
   });
   return res.data;
 };

@@ -16,8 +16,9 @@ export interface IForgetPasswordData {
   licenseState: string;
 }
 
-export interface IForgetPasswordDataProfessional {
-  email: string;
+export interface IForgetPasswordDataOthers {
+  userEmail: string;
+  accessProfile : string;
 }
 
 export interface IDoctorInfoByCRM {

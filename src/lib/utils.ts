@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
  return twMerge(clsx(inputs));
 }
 
-const rolesWithEmailOnly = z.enum(["assistente", "logistica", "operacao"]);
+const rolesWithEmailOnly = z.enum(["assistente", "logistica", "operacao","cliente"]);
 
 //Esquemas de validação
 export const forgetPasswordSchema = z.discriminatedUnion("role", [

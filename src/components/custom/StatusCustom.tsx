@@ -35,6 +35,7 @@ const StatusCustom = ({ type, statusStringMap }: StatusCustomProps) => {
                 break;
             case "EXAM_WAITING_LOGISTICS_BATCH":
             case "EXAM_WAITING_SCHEDULE_WITHDRAWAL":
+            case "EXAM_WAITING_PRINT_DOCUMENTS":
                 color = "bg-orange-500";
                 break;
             case "EXAM_REPORT_AVAILABLE":

@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { CgSpinner } from "react-icons/cg";
-import { forgetPassword, forgetPasswordProfessional } from "@/services/auth";
+import { forgetPassword, forgetPasswordOthers } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { ForgetPasswordSchema, forgetPasswordSchema } from "@/lib/utils";
 import { CustomSelect } from "@/components/custom/CustomSelect";
@@ -18,6 +18,7 @@ const profileOptions = [
  { id: "assistente", value: "Assistente Médico" },
  { id: "logistica", value: "Logística" },
  { id: "operacao", value: "Operação" },
+ { id: "cliente", value:"Cliente"}
 ];
 
 export default function ForgetPasswordPage() {
@@ -45,7 +46,7 @@ export default function ForgetPasswordPage() {
     const { cpf, licenseNumber, licenseState } = data;
     response = await forgetPassword({ cpf, licenseNumber, licenseState });
    } else {
-    response = await forgetPasswordProfessional({ email: data.email });
+    response = await forgetPasswordOthers({ userEmail: data.email, accessProfile : data.role });
    }
 
    handleResponse(response);
