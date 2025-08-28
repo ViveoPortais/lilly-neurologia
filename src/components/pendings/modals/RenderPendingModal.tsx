@@ -1,4 +1,4 @@
-import { ExamPendingModel, IPrintDocumentsModel } from "@/types/diagnostic";
+import { ExamPendingModel, IPrintDocumentsModel, TubePendingModel } from "@/types/diagnostic";
 import { formatFileSize } from "@/helpers/helpers";
 import GenericModalForm from "@/components/modals/GenericModalForm";
 import OperationRejectedDocModal from "./OperationRejectedDocModal";
@@ -14,6 +14,7 @@ import SampleIssueModal from "../doctor/SampleIssueModal";
 import ApproveSampleDateModal from "../logistic/ApproveSampleDateModal";
 import RejectedScheduleModal from "./RejectedScheduleModal";
 import PrintDocumentsModal from "./PrintDocumentsModal";
+import RecollectSampleModal from "./RecollectSampleModal";
 
 interface RenderPendingModalProps {
   item: ExamPendingModel | null;
@@ -90,12 +91,12 @@ const modalMapByRole: Record<Role, Partial<Record<Category, ModalRenderer>>> = {
     ),
     "Confirmar Entrega de Tubo": (item, onClose) => (
       <GenericModalForm title="Data da Entrega" isOpen onClose={onClose}>
-        <TubeDeliveryDate onClose={onClose} item={item} />
+        <TubeDeliveryDate onClose={onClose} item={item as TubePendingModel}/>
       </GenericModalForm>
     ),
     "Confirmar Retirada da Amostra": (item, onClose) => (
       <GenericModalForm title="Amostra Retirada" isOpen onClose={onClose}>
-        <DeliverySampleModal onClose={onClose} item={item} />
+        <RecollectSampleModal onClose={onClose} item={item} />
       </GenericModalForm>
     ),
     "Solicitações de Retirada": (item, onClose) => <ApproveSampleDateModal item={item} onClose={onClose} />,

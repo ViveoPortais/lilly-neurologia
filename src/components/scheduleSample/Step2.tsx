@@ -18,6 +18,12 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
     const day = date.getDay();
     return day !== 5 && day !== 6 && day !== 0;
   };
+
+  const isCollectDateAllowed = (date: Date) => {
+    if (!data?.tubeReceptionDate) return true;
+    const minDate = new Date(data.tubeReceptionDate);
+    return date >= minDate;
+  };
   const downloadFichaEmergencia = () => {
     const link = document.createElement("a");
     link.href = "/files/FICHA DE EMERGENCIA - UN3373 LCT.XLS";
@@ -56,6 +62,7 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
                 timeFormat="HH:mm"
                 timeIntervals={30}
                 dateFormat="dd/MM/yyyy HH:mm"
+                filterDate={isCollectDateAllowed}
                 name="collectMaterial"
               />
             )}

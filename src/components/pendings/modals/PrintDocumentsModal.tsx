@@ -15,6 +15,7 @@ import { UploadButton } from "@/components/custom/UploadButton";
 import { Download } from "lucide-react";
 import { fetchTermAttachFilled } from "@/store/slices/diagnosticSlice";
 import { toast } from "react-toastify";
+import { useLoading } from "@/contexts/LoadingContext";
 
 interface PrintDocumentsModalProps {
   onClose: () => void;
@@ -24,6 +25,7 @@ interface PrintDocumentsModalProps {
 export default function OperationRejectedDocModal({ onClose, item }: PrintDocumentsModalProps) {
   const dispatch = useAppDispatch();
   const { resolve } = useResolveExamPendency();
+  const { show , hide} = useLoading();
 
   const [logisticsBatchDownloaded, setLogisticsBatchDownloaded] = useState<boolean>(false);
   const [transportDeclarationDownloaded, setTransportDeclarationDownloaded] = useState<boolean>(false);
@@ -69,6 +71,7 @@ export default function OperationRejectedDocModal({ onClose, item }: PrintDocume
 
   const handleDownloadTransportDeclaration = async () => {
     try {
+      show();
       const payload: IDocumentFilledRequestModel = {
         examId: item.id,
         annotationTypeStringMapFlag: "#TRANSPORT_DECLARATION"
@@ -87,10 +90,13 @@ export default function OperationRejectedDocModal({ onClose, item }: PrintDocume
 
       setTimeout(() => {
         setTransportDeclarationDownloaded(true);
+        hide();
       }, 300);
 
     } catch (error) {
       setTransportDeclarationDownloaded(false);
+    }finally{
+      hide();
     }
   };
 

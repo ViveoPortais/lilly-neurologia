@@ -14,15 +14,27 @@ interface TubeShippingProps {
 
 export default function TubeShippingModal({ onClose, item }: TubeShippingProps) {
   const [sendDate, setSendDate] = useState("");
+  const [dateError, setDateError] = useState("");
   const { show } = useLoading();
   const { resolve } = useResolveExamPendency();
 
+  const minDate = new Date(item.dateCreate!).toISOString().split('T')[0];
+
   const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    validateNoFutureDate(e.target.value, "sendDate", (field, value) => setSendDate(value), "A data de envio não pode ser futura");
+    const selectedDate = e.target.value;
+    
+    if (selectedDate && selectedDate < minDate) {
+      setDateError("A data de envio não pode ser inferior a data de solicitação do exame");
+      return;
+    }
+    
+    setDateError("");
+    validateNoFutureDate(selectedDate, "sendDate", (field, value) => setSendDate(value), "A data de envio não pode ser futura");
   };
 
   const handleCancel = () => {
     setSendDate("");
+    setDateError("");
     onClose();
   };
 
@@ -54,21 +66,25 @@ export default function TubeShippingModal({ onClose, item }: TubeShippingProps) 
           <Input value={labelItem.addressState ?? ""} readOnly placeholder="Estado" />
         </div>
       </div>
-      <Input
-        type="date"
-        placeholder="Data de envio"
-        max={today}
-        value={sendDate}
-        onChange={(e) => setSendDate(e.target.value)}
-        onBlur={handleBlur}
-        className="w-full"
-      />
+      <div>
+        <Input
+          type="date"
+          placeholder="Data de envio"
+          max={today}
+          min={minDate}
+          value={sendDate}
+          onChange={(e) => setSendDate(e.target.value)}
+          onBlur={handleBlur}
+          className="w-full"
+        />
+        {dateError && <p className="text-red-500 text-sm mt-1">{dateError}</p>}
+      </div>
 
       <div className="flex flex-col md:flex-row justify-between gap-4 pt-2">
         <Button onClick={handleCancel} variant="outlineMainlilly" className="w-full md:w-1/2">
           Cancelar
         </Button>
-        <Button onClick={handleConfirm} disabled={!sendDate} className="w-full md:w-1/2">
+        <Button onClick={handleConfirm} disabled={!sendDate || !!dateError} className="w-full md:w-1/2">
           Enviado
         </Button>
       </div>

@@ -7,9 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ExamPendingModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
+import dayjs from "dayjs";
 
-const schema = z.object({
-  conclusionDate: z.string().min(1, "Data obrigatória"),
+const createSchema = (minDate: string) => z.object({
+  conclusionDate: z.string().min(1, "Data obrigatória")
+    .refine((date) => !date || date <= dayjs().format("YYYY-MM-DD"), {
+      message: "A data de conclusão não pode ser futura"
+    })
+    .refine((date) => !minDate || !date || date >= minDate, {
+      message: "A data de conclusão não pode ser inferior a data de envio"
+    }),
   ba42: z.string(),
   ptau: z.string(),
   ratio: z.string(),
@@ -26,18 +33,20 @@ const schema = z.object({
   }
 );
 
-type FormData = z.infer<typeof schema>;
-
 export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { onClose: () => void; pendencyId: string; item: ExamPendingModel }) {
   const { resolve } = useResolveExamPendency();
   const dispatch = useAppDispatch();
+  
+  const minDate = item.sentDate ? dayjs(item.sentDate).format("YYYY-MM-DD") : "";
+  const schema = createSchema(minDate);
+  
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors, isValid },
-  } = useForm<FormData>({
+  } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       resultInconclusive: false,
@@ -46,7 +55,7 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
   });
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    validateNoFutureDate(e.target.value, "conclusionDate", setValue, "A data de conclusão não pode ser futura.");
+    setValue("conclusionDate", e.target.value, { shouldValidate: true });
   };
 
   const handleChangeResultInconclusive = (value : boolean)=>{
@@ -65,7 +74,7 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
 
   }
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: z.infer<typeof schema>) => {
     await resolve({
       item: {
         ...item,
@@ -93,6 +102,8 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
         onChange={handleDateChange}
         value={watch("conclusionDate")}
         className="w-full border rounded px-3 py-2"
+        max={dayjs().format("YYYY-MM-DD")}
+        min={minDate || undefined}
       />
       {errors.conclusionDate && <span className="text-red-500 text-sm">{errors.conclusionDate.message}</span>}
 

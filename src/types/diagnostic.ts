@@ -293,7 +293,7 @@ export interface ISchedulingHistoryResultModel {
 export interface PendingResponse {
   documents: DocumentPendingModel[];
   labels: LabelPendingModel[];
-  tubes: ExamPendingModel[];
+  tubes: TubePendingModel[];
   batchPendingDeclarations: ExamPendingModel[];
   printDocuments : IPrintDocumentsModel[];
   generateBatchDeclarations: ExamPendingModel[];
@@ -303,6 +303,10 @@ export interface PendingResponse {
   problemWithSamples: IProblemWithSampleModel[];
   confirmSampleDeliveries: IConfirmSampleDeliveryModel[];
   analyzes: IConfirmSampleDeliveryModel[];
+}
+
+export interface TubePendingModel extends ExamPendingModel {
+  deliveryDate : string;
 }
 
 export interface DocumentPendingModel extends ExamPendingModel {
@@ -359,6 +363,7 @@ export interface IProblemWithSampleModel extends ExamPendingModel {
 export interface IConfirmSampleDeliveryModel extends ExamPendingModel {
   doctorName?: string;
   sentDate?: string;
+  confirmWithdrawalDate?: string;
 }
 
 export interface IAnalysisSampleModel {

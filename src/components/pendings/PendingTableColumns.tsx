@@ -1,4 +1,4 @@
-import { ExamPendingModel, IConfirmSampleDeliveryModel, IPrintDocumentsModel } from "@/types/diagnostic";
+import { ExamPendingModel, IConfirmSampleDeliveryModel, IPrintDocumentsModel, TubePendingModel } from "@/types/diagnostic";
 import { formatDate } from "@/helpers/helpers";
 import dayjs from "dayjs";
 import { downloadBase64File } from "@/helpers/fileHelper";
@@ -107,10 +107,10 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Número do Protocolo", render: (item) => item.numberProtocol },
       { label: "Data da pendência", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
       {
-        label: "Data de Envio",
+        label: "Data de Retirada",
         render: (item) => {
           const data = item as IConfirmSampleDeliveryModel;
-          return dayjs(data.sentDate).format("DD/MM/YYYY");
+          return data.confirmWithdrawalDate ? dayjs(data.confirmWithdrawalDate).format("DD/MM/YYYY HH:mm")  : '';
         },
       },
       { label: "Nome do Médico/Profissional", render: (item) => item.doctorName || "-" },
@@ -145,6 +145,13 @@ export const PendingTableColumns: Record<Role, TableColumnMap> = {
       { label: "Nome do Paciente", render: (item) => item.patientName },
       { label: "Data da pendência", render: (item) => dayjs(item.dateUpdate).format("DD/MM/YYYY") },
       { label: "Data do Pedido", render: (item) => dayjs(item.dateCreate).format("DD/MM/YYYY") },
+      {
+        label: "Data de Envio",
+        render: (item) => {
+          const data = item as TubePendingModel;
+          return dayjs(data.deliveryDate).format("DD/MM/YYYY");
+        },
+      },
       motivoColumn,
     ],
     "Solicitações de Retirada": [

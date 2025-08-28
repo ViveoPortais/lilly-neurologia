@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,32 +8,28 @@ import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { validateNoFutureDate } from "@/helpers/helpers";
-import { IConfirmSampleDeliveryModel } from "@/types/diagnostic";
+import { ExamPendingModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import useSession from "@/hooks/useSession";
 
-interface DeliverySampleModalProps {
+interface RecollectSampleModalProps {
   onClose: () => void;
-  item: IConfirmSampleDeliveryModel;
+  item: ExamPendingModel;
 }
 
 const createSchema = (minDate: string) => z.object({
   deliveryDate: z.string().min(1, "Data da entrega é obrigatória")
-    .refine((date) => !date || date <= dayjs().format("YYYY-MM-DD"), {
-      message: "A data de entrega não pode ser futura"
-    })
-    .refine((date) => !minDate || !date || date >= minDate, {
-      message: "A data de entrega não pode ser inferior a data de retirada do exame"
+    .refine((date) => !minDate || date >= minDate, {
+      message: "A data de retirada não pode ser inferior a data de coleta do exame"
     }),
   deliveryTime: z.string().min(1, "Horário é obrigatório"),
 });
 
-export default function DeliverySampleModal({ onClose, item }: DeliverySampleModalProps) {
-  const { resolve } = useResolveExamPendency();
+export default function RecollectSampleModal({ onClose, item }: RecollectSampleModalProps) {
+   const { resolve } = useResolveExamPendency();
   const auth = useSession();
   
-  const minDate = item.confirmWithdrawalDate ? dayjs(item.confirmWithdrawalDate).format("YYYY-MM-DD") : "";
-  console.log("MinDate:", minDate, "Item:", item.confirmWithdrawalDate);
+  const minDate = item.examCollectionDate ? dayjs(item.examCollectionDate).format("YYYY-MM-DD") : "";
   const schema = createSchema(minDate);
   
   const {
@@ -43,12 +40,12 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
     formState: { errors, isValid, touchedFields },
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onBlur",
+    reValidateMode: "onBlur",
   });
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("deliveryDate", e.target.value, { shouldValidate: true });
+    validateNoFutureDate(e.target.value, "deliveryDate", setValue, "A data de retirada não pode ser futura.");
   };
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
@@ -66,17 +63,17 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         type="date"
-        placeholder="Data de entrega da amostra"
-        inputPlaceholder="Informe a data de entrega da amostra"
+        placeholder="Data da retirada"
+        inputPlaceholder="Informe a data da retirada"
         {...register("deliveryDate")}
         onChange={handleDateChange}
         className="w-full"
         max={dayjs().format("YYYY-MM-DD")}
-        min={minDate || undefined}
+        min={minDate}
       />
       {touchedFields.deliveryDate && errors.deliveryDate && <p className="text-red-500 text-sm mt-1">{errors.deliveryDate.message}</p>}
 
-      <Input type="time" placeholder="Horário de entrega da amostra" {...register("deliveryTime")} inputPlaceholder="Informe o horário de entrega da amostra" className="w-full" />
+      <Input type="time" placeholder="Horário da retirada" {...register("deliveryTime")} inputPlaceholder="Informe o horário" className="w-full" />
       {touchedFields.deliveryTime && errors.deliveryTime && <p className="text-red-500 text-sm mt-1">{errors.deliveryTime.message}</p>}
 
       <Button type="submit" className="w-full" disabled={!isValid}>
