@@ -2,10 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch } from "@/store/hooks";
-import { validateNoFutureDate } from "@/helpers/helpers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ExamPendingModel } from "@/types/diagnostic";
+import { IConfirmSampleDeliveryModel } from "@/types/diagnostic";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import dayjs from "dayjs";
 
@@ -25,21 +24,21 @@ const createSchema = (minDate: string) => z.object({
   password: z.string().min(1),
   resultInconclusive: z.boolean()
 }).refine(
-  (data)=>{
-    if(!data.resultInconclusive){
+  (data) => {
+    if (!data.resultInconclusive) {
       return data.ba42 && data.ptau && data.ratio && data.ttau;
     }
     return true;
   }
 );
 
-export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { onClose: () => void; pendencyId: string; item: ExamPendingModel }) {
+export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { onClose: () => void; pendencyId: string; item: IConfirmSampleDeliveryModel }) {
   const { resolve } = useResolveExamPendency();
   const dispatch = useAppDispatch();
-  
+
   const minDate = item.sentDate ? dayjs(item.sentDate).format("YYYY-MM-DD") : "";
   const schema = createSchema(minDate);
-  
+
   const {
     register,
     handleSubmit,
@@ -51,24 +50,24 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
     defaultValues: {
       resultInconclusive: false,
     },
-    mode : "onChange"
+    mode: "onChange"
   });
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("conclusionDate", e.target.value, { shouldValidate: true });
   };
 
-  const handleChangeResultInconclusive = (value : boolean)=>{
+  const handleChangeResultInconclusive = (value: boolean) => {
     setValue("resultInconclusive", value, {
       shouldValidate: true,
       shouldDirty: true,
     });
 
-    if(value){
-      setValue("ba42","");
-      setValue("ptau","");
-      setValue("ratio","");
-      setValue("ttau","");
+    if (value) {
+      setValue("ba42", "");
+      setValue("ptau", "");
+      setValue("ratio", "");
+      setValue("ttau", "");
     }
 
 
@@ -86,7 +85,7 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
           totalTau: data.ttau,
           loginMatrix: data.username,
           passwordMatrix: data.password,
-          resultInconclusive : data.resultInconclusive
+          resultInconclusive: data.resultInconclusive
         },
       },
       onSuccess: onClose,
@@ -131,7 +130,7 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
                 onChange={() => handleChangeResultInconclusive(false)}
                 checked={watch("resultInconclusive") === null ? true : watch("resultInconclusive") === false}
                 className="hidden peer"
-              />  
+              />
               <div className="w-4 h-4 rounded-full border border-mainlilly flex items-center justify-center peer-checked:bg-mainlilly">
                 <div className="w-1 h-1 rounded-full bg-white" />
               </div>
@@ -143,9 +142,9 @@ export default function ConcludeAnalysisForm({ onClose, pendencyId, item }: { on
           )}
         </div>
         <Input {...register("ba42")} placeholder="Peptídeo Beta Amiloide 1-42 (BA42)" disabled={watch("resultInconclusive")} />
-        <Input {...register("ptau")} placeholder="Proteína Tau Fosforilada (pTau)" disabled={watch("resultInconclusive")}/>
-        <Input {...register("ratio")} placeholder="Razão pTau/BA42" disabled={watch("resultInconclusive")}/>
-        <Input {...register("ttau")} placeholder="Proteína Tau Total (tTau)" disabled={watch("resultInconclusive")}/>
+        <Input {...register("ptau")} placeholder="Proteína Tau Fosforilada (pTau)" disabled={watch("resultInconclusive")} />
+        <Input {...register("ratio")} placeholder="Razão pTau/BA42" disabled={watch("resultInconclusive")} />
+        <Input {...register("ttau")} placeholder="Proteína Tau Total (tTau)" disabled={watch("resultInconclusive")} />
         <Input {...register("username")} placeholder="Usuário Matrix" />
         <Input {...register("password")} placeholder="Senha" type="password" className="input" />
       </div>
