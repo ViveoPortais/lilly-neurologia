@@ -1,4 +1,7 @@
 import axios from "axios";
+import useSession from "../hooks/useSession";
+import { toast } from "react-toastify";
+
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -11,6 +14,21 @@ export const api = axios.create({
       "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
   },
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.code === 'ERR_NETWORK' || !error.response) {
+      useSession.getState().onLogout();
+      toast.error("Sua sessão expirou, faça o login novamente");
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 export default api;
 
