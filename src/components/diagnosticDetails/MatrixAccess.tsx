@@ -33,7 +33,7 @@ const AttachmentDetails = ({ data }: MatrixAccessProps) => {
   };
 
   const handleRedirect = () => {
-    window.open("https://meu.einstein.br/", "_blank");
+    window.open("https://matrixnet.einstein.br/apoiados/wfrmLogin.aspx", "_blank");
   };
 
   return (
