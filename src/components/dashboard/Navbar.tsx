@@ -15,6 +15,7 @@ import { useState } from "react";
 import GenericModalForm from "../modals/GenericModalForm";
 import OperationPasswordModal from "../manageFiles/OperationPasswordModal";
 import {clearAllConsentCaches } from "@/lib/consentCache";
+import { useGenericModal } from "@/contexts/GenericModalContext";
 
 type NotificationProps = {
   onOpenNotificationModal: () => void;
@@ -32,6 +33,7 @@ export function Navbar(props: NotificationProps) {
  const isMobile = useMediaQuery("(max-width: 768px)");
  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
+ const modal = useGenericModal();
 
  const handleProtectedRoute = (route: string) => {
   setPendingRoute(route);
@@ -90,10 +92,22 @@ export function Navbar(props: NotificationProps) {
        {(onClose) => (
          <OperationPasswordModal
            onClose={onClose}
-           onConfirm={() => {
+           onConfirm={(senha: string) => {
              onClose();
-             if (pendingRoute) {
-               router.push(pendingRoute);
+             if (senha === process.env.NEXT_PUBLIC_PASSWORD_MANAGE) {
+               if (pendingRoute) {
+                 router.push(pendingRoute);
+               }
+             }
+             else {
+               modal.showModal(
+                 {
+                   type: "warning",
+                   message: 'Senha incorreta',
+                 },
+                 onClose
+               );
+               return;
              }
            }}
          />

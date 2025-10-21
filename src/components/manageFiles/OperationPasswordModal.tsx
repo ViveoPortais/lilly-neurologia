@@ -13,8 +13,8 @@ export default function OperationPasswordModal({ onConfirm, onClose }: Operation
  const router = useRouter();
  const { register, handleSubmit, watch } = useForm();
 
+
  const onSubmit = (data: any) => {
-  console.log("Senha enviada:", data.senha);
   onConfirm(data.senha);
  };
 

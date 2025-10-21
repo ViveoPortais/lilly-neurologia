@@ -43,7 +43,7 @@ export default function AddFileModal({ onConfirm, options }: AddFileModalProps) 
       documentBody: base64 as string,
      },
     ],
-    name: selectedFile.name,
+    name: data.name,
     annotationTypeStringMapId: data.annotationTypeStringMapId,
    };
 
@@ -78,10 +78,7 @@ export default function AddFileModal({ onConfirm, options }: AddFileModalProps) 
 
  return (
   <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:pl-12 md:pr-12">
-   {/* <div className="flex flex-row items-center gap-2">
 
-    <Input id="fileName" placeholder="Nome do Arquivo" inputPlaceholder="Digite o nome..." {...register("fileName", { required: true })} />
-   </div> */}
 
    <CustomFilterSelect
     name="annotationTypeStringMapId"
@@ -91,6 +88,8 @@ export default function AddFileModal({ onConfirm, options }: AddFileModalProps) 
     onChange={(val) => setValue("annotationTypeStringMapId", val)}
     customClass="text-left"
    />
+
+   <Input id="name" placeholder="Descrição do arquivo" inputPlaceholder="Digite a descrição" {...register("name", { required: true })} />
 
    <UploadButton
     fieldName="file"

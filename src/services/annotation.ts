@@ -33,6 +33,15 @@ export const updateAnnotation = async (data: AnnotationModel) => {
  return response.data;
 };
 
+export const deleteAnnotation = async (data: AnnotationModel) => {
+ const response = await api.post("/Annotation/Delete", {
+  ...data,
+  programCode: programCode,
+ });
+
+ return response.data;
+};
+
 export const downloadDocumentFilled = async (data: IDocumentFilledRequestModel) => {
     const response = await api.post(
         "/Annotation/documentFilled",

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AnnotationModel, IAnnotationFilterModel } from "@/types/general";
-import { addAnnotation, getAnnotationsFile, updateAnnotation } from "@/services/annotation";
+import { addAnnotation, deleteAnnotation, getAnnotationsFile, updateAnnotation } from "@/services/annotation";
 
 interface ManageFileState {
  loading: boolean;
@@ -39,6 +39,15 @@ export const fetchGetAnnotations = createAsyncThunk("annotations/getAnnotations"
 export const fetchUpdateAnnotation = createAsyncThunk("manageFile/updateAnnotation", async (data: AnnotationModel, { rejectWithValue }) => {
  try {
   const response = await updateAnnotation(data);
+  return response;
+ } catch (error: any) {
+  return rejectWithValue(error.response?.data || "Erro ao alterar arquivo.");
+ }
+});
+
+export const submitDeleteAnnotation = createAsyncThunk("manageFile/deleteAnnotation", async (data: AnnotationModel, { rejectWithValue }) => {
+ try {
+  const response = await deleteAnnotation(data);
   return response;
  } catch (error: any) {
   return rejectWithValue(error.response?.data || "Erro ao alterar arquivo.");
@@ -84,6 +93,18 @@ const manageFileSlice = createSlice({
     state.loading = false;
    })
    .addCase(fetchUpdateAnnotation.rejected, (state, action) => {
+    state.loading = false;
+    state.error = action.payload as string;
+   })
+
+    .addCase(submitDeleteAnnotation.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+   })
+   .addCase(submitDeleteAnnotation.fulfilled, (state) => {
+    state.loading = false;
+   })
+   .addCase(submitDeleteAnnotation.rejected, (state, action) => {
     state.loading = false;
     state.error = action.payload as string;
    });
