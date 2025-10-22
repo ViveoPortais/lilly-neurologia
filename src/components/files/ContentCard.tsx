@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaFilePdf, FaFileAlt, FaLink } from "react-icons/fa";
 import { PdfViewerModal } from "../modals/PdfViewerModal";
+import { FaVideo } from "react-icons/fa6";
 
 interface ContentCardProps {
  item: {
@@ -17,7 +18,7 @@ export function ContentCard({ item }: ContentCardProps) {
  const handleClick = () => {
   if (item.type === "pdf") {
    setOpen(true);
-  } else if (item.type === "link") {
+  } else if (item.type === "link" || item.type === "video") {
    window.open(item.url, "_blank");
   } else {
    const link = document.createElement("a");
@@ -35,6 +36,8 @@ export function ContentCard({ item }: ContentCardProps) {
     return <FaFilePdf className="text-mainlilly" size={40} />;
    case "link":
     return <FaLink className="text-blue-500" size={40} />;
+    case "video":
+     return <FaVideo className="text-mainlilly" size={40} />;
    default:
     return <FaFileAlt className="text-gray-500" size={40} />;
   }
