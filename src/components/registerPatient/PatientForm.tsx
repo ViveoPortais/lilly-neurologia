@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { FormProvider, NonUndefined, useForm } from "react-hook-form";
+import { useEffect, useState, useMemo } from "react";
+import { FormProvider, NonUndefined, useForm, useFormContext } from "react-hook-form";
 import StepIndicator from "../custom/StepIndicator";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
 import { patientSchema } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchDiseases, fetchExams, fetchGenders, fetchLabs, getDoctorInfo, submitPatientRegistration } from "@/store/slices/registerPatientSlice";
@@ -17,6 +16,7 @@ import { ButtonsNavigation } from "./ButtonsNavigation";
 import { cclChecks, dlChecks } from "@/helpers/select-filters";
 import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { IDiagnosticExamModel } from "@/types/diagnostic";
+import { IStringMap } from "@/types";
 
 type Props = {
   role: string;
@@ -39,11 +39,29 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   const stringMaps = useAppSelector((state) => state.basic.data.stringMaps);
   const router = useRouter();
   const [examExistent, setExamExistent] = useState<IDiagnosticExamModel | null>(null);
+  const [logisticsAddressType, setLogisticsAddressType] = useState<any[]>([]);
+  const [logisticsScheduleAddressType, setLogisticsScheduleAddressType] = useState<any[]>([]);
+  const [clinicalProfileOptions, setClinicalProfileOptions] = useState<any[]>([]);
 
   const methods = useForm({
     resolver: zodResolver(patientSchema),
     mode: "onBlur",
   });
+
+  const { watch } = methods;
+  
+  const selectedLogisticsAddressTypeId = watch('logisticsAddressType');
+  const selectedLogisticsScheduleAddressTypeId = watch('logisticsScheduleAddressType');
+
+  const selectedLogisticsAddressType = useMemo(() => 
+    logisticsAddressType?.find((x: IStringMap) => x.stringMapId === selectedLogisticsAddressTypeId) || null,
+    [logisticsAddressType, selectedLogisticsAddressTypeId]
+  );
+
+  const selectedLogisticsScheduleAddressType = useMemo(() => 
+    logisticsScheduleAddressType?.find((x: IStringMap) => x.stringMapId === selectedLogisticsScheduleAddressTypeId) || null,
+    [logisticsScheduleAddressType, selectedLogisticsScheduleAddressTypeId]
+  );
 
   const handleClearForm = () => {
     setSelectedProfile("");
@@ -70,41 +88,50 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
       pickupPostalCode: "",
       pickupAddressName: "",
       pickupNumber: "",
-      pickupComplement: "",
-      pickupDistrict: "",
-      pickupCity: "",
-      pickupState: "",
-      pickupResponsibleName: "",
+      pickupAddressComplement: "",
+      pickupAddressDistrict: "",
+      pickupAddressCity: "",
+      pickupAddressState: "",
+      pickupSector: "",
       pickupContact: "",
+      pickupLocalName: "",
+      pickupCompanyName: "",
+      pickupCNPJ: "",
+      localName: "",
+      companyName: "",
+      cnpj: "",
+      logisticsAddressType: "",
+      logisticsScheduleAddressType: "",
+      addressComplement: "",
       useSameAddress: false,
     });
   };
 
   const modal = useGenericModal();
 
-  const clinicalProfile = stringMaps.map((item) => {
-    return {
-      stringMapId: item.stringMapId,
-      optionName: item.optionName,
-    };
-  });
+  const clinicalProfile = clinicalProfileOptions;
 
   const getStepFields = () => {
     const hasResponsible = methods.watch("hasResponsible") === "yes";
     const useSameAddress = methods.watch("useSameAddress") === true;
 
     const pickupFields = [
+      "logisticsAddressType",
       "pickupPostalCode",
       "pickupAddressName",
       "pickupNumber",
+      "pickupAddressComplement",
       "pickupAddressDistrict",
       "pickupAddressCity",
       "pickupAddressState",
       "pickupSector",
       "pickupContact",
+      "pickupLocalName",
+      "pickupCompanyName",
+      "pickupCNPJ",
     ];
 
-    const addressFields = ["addressPostalCode", "addressName", "addressNumber", "addressDistrict", "addressCity", "addressState", "sector", "contact"];
+    const addressFields = ["logisticsScheduleAddressType", "addressPostalCode", "addressName", "addressNumber", "addressComplement", "addressDistrict", "addressCity", "addressState", "sector", "contact", "localName", "companyName", "cnpj"];
 
     if (!isMobile && step === 1) {
       return [
@@ -156,16 +183,98 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
     return allChecked;
   };
 
+  const validateCommercialFields = () => {
+    const formData = methods.getValues();
+    const isPickupCommercial = selectedLogisticsAddressType?.flag === "#COMMERCIAL";
+    const isScheduleCommercial = selectedLogisticsScheduleAddressType?.flag === "#COMMERCIAL";
+    let isValid = true;
+
+    methods.clearErrors(["pickupSector", "pickupContact", "pickupLocalName", "pickupCNPJ", "pickupCompanyName", "sector", "contact", "localName", "cnpj", "companyName"]);
+
+    if (isPickupCommercial) {
+      if (!formData.pickupSector?.trim()) {
+        methods.setError("pickupSector", {
+          type: "required",
+          message: "Nome do responsável/setor é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.pickupContact?.trim()) {
+        methods.setError("pickupContact", {
+          type: "required",
+          message: "Telefone de contato é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.pickupLocalName?.trim()) {
+        methods.setError("pickupLocalName", {
+          type: "required",
+          message: "Nome do local é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.pickupCNPJ?.trim()) {
+        methods.setError("pickupCNPJ", {
+          type: "required",
+          message: "CNPJ é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.pickupCompanyName?.trim()) {
+        methods.setError("pickupCompanyName", {
+          type: "required",
+          message: "Razão social é obrigatória para endereços comerciais"
+        });
+        isValid = false;
+      }
+    }
+
+    if (isScheduleCommercial && !formData.useSameAddress) {
+      if (!formData.sector?.trim()) {
+        methods.setError("sector", {
+          type: "required",
+          message: "Nome do responsável/setor é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.contact?.trim()) {
+        methods.setError("contact", {
+          type: "required",
+          message: "Telefone de contato é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.localName?.trim()) {
+        methods.setError("localName", {
+          type: "required",
+          message: "Nome do local é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.cnpj?.trim()) {
+        methods.setError("cnpj", {
+          type: "required",
+          message: "CNPJ é obrigatório para endereços comerciais"
+        });
+        isValid = false;
+      }
+      if (!formData.companyName?.trim()) {
+        methods.setError("companyName", {
+          type: "required",
+          message: "Razão social é obrigatória para endereços comerciais"
+        });
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
   const handleNext = async () => {
     const fields = getStepFields();
-    const values = Object.fromEntries(fields.map((field) => [field, methods.getValues(field)]));
+    const isValid = await methods.trigger(fields);
 
-    const invalidFields = fields.filter((field: any) => {
-      const value = values[field];
-      return !value || (typeof value === "string" && value.trim() === "") || (value instanceof File === false && typeof value === "object");
-    });
-
-    if (invalidFields.length > 0 || !validateClinalProfile()) {
+    if (!validateClinalProfile() || !validateCommercialFields() || !isValid) {
       modal.showModal(
         {
           type: "warning",
@@ -220,6 +329,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           termConsentAttach,
           hasResponsible,
           useSameAddress,
+          logisticsAddressType,
+          logisticsScheduleAddressType,
           pickupPostalCode,
           pickupAddressName,
           pickupNumber,
@@ -229,6 +340,12 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           pickupAddressState,
           pickupSector,
           pickupContact,
+          pickupLocalName,
+          pickupCompanyName,
+          pickupCNPJ,
+          localName,
+          companyName,
+          cnpj,
           ...restData
         } = data;
 
@@ -240,23 +357,33 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           addressDistrict: pickupAddressDistrict,
           addressCity: pickupAddressCity,
           addressState: pickupAddressState,
-          sector: data.sector,
-          contact: data.contact,
+          sector: pickupSector,
+          contact: pickupContact,
+          local:{
+            name: pickupLocalName,
+            companyName: pickupCompanyName,
+            cnpj: pickupCNPJ,
+          },
+          addressTypeStringMapId: logisticsAddressType,
         };
 
-        const commonAddressFields = useSameAddress
-          ? {
-              addressPostalCode: pickupPostalCode,
-              addressName: pickupAddressName,
-              addressNumber: pickupNumber,
-              addressComplement: pickupAddressComplement,
-              addressDistrict: pickupAddressDistrict,
-              addressCity: pickupAddressCity,
-              addressState: pickupAddressState,
-              sector: pickupSector,
-              contact: pickupContact,
-            }
-          : {};
+        const commonAddressFields = {
+          addressPostalCode: data.addressPostalCode,
+          addressName: data.addressName,
+          addressNumber: data.addressNumber,
+          addressComplement: data.addressComplement,
+          addressDistrict: data.addressDistrict,
+          addressCity: data.addressCity,
+          addressState: data.addressState,
+          sector: data.sector,
+          contact: data.contact,
+          local: {
+            name: data.localName,
+            companyName: data.companyName,
+            cnpj: data.cnpj,
+          },
+          addressTypeStringMapId: data.logisticsScheduleAddressType,
+        }
 
         const payload: any = {
           ...restData,
@@ -264,7 +391,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           logistics,
           hasClinicalProfile: true,
           clinicalProfile: selectedProfile,
-          doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId,
+          doctorId: doctor && auth.role !== "doctor" ? doctor : doctorId
         };
 
         if (termConsentAttach) {
@@ -306,12 +433,30 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   };
 
   useEffect(() => {
-    dispatch(fetchGenders());
-    dispatch(fetchExams());
-    dispatch(fetchLabs());
-    dispatch(fetchDiseases());
-    dispatch(getDoctorInfo());
-    dispatch(fetchStringMaps({ attributeName: "Custom1StringMap", entityName: "diagnostic" }));
+    const fetchData = async () => {
+      dispatch(fetchGenders());
+      dispatch(fetchExams());
+      dispatch(fetchLabs());
+      dispatch(fetchDiseases());
+      dispatch(getDoctorInfo());
+      
+      try {
+        const clinicalProfileResult = await dispatch(fetchStringMaps({ attributeName: "Custom1StringMap", entityName: "diagnostic" })).unwrap();
+        const logisticsResult = await dispatch(fetchStringMaps({ attributeName: "AddressTypeStringMap", entityName: "Logistics" })).unwrap();
+        const logisticsScheduleResult = await dispatch(fetchStringMaps({ attributeName: "AddressTypeStringMap", entityName: "LogisticsSchedule" })).unwrap();
+        
+        setClinicalProfileOptions(clinicalProfileResult.map((item: any) => ({
+          stringMapId: item.stringMapId,
+          optionName: item.optionName,
+        })));
+        setLogisticsAddressType(logisticsResult);
+        setLogisticsScheduleAddressType(logisticsScheduleResult);
+      } catch (error) {
+        console.error("Erro ao buscar tipos de endereço:", error);
+      }
+    };
+    
+    fetchData();
   }, [dispatch]);
 
   return (
@@ -356,7 +501,16 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
 
         {step === 2 && (
           <motion.div key="step2" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>
-            <Step2 setStep={setStep} control={methods.control} errors={methods.formState.errors} setValue={methods.setValue} />
+            <Step2 
+              setStep={setStep} 
+              control={methods.control} 
+              errors={methods.formState.errors} 
+              setValue={methods.setValue}
+              logisticsAddressType={logisticsAddressType}
+              logisticsScheduleAddressType={logisticsScheduleAddressType}
+              selectedLogisticsAddressType={selectedLogisticsAddressType}
+              selectedLogisticsScheduleAddressType={selectedLogisticsScheduleAddressType}
+            />
           </motion.div>
         )}
 

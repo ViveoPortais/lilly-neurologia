@@ -16,6 +16,7 @@ interface CustomFilterSelectProps {
     isLoading?: boolean;
     params?: any;
     placeholder?: string;
+    disabled?: boolean;
 }
 
 const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
@@ -29,6 +30,7 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
     isLoading,
     params,
     placeholder = "Selecione...",
+    disabled = false,
     ...props
 }) => {
     const [filter, setFilter] = useState("");
@@ -73,6 +75,8 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
                             borderRadius: '0.375rem',
                             borderColor: '#c4b9b9',
                             boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                            backgroundColor: disabled ? '#e7e5e4' : 'white',
+                            cursor: disabled ? 'not-allowed' : 'default',
                         }),
                         menu: (provided) => ({
                             ...provided,
@@ -85,7 +89,13 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
                         }),
                         placeholder: (provided) => ({
                             ...provided,
-                            color: '#919191',
+                            color: disabled ? '#000000' : '#919191',
+                            fontWeight: disabled ? 'bold' : 'normal',
+                        }),
+                        singleValue: (provided) => ({
+                            ...provided,
+                            color: disabled ? '#000000' : 'inherit',
+                            fontWeight: disabled ? 'bold' : 'normal',
                         }),
                         option: (provided, state) => ({
                             ...provided,
@@ -95,6 +105,7 @@ const CustomFilterSelect: React.FC<CustomFilterSelectProps> = ({
                         }),
                     }}
                     {...props}
+                    isDisabled={disabled}
                 />
             </div>
         </div>

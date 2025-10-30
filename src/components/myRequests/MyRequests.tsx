@@ -14,6 +14,8 @@ import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { getLinkedDoctor } from "@/store/slices/registerPatientSlice";
 import { columns } from "./columns";
 import { columnsLogistics } from "./columnsLogistics";
+import { Button } from "../ui/button";
+import { exportDiagnosticsToExcel } from "@/utils/exportExcel";
 
 export default function MyRequests() {
   const dispatch = useAppDispatch();
@@ -51,7 +53,11 @@ export default function MyRequests() {
       <div>
         <Filter stringMapsFilter={stringMapsFilter} linkedDoctor={linkedDoctor ?? []} />
       </div>
-      <div>
+
+      <div className="mt-4">
+        <div className="w-full flex justify-end md:px-6 mb-3">
+          {session.role === "operation" && <Button onClick={() => exportDiagnosticsToExcel(myExams)}>Exportar Excel</Button>}
+        </div>
         <DataTable
           columns={session.role === "logistics" ? columnsLogistics : columns}
           data={myExams}

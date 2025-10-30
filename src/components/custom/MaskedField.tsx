@@ -16,7 +16,8 @@ const maskOptions = {
     cpf: "999.999.999-99",
     phone: '(99) 9999-9999',
     cellphone: '(99) 99999-9999',
-    cep: '99999-999'
+    cep: '99999-999',
+    cnpj: '99.999.999/9999-99'
 }
 
 export const maskedField = (

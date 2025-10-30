@@ -420,30 +420,40 @@ export const patientSchema = z
     examDefinition: z.string().min(1, { message: "Descreva o exame" }),
     laboratoryAnalysis: z.string().min(1, { message: "Informe o laboratório" }),
     genderId: z.string().min(1, { message: "Informe o gênero" }),
-    addressPostalCode: z.string().optional(),
-    addressName: z.string().optional(),
-    addressNumber: z.string().optional(),
-    addressComplement: z.string().optional(),
-    addressDistrict: z.string().optional(),
-    addressCity: z.string().optional(),
-    addressState: z.string().optional(),
+    addressPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
+    addressName: z.string().min(1, { message: "Rua é obrigatória" }),
+    addressNumber: z.string().min(1, { message: "Número é obrigatório" }),
+    addressComplement: z.string().min(1,{ message: "Complemento/Sala/Consultório é obrigatório" }),
+    addressDistrict: z.string().min(1, { message: "Bairro é obrigatório" }),
+    addressCity: z.string().min(1, { message: "Cidade é obrigatória" }),
+    addressState: z.string().min(1, { message: "Estado é obrigatório" }),
     sector: z.string().optional(),
     contact: z.string().optional(),
     pickupPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
     pickupAddressName: z.string().min(1, { message: "Rua é obrigatória" }),
     pickupNumber: z.string().min(1, { message: "Número é obrigatório" }),
-    pickupAddressComplement: z.string().optional(),
+    pickupAddressComplement: z.string().min(1, { message: "Complemento/Sala/Consultório é obrigatório" }),
     pickupAddressDistrict: z.string().min(1, { message: "Bairro é obrigatório" }),
     pickupAddressCity: z.string().min(1, { message: "Cidade é obrigatória" }),
     pickupAddressState: z.string().min(1, { message: "Estado é obrigatório" }),
-    pickupSector: z.string().min(1, { message: "Nome do responsável/setor é obrigatório" }),
-    pickupContact: z.string().min(1, { message: "Telefone de contato é obrigatório" }),
+    pickupSector: z.string().optional(),
+    pickupContact: z.string().optional(),
+    pickupLocalName : z.string().optional(),
+    pickupCNPJ : z.string().optional(),
+    pickupCompanyName : z.string().optional(),
     useSameAddress: z.boolean().optional(),
     isSecondSolicitation: z.boolean().optional(),
     termConsentAttach: z.any().optional(),
     saveAddress: z.boolean().default(false),
     hasDigitalSignature: z.boolean().default(false),
     emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+    logisticsAddressType : z.string().min(1, { message: "Selecione o tipo de endereço" }),
+    logisticsScheduleAddressType : z.string().min(1, { message: "Selecione o tipo de endereço" }),
+    localName : z.string().optional(),
+    cnpj : z.string().optional(),
+    companyName : z.string().optional()
+    
+
   })
   .refine(
     (data) => {
@@ -492,6 +502,9 @@ export const patientSchema = z
       if (!data.addressNumber) {
         ctx.addIssue({ path: ["addressNumber"], code: z.ZodIssueCode.custom, message: "Número é obrigatório" });
       }
+      if (!data.addressComplement) {
+        ctx.addIssue({ path: ["addressComplement"], code: z.ZodIssueCode.custom, message: "Complemento/Sala/Consultório é obrigatório" });
+      }
       if (!data.addressDistrict) {
         ctx.addIssue({ path: ["addressDistrict"], code: z.ZodIssueCode.custom, message: "Bairro é obrigatório" });
       }
@@ -536,6 +549,7 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
     .object({
       collectMaterial: z.date({ required_error: "Informe a data de coleta" }),
       doctorSuggestedDate: z.date({ required_error: "Informe a data desejada" }),
+      preferredTimeStringMap : z.string().min(1,{message:"Selecione o período para retirada da amostra"})
     })
     .superRefine((data, ctx) => {
       let recebimento;

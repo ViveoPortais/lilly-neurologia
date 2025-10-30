@@ -1,19 +1,22 @@
 import { Input } from "@/components/ui/input";
-import { Download } from "lucide-react";
+import { AlertCircle, Download } from "lucide-react";
 import { Button } from "../ui/button";
 import { IPatientSampleCollectionViewModel } from "@/types/diagnostic";
 import { downloadBase64File } from "@/helpers/fileHelper";
 import { Controller } from "react-hook-form";
 import { CustomDatePicker } from "../custom/CustomDatepicker";
+import { CustomFilterSelect } from "../custom/CustomFilterSelect";
+import { IStringMap } from "@/types";
 
 interface Step2Props {
   register: any;
   errors: any;
   control: any;
   data: IPatientSampleCollectionViewModel;
+  preferredTimeStringMaps : IStringMap[];
 }
 
-export default function Step2({ register, errors, control, data }: Step2Props) {
+export default function Step2({ register, errors, control, data, preferredTimeStringMaps }: Step2Props) {
   const isWeekdayAllowed = (date: Date) => {
     const day = date.getDay();
     return day !== 5 && day !== 6 && day !== 0;
@@ -49,7 +52,7 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="space-y-1">
-          <label className="text-sm text-zinc-700">Data e Hora da Coleta do Material Biológico</label>
+          <label className="text-base tracking-wide text-black">Data e Hora da Coleta do Material Biológico</label>
           <Controller
             control={control}
             name="collectMaterial"
@@ -71,7 +74,7 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm text-zinc-700">Data Desejada da Retirada da Amostra</label>
+          <label className="text-base tracking-wide text-black">Data Desejada da Retirada da Amostra</label>
           <Controller
             control={control}
             name="doctorSuggestedDate"
@@ -85,6 +88,24 @@ export default function Step2({ register, errors, control, data }: Step2Props) {
               />
             )}
           />
+          {errors.doctorSuggestedDate && <p className="text-red-500 text-sm mt-1">{errors.doctorSuggestedDate.message?.toString()}</p>}
+        </div>
+        <div className="space-y-1">
+          <Controller
+            name="preferredTimeStringMap"
+            control={control}
+            render={({ field }) => (
+              <CustomFilterSelect
+                {...field}
+                label="Período para Retirada da Amostra"
+                options={preferredTimeStringMaps}
+              />
+            )}
+          />
+          <p className="text-xs text-red-500 flex  gap-1">
+            <AlertCircle className="w-8 h-8" />
+            Para retiradas no período da manhã, a amostra precisará ser coletada no dia anterior ou até as 08h, para retiradas no período da tarde, a amostra precisará ser coletada até as 11h.
+          </p>
           {errors.doctorSuggestedDate && <p className="text-red-500 text-sm mt-1">{errors.doctorSuggestedDate.message?.toString()}</p>}
         </div>
       </div>

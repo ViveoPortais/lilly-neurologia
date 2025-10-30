@@ -172,6 +172,14 @@ export interface IDiagnosticExamModel {
   loginMatrix?: string | null;
   passwordMatrix?: string | null;
   hasDigitalSignature? : boolean | null;
+  addressTypeStringMap?: IStringMap | null;
+  logisticsAddressTypeStringMap?: IStringMap |null; 
+  logisticsLocal?: IAccountModel |null; 
+  logisticsScheduleLocal?: IAccountModel |null; 
+  preferredTimeStringMap?: IStringMap | null; 
+  deliveryTubeContact? : string | null; 
+  deliveryTubeTelephone? : string | null; 
+  doctorSuggestedDate?: string | null;
 }
 
 
@@ -266,6 +274,7 @@ export interface ExamPendingModel {
   dateForCollecting?: string;
   doctorSelectedDate?: string;
   incidentStatusStringMapId?: string;
+  preferredTimeStringMap?:string;
 }
 
 export interface ResolveExamPendency {
@@ -331,6 +340,10 @@ export interface LabelPendingModel extends ExamPendingModel {
   addressState?: string;
   addressNumber?: string;
   addressDistrict?: string;
+  section?: string;
+  institutionTelephone?: string;
+  logisticsLocal?: IAccountModel;
+  logisticsAddressTypeStringMap?: IStringMap;
 }
 
 export interface IExamCancellationModel {
@@ -354,6 +367,10 @@ export interface IPickupRequestModel extends ExamPendingModel {
   addressState?: string;
   addressNumber?: string;
   addressDistrict?: string;
+  section?: string;
+  institutionTelephone?: string;
+  logisticsScheduleLocal?: IAccountModel;
+  logisticsAddressTypeStringMap?: IStringMap;
 }
 
 export interface IProblemWithSampleModel extends ExamPendingModel {
@@ -404,4 +421,10 @@ export interface IDocumentFilledRequestModel{
     examCreateModel?: ExamCreateModel;
     annotationTypeStringMapFlag?:string;
     examId?:string;
+}
+export interface IAccountModel {
+  id?: string | null;
+  name?: string | null;
+  companyName?: string | null;
+  cnpj?: string | null;
 }

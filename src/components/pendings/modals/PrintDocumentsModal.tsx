@@ -12,10 +12,11 @@ import { fetchPendencyReasons } from "@/store/slices/pendingsSlice";
 import { downloadBase64File, fileToBase64 } from "@/helpers/fileHelper";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { UploadButton } from "@/components/custom/UploadButton";
-import { Download } from "lucide-react";
+import { AlertCircle, Download } from "lucide-react";
 import { fetchTermAttachFilled } from "@/store/slices/diagnosticSlice";
 import { toast } from "react-toastify";
 import { useLoading } from "@/contexts/LoadingContext";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 interface PrintDocumentsModalProps {
   onClose: () => void;
@@ -25,7 +26,7 @@ interface PrintDocumentsModalProps {
 export default function OperationRejectedDocModal({ onClose, item }: PrintDocumentsModalProps) {
   const dispatch = useAppDispatch();
   const { resolve } = useResolveExamPendency();
-  const { show , hide} = useLoading();
+  const { show, hide } = useLoading();
 
   const [logisticsBatchDownloaded, setLogisticsBatchDownloaded] = useState<boolean>(false);
   const [transportDeclarationDownloaded, setTransportDeclarationDownloaded] = useState<boolean>(false);
@@ -95,7 +96,7 @@ export default function OperationRejectedDocModal({ onClose, item }: PrintDocume
 
     } catch (error) {
       setTransportDeclarationDownloaded(false);
-    }finally{
+    } finally {
       hide();
     }
   };
@@ -135,6 +136,35 @@ export default function OperationRejectedDocModal({ onClose, item }: PrintDocume
         }
         Declaração de Transporte e Ficha de Emergência
       </Button>
+
+
+      <div className="items-center justify-center space-x-2 p-6">
+        <div className="flex flex-row gap-2">
+          <FaCircleExclamation size={15} className="text-red-200 bg-mainlilly rounded rounded-full mt-[0.15em]" />
+          <h4 className="font-semibold text-gray-700 text-sm mb-2">Atenção:</h4>
+        </div>
+        <div className="flex flex-row">
+          <ul className="text-xs text-gray-700 space-y-1">
+            <li className="flex items-start">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+              <span>Imprimir 2 vias da <span className="italic">Declaração de Transporte Nacional</span> em papel timbrado;</span>
+            </li>
+            <li className="flex items-start">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+              <span>É obrigatório preencher o tipo de material e a quantidade (em mL);</span>
+            </li>
+            <li className="flex items-start">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+              <span>Assinar, datar e carimbar com o registro profissional (CRM / CRF / COREN / CRBM) do responsável.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+              <span className="font-bold">Sem a documentação corretamente preenchida e assinada, o transporte do material não poderá ser realizado</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <div className="flex flex-col sm:flex-row justify-between gap-2 pt-2">
         <Button type="button" className="w-full" onClick={handleSave} disabled={!logisticsBatchDownloaded || !transportDeclarationDownloaded}>
           Resolver pendência

@@ -13,13 +13,15 @@ import Step1 from "./Step1";
 import StepIndicator from "../custom/StepIndicator";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { clearSelectedExamItem } from "@/store/slices/pendingsSlice";
+import { IStringMap } from "@/types";
 
 interface ScheduleSampleFormProps {
   data: IPatientSampleCollectionViewModel;
   item: ExamPendingModel;
+  preferredTimeStringMaps : IStringMap[];
 }
 
-export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormProps) {
+export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps }: ScheduleSampleFormProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [step, setStep] = useState(1);
   const { resolve } = useResolveExamPendency();
@@ -36,6 +38,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
     defaultValues: {
       collectMaterial: "",
       doctorSuggestedDate: "",
+      preferredTimeStringMaps:"",
     },
   });
 
@@ -47,6 +50,7 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
         deliveryConfirmedAt: dataForm.tubeReceptionDate,
         doctorSuggestedDate: dataForm.doctorSuggestedDate,
         collectMaterial: dataForm.collectMaterial,
+        preferredTimeStringMap: dataForm.preferredTimeStringMap,
         id : data.examId,
       },
       onSuccess: () => {
@@ -81,13 +85,13 @@ export default function ScheduleSampleForm({ data, item }: ScheduleSampleFormPro
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                <Step2 register={register} errors={errors} data={data} control={control} />
+                <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps} />
               </motion.div>
             )
           ) : (
             <>
               <Step1 data={data} />
-              <Step2 register={register} errors={errors} data={data} control={control}/>
+              <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps}/>
             </>
           )}
         </AnimatePresence>

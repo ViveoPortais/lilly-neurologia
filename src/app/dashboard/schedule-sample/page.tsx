@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { useLoading } from "@/contexts/LoadingContext";
 import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchStringMaps } from "@/store/slices/basicSlice";
 import { clearSelectedExamItem, fetchCollectionSchedule, fetchPendings } from "@/store/slices/pendingsSlice";
 import { clearSelectedDoctorId, getLinkedDoctor, setSelectedDoctorId } from "@/store/slices/registerPatientSlice";
+import { IStringMap } from "@/types";
 import { ExamPendingModel, IPatientSampleCollectionViewModel, PatientData } from "@/types/diagnostic";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
@@ -24,6 +26,7 @@ export default function ScheduleSample() {
   const selectedDoctorId = useAppSelector((state) => state.registerPatient.selectedDoctorId);
   const linkedDoctor = useAppSelector((state) => state.registerPatient.data.linkedDoctor);
   const { data: pendings, loading, collectionScheduleData, selectedExamItem } = useAppSelector((state) => state.pending);
+  const [preferredTimeStringMaps, setPreferredTimeStringMaps] = useState<IStringMap[]>([]);
   const { show, hide } = useLoading();
 
   useEffect(() => {
@@ -60,10 +63,14 @@ export default function ScheduleSample() {
   }, [loading, show, hide]);
 
   useEffect(() => {
-    return () => {
+    const fetchData = async () => {
       dispatch(clearSelectedExamItem());
       dispatch(clearSelectedDoctorId());
+      const preferredTimeStringMapResult = await dispatch(fetchStringMaps({ attributeName: "PreferredTimeStringMap", entityName: "LogisticsSchedule" })).unwrap();
+      setPreferredTimeStringMaps(preferredTimeStringMapResult);
     };
+
+    fetchData();
   }, [dispatch]);
 
   const fixedCategories = ["Solicitações de Retirada de Amostra"];
@@ -91,7 +98,7 @@ export default function ScheduleSample() {
           <AnimatePresence mode="wait">
             {collectionScheduleData && (
               <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
-                <ScheduleSampleForm data={collectionScheduleData} item={selectedExamItem!} />
+                <ScheduleSampleForm data={collectionScheduleData} item={selectedExamItem!} preferredTimeStringMaps={preferredTimeStringMaps} />
               </motion.div>
             )}
           </AnimatePresence>

@@ -15,6 +15,7 @@ import MatrixAccess from "./MatrixAccess";
 import useSession from "@/hooks/useSession";
 import LabelDownload from "./LabelDownload";
 import DigitalSignatureDetails from "./DigitalSignatureDetails";
+import AddressesDetails from "./AddressesDetails";
 
 interface ModalDiagnosticDetailsFormProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white rounded-3xl pt-8 pb-4 pl-6 pr-6 shadow-lg w-full text-center w-full md:max-w-[60%] overflow-y-auto scrollbar-hidden overflow-x-none pb-10"
+            className="bg-white rounded-3xl pt-8 pb-4 pl-6 pr-6 shadow-lg w-full text-center w-full md:max-w-[70%] overflow-y-auto scrollbar-hidden overflow-x-none pb-10"
           >
             <div className="flex flex-row-reverse pb-2 mb-4">
               <button
@@ -55,6 +56,7 @@ export default function ModalDiagnosticDetails({ isOpen, onClose, data, annotati
               </button>
             </div>
             <DiagnosticDetails data={data} role={auth.role} />
+            <AddressesDetails data={data}/>
             {auth.role !== "logistics" && (
               <div className="flex flex-col w-full space-y-8 mt-2">
                 {auth.role === "doctor" && (data.examStatusStringMap?.optionName == "Laudo Disponível") && <MatrixAccess data={data} />}

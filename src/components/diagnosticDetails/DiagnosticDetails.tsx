@@ -133,9 +133,19 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
                 <span>({data.reasonExamNotDoneStringMap?.optionName})</span>
               </div>
             )}
+            {(data.examStatusStringMap?.flag === 'EXAM_WITHDRAWAL_WAITING_APROVATION' && data.doctorSuggestedDate != null)&& (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Data sugerida da retirada da amostra : <strong className="text-black">{dayjs(data.doctorSuggestedDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
+              </div>
+            )}
             {(data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' && data.withdrawalDate != null)&& (
               <div className="flex items-center gap-2">
-                <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")}</strong></span>
+                <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
+              </div>
+            )}
+            {(data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' && data.withdrawalDate != null)&& (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
               </div>
             )}
             {resolvableFlags.includes(statusFlag) && (role === "doctor" || role === "professional") && (
@@ -171,30 +181,6 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
               </div>
             </div>
           )}
-          <div className="flex flex-col md:flex-row gap-6 py-4">
-            <div className="md:basis-1/6">
-              <label>CEP da Coleta</label>
-              <p>{data.logisticsAddressPostalCode}</p>
-            </div>
-            <div className="md:basis-1/6">
-              <label>Endereço da Coleta</label>
-              <p>{data.logisticsAddressCity && data.logisticsAddressState && `${data.logisticsAddressCity}/${data.logisticsAddressState}`}</p>
-            </div>
-            <div className="md:basis-1/6">
-              <label>Logradouro</label>
-              <p>{`${data.logisticsAddressName}, ${data.logisticsAddressNumber}`}</p>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row gap-6 py-4">
-            <div className="md:basis-1/6">
-              <label>Nome do Responsável/Setor</label>
-              <p>{data.section}</p>
-            </div>
-            <div className="md:basis-1/6">
-              <label>Telefone de Contato</label>
-              <p>{data.institutionTelephone}</p>
-            </div>
-          </div>
         </div>
       </div>
       {(role != "logistics" && data.examStatusStringMap?.flag === "EXAM_REPORT_AVAILABLE") && (
