@@ -138,27 +138,27 @@ export default function OperationRejectedDocModal({ onClose, item }: PrintDocume
       </Button>
 
 
-      <div className="items-center justify-center space-x-2 p-6">
+      <div className="justify-start space-x-2 p-6">
         <div className="flex flex-row gap-2">
-          <FaCircleExclamation size={15} className="text-red-200 bg-mainlilly rounded rounded-full mt-[0.15em]" />
-          <h4 className="font-semibold text-gray-700 text-sm mb-2">Atenção:</h4>
+          <FaCircleExclamation size={15} className="text-red-200 bg-mainlilly rounded rounded-full mt-[0.25em]" />
+          <h4 className="font-semibold text-gray-700 mb-2">Atenção:</h4>
         </div>
         <div className="flex flex-row">
-          <ul className="text-xs text-gray-700 space-y-1">
-            <li className="flex items-start">
-              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+          <ul className="text-sm text-gray-700 space-y-1">
+            <li className="flex items-start space-x-1">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
               <span>Imprimir 2 vias da <span className="italic">Declaração de Transporte Nacional</span> em papel timbrado;</span>
             </li>
-            <li className="flex items-start">
-              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+            <li className="flex items-start space-x-1">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
               <span>É obrigatório preencher o tipo de material e a quantidade (em mL);</span>
             </li>
-            <li className="flex items-start">
-              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
-              <span>Assinar, datar e carimbar com o registro profissional (CRM / CRF / COREN / CRBM) do responsável.</span>
+            <li className="flex items-start space-x-1">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
+              <span>Assinar, datar e carimbar com o registro profissional (CRM / CRF / COREN / CRBM) do responsável;</span>
             </li>
-            <li className="flex items-start">
-              <span className="w-1 h-1 bg-black rounded-full mt-2 mr-2 flex-shrink-0"></span>
+            <li className="flex items-start space-x-1">
+              <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
               <span className="font-bold">Sem a documentação corretamente preenchida e assinada, o transporte do material não poderá ser realizado</span>
             </li>
           </ul>

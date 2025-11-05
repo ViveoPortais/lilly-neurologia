@@ -44,8 +44,16 @@ export default function ApproveSampleDateModal({ onClose, item }: ApproveSampleD
               <Input value={labelItem.addressNumber ?? ""} readOnly placeholder="Número" />
               <Input value={labelItem.addressState ?? ""} readOnly placeholder="Estado" />
             </div>
+            {(labelItem.logisticsScheduleAddressTypeStringMap?.flag === "#COMMERCIAL" && labelItem.logisticsScheduleLocal)&& (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <Input value={labelItem.logisticsScheduleLocal?.name ?? ""} readOnly placeholder="Nome do Local" />
+                <Input value={labelItem.logisticsScheduleLocal?.cnpj ?? ""} readOnly placeholder="CNPJ" />
+                <Input value={labelItem.logisticsScheduleLocal?.companyName ?? ""} readOnly placeholder="Razão Social" />
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <Input value={dayjs(labelItem.examPickupDate).format("DD/MM/YYYY") ?? ""} readOnly placeholder="Data sugerida" />
+              <Input value={labelItem.preferredTimeStringMap?.optionName ?? ""} readOnly placeholder="Período da coleta" />
             </div>
           </div>
           <div className="flex justify-center gap-4 p-4">

@@ -50,7 +50,7 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
         deliveryConfirmedAt: dataForm.tubeReceptionDate,
         doctorSuggestedDate: dataForm.doctorSuggestedDate,
         collectMaterial: dataForm.collectMaterial,
-        preferredTimeStringMap: dataForm.preferredTimeStringMap,
+        preferredTimeStringMapId: dataForm.preferredTimeStringMap,
         id : data.examId,
       },
       onSuccess: () => {

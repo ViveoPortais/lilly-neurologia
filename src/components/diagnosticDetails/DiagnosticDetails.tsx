@@ -138,12 +138,9 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
                 <span className="text-gray-400">Data sugerida da retirada da amostra : <strong className="text-black">{dayjs(data.doctorSuggestedDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
               </div>
             )}
-            {(data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' && data.withdrawalDate != null)&& (
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
-              </div>
-            )}
-            {(data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' && data.withdrawalDate != null)&& (
+            {((data.examStatusStringMap?.flag === 'EXAM_WAITING_WITHDRAWAL' || 
+              data.examStatusStringMap?.flag === 'EXAM_WAITING_LOGISTICS_BATCH' ||
+              data.examStatusStringMap?.flag === 'EXAM_WAITING_PRINT_DOCUMENTS') && data.withdrawalDate != null)&& (
               <div className="flex items-center gap-2">
                 <span className="text-gray-400">Data de retirada da amostra : <strong className="text-black">{dayjs(data.withdrawalDate).format("DD/MM/YYYY")} - {data.preferredTimeStringMap?.optionName}</strong></span>
               </div>

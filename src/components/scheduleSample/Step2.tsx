@@ -102,11 +102,11 @@ export default function Step2({ register, errors, control, data, preferredTimeSt
               />
             )}
           />
-          <p className="text-xs text-red-500 flex  gap-1">
+          <p className="text-xs text-black flex  gap-1">
             <AlertCircle className="w-8 h-8" />
             Para retiradas no período da manhã, a amostra precisará ser coletada no dia anterior ou até as 08h, para retiradas no período da tarde, a amostra precisará ser coletada até as 11h.
           </p>
-          {errors.doctorSuggestedDate && <p className="text-red-500 text-sm mt-1">{errors.doctorSuggestedDate.message?.toString()}</p>}
+          {errors.preferredTimeStringMap && <p className="text-red-500 text-sm mt-1">{errors.preferredTimeStringMap.message?.toString()}</p>}
         </div>
       </div>
 
