@@ -447,8 +447,8 @@ export const patientSchema = z
     saveAddress: z.boolean().default(false),
     hasDigitalSignature: z.boolean().default(false),
     emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
-    logisticsAddressType : z.string().min(1, { message: "Selecione o tipo de endereço" }),
-    logisticsScheduleAddressType : z.string().min(1, { message: "Selecione o tipo de endereço" }),
+    logisticsAddressCommercial: z.boolean().default(false),
+    addressCommercial: z.boolean().default(false),
     localName : z.string().optional(),
     cnpj : z.string().optional(),
     companyName : z.string().optional()

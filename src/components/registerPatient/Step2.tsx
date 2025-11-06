@@ -3,18 +3,18 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { maskedField } from "@/components/custom/MaskedField";
-import { CustomFilterSelect } from "@/components/custom/CustomFilterSelect";
 import { useEffect, useState } from "react";
 import { AddressData } from "@/services/api";
 import { toast } from "react-toastify";
 import { isValidPhoneNumber } from "@/helpers/helpers";
-import { IStringMap } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 
-export function Step2({ control, errors, setValue, logisticsAddressType, logisticsScheduleAddressType, methods, selectedLogisticsAddressType, selectedLogisticsScheduleAddressType }: any) {
+export function Step2({ control, errors, setValue }: any) {
   const { register, watch } = useFormContext();
   const [isFetchingCep, setIsFetchingCep] = useState(false);
   const useSameAddress = watch("useSameAddress");
+  const logisticsAddressCommercial = watch("logisticsAddressCommercial");
+  const addressCommercial = watch("addressCommercial");
   const [pickupContactError, setPickupContactError] = useState<string | null>(null);
   const [contactError, setContactError] = useState<string | null>(null);
 
@@ -49,18 +49,12 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
   useEffect(() => {
     if (useSameAddress) {
 
+      setValue("addressCommercial", logisticsAddressCommercial || false);
 
-      let logisticsScheduleAddressTypeSameFlag = 
-          logisticsScheduleAddressType?.find((x: IStringMap) => x.flag === selectedLogisticsAddressType.flag) || null;
-
-      setValue("logisticsScheduleAddressType", logisticsScheduleAddressTypeSameFlag.stringMapId);
-
-      // Copiar campos comerciais
       setValue("localName", watch("pickupLocalName") || "");
       setValue("companyName", watch("pickupCompanyName") || "");
       setValue("cnpj", watch("pickupCNPJ") || "");
 
-      // Copiar endereço
       setValue("addressPostalCode", watch("pickupPostalCode") || "");
       setValue("addressName", watch("pickupAddressName") || "");
       setValue("addressNumber", watch("pickupNumber") || "");
@@ -71,7 +65,7 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
       setValue("sector", watch("pickupSector") || "");
       setValue("contact", watch("pickupContact") || "");
     } else {
-      setValue("logisticsScheduleAddressType", "");
+      setValue("addressCommercial", false);
       setValue("localName", "");
       setValue("companyName", "");
       setValue("cnpj", "");
@@ -85,7 +79,7 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
       setValue("sector", "");
       setValue("contact", "");
     }
-  }, [useSameAddress, setValue, watch]);
+  }, [useSameAddress, setValue, watch, logisticsAddressCommercial]);
 
 
 
@@ -94,20 +88,12 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
     <div className="space-y-8">
       <div>
         <h2 className="font-semibold text-lg text-gray-600 mb-2">Endereço de Envio do Tubo</h2>
-        <div className="grid md:grid-cols-4 gap-4 mb-4">
-          <Controller
-            name="logisticsAddressType"
-            control={control}
-            render={({ field }) => (
-              <div className="w-full">
-                <CustomFilterSelect options={logisticsAddressType} value={field.value} onChange={field.onChange} name="logisticsAddressType" label="Tipo de Endereço" />
-                {errors?.logisticsAddressType && <span className="text-sm text-red-500 mt-1 block">{errors.logisticsAddressType.message as string}</span>}
-              </div>
-            )}
-          />
-        </div>
+        <label className="flex items-center gap-2 text-sm text-zinc-700 mb-3">
+          <input type="checkbox" className="accent-mainlilly w-4 h-4" {...register("logisticsAddressCommercial")} />
+          Endereço comercial
+        </label>
         <AnimatePresence>
-          {(selectedLogisticsAddressType != null && selectedLogisticsAddressType.flag === "#COMMERCIAL") && (
+          {logisticsAddressCommercial && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -168,7 +154,7 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
           )}
         </AnimatePresence>
         <AnimatePresence>
-          {selectedLogisticsAddressType != null && (
+          {true && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -225,29 +211,13 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
           Utilizar o Endereço da Entrega para retirada da amostra
         </label>
 
-        <div className="grid md:grid-cols-4 gap-4 mb-4">
-          <Controller
-            name="logisticsScheduleAddressType"
-            control={control}
-            render={({ field }) => (
-              <div className="w-full">
-                <CustomFilterSelect 
-                  options={logisticsScheduleAddressType} 
-                  value={field.value} 
-                  onChange={useSameAddress ? () => {} : field.onChange} 
-                  name="logisticsScheduleAddressType" 
-                  label="Tipo de Endereço"
-                  placeholder={"Selecione..."}
-                  disabled={useSameAddress}
-                />
-                {errors?.logisticsScheduleAddressType && <span className="text-sm text-red-500 mt-1 block">{errors.logisticsScheduleAddressType.message as string}</span>}
-              </div>
-            )}
-          />
-        </div>
+        <label className="flex items-center gap-2 text-sm text-zinc-700 mb-3">
+          <input type="checkbox" className="accent-mainlilly w-4 h-4" {...register("addressCommercial")} disabled={useSameAddress} />
+          Endereço comercial
+        </label>
 
         <AnimatePresence>
-          {(selectedLogisticsScheduleAddressType != null && selectedLogisticsScheduleAddressType.flag === "#COMMERCIAL") && (
+          {addressCommercial && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -306,7 +276,7 @@ export function Step2({ control, errors, setValue, logisticsAddressType, logisti
         </AnimatePresence>
 
         <AnimatePresence>
-          {selectedLogisticsScheduleAddressType != null && (
+          {true && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}

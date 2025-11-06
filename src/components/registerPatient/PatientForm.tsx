@@ -39,8 +39,6 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   const stringMaps = useAppSelector((state) => state.basic.data.stringMaps);
   const router = useRouter();
   const [examExistent, setExamExistent] = useState<IDiagnosticExamModel | null>(null);
-  const [logisticsAddressType, setLogisticsAddressType] = useState<any[]>([]);
-  const [logisticsScheduleAddressType, setLogisticsScheduleAddressType] = useState<any[]>([]);
   const [clinicalProfileOptions, setClinicalProfileOptions] = useState<any[]>([]);
 
   const methods = useForm({
@@ -49,19 +47,6 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   });
 
   const { watch } = methods;
-  
-  const selectedLogisticsAddressTypeId = watch('logisticsAddressType');
-  const selectedLogisticsScheduleAddressTypeId = watch('logisticsScheduleAddressType');
-
-  const selectedLogisticsAddressType = useMemo(() => 
-    logisticsAddressType?.find((x: IStringMap) => x.stringMapId === selectedLogisticsAddressTypeId) || null,
-    [logisticsAddressType, selectedLogisticsAddressTypeId]
-  );
-
-  const selectedLogisticsScheduleAddressType = useMemo(() => 
-    logisticsScheduleAddressType?.find((x: IStringMap) => x.stringMapId === selectedLogisticsScheduleAddressTypeId) || null,
-    [logisticsScheduleAddressType, selectedLogisticsScheduleAddressTypeId]
-  );
 
   const handleClearForm = () => {
     setSelectedProfile("");
@@ -100,8 +85,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
       localName: "",
       companyName: "",
       cnpj: "",
-      logisticsAddressType: "",
-      logisticsScheduleAddressType: "",
+      logisticsAddressCommercial: false,
+      addressCommercial: false,
       addressComplement: "",
       useSameAddress: false,
     });
@@ -116,7 +101,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
     const useSameAddress = methods.watch("useSameAddress") === true;
 
     const pickupFields = [
-      "logisticsAddressType",
+      "logisticsAddressCommercial",
       "pickupPostalCode",
       "pickupAddressName",
       "pickupNumber",
@@ -131,7 +116,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
       "pickupCNPJ",
     ];
 
-    const addressFields = ["logisticsScheduleAddressType", "addressPostalCode", "addressName", "addressNumber", "addressComplement", "addressDistrict", "addressCity", "addressState", "sector", "contact", "localName", "companyName", "cnpj"];
+    const addressFields = ["addressCommercial", "addressPostalCode", "addressName", "addressNumber", "addressComplement", "addressDistrict", "addressCity", "addressState", "sector", "contact", "localName", "companyName", "cnpj"];
 
     if (!isMobile && step === 1) {
       return [
@@ -185,8 +170,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
 
   const validateCommercialFields = () => {
     const formData = methods.getValues();
-    const isPickupCommercial = selectedLogisticsAddressType?.flag === "#COMMERCIAL";
-    const isScheduleCommercial = selectedLogisticsScheduleAddressType?.flag === "#COMMERCIAL";
+    const isPickupCommercial = formData.logisticsAddressCommercial;
+    const isScheduleCommercial = formData.addressCommercial;
     let isValid = true;
 
     methods.clearErrors(["pickupSector", "pickupContact", "pickupLocalName", "pickupCNPJ", "pickupCompanyName", "sector", "contact", "localName", "cnpj", "companyName"]);
@@ -329,8 +314,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
           termConsentAttach,
           hasResponsible,
           useSameAddress,
-          logisticsAddressType,
-          logisticsScheduleAddressType,
+          logisticsAddressCommercial,
+          addressCommercial,
           pickupPostalCode,
           pickupAddressName,
           pickupNumber,
@@ -364,7 +349,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
             companyName: pickupCompanyName,
             cnpj: pickupCNPJ,
           },
-          addressTypeStringMapId: logisticsAddressType,
+          addressCommercial: logisticsAddressCommercial,
         };
 
         const commonAddressFields = {
@@ -382,7 +367,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
             companyName: data.companyName,
             cnpj: data.cnpj,
           },
-          addressTypeStringMapId: data.logisticsScheduleAddressType,
+          addressCommercial: data.addressCommercial,
         }
 
         const payload: any = {
@@ -442,17 +427,13 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
       
       try {
         const clinicalProfileResult = await dispatch(fetchStringMaps({ attributeName: "Custom1StringMap", entityName: "diagnostic" })).unwrap();
-        const logisticsResult = await dispatch(fetchStringMaps({ attributeName: "AddressTypeStringMap", entityName: "Logistics" })).unwrap();
-        const logisticsScheduleResult = await dispatch(fetchStringMaps({ attributeName: "AddressTypeStringMap", entityName: "LogisticsSchedule" })).unwrap();
         
         setClinicalProfileOptions(clinicalProfileResult.map((item: any) => ({
           stringMapId: item.stringMapId,
           optionName: item.optionName,
         })));
-        setLogisticsAddressType(logisticsResult);
-        setLogisticsScheduleAddressType(logisticsScheduleResult);
       } catch (error) {
-        console.error("Erro ao buscar tipos de endereço:", error);
+        console.error("Erro ao buscar perfil clínico:", error);
       }
     };
     
@@ -506,10 +487,6 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
               control={methods.control} 
               errors={methods.formState.errors} 
               setValue={methods.setValue}
-              logisticsAddressType={logisticsAddressType}
-              logisticsScheduleAddressType={logisticsScheduleAddressType}
-              selectedLogisticsAddressType={selectedLogisticsAddressType}
-              selectedLogisticsScheduleAddressType={selectedLogisticsScheduleAddressType}
             />
           </motion.div>
         )}

@@ -45,8 +45,8 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
               >
                 <div className="flex flex-col md:flex-row gap-6 py-2">
                   <div className="md:basis-1/5 min-w-0">
-                    <label className="block text-sm font-medium mb-1">Tipo de Endereço</label>
-                    <p className="truncate" title={data.addressTypeStringMap?.optionName || undefined}>{data.addressTypeStringMap?.optionName}</p>
+                    <label className="block text-sm font-medium mb-1">Endereço Comercial</label>
+                    <p className="truncate" title={data.addressCommercial ? "Sim" : "Não"}>{data.addressCommercial ? "Sim" : "Não"}</p>
                   </div>
                   <div className="md:basis-1/5 min-w-0">
                     <label className="block text-sm font-medium mb-1">CEP</label>
@@ -79,7 +79,7 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
                     <p className="truncate" title={data.addressState || undefined}>{data.addressState}</p>
                   </div>
                 </div>
-                { data.addressTypeStringMap?.flag === "#COMMERCIAL" &&
+                { data.addressCommercial &&
                 <div className="flex flex-col md:flex-row gap-6 py-4">
                   <div className="md:basis-1/5 min-w-0">
                     <label className="block text-sm font-medium mb-1">Nome do Responsável</label>
@@ -132,8 +132,8 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
               >
                 <div className="flex flex-col md:flex-row gap-6 py-2">
                   <div className="md:basis-1/5 min-w-0">
-                    <label className="block text-sm font-medium mb-1">Tipo de Endereço</label>
-                    <p className="truncate" title={data.logisticsAddressTypeStringMap?.optionName || undefined}>{data.logisticsAddressTypeStringMap?.optionName}</p>
+                    <label className="block text-sm font-medium mb-1">Endereço Comercial</label>
+                    <p className="truncate" title={data.logisticsAddressCommercial ? "Sim" : "Não"}>{data.logisticsAddressCommercial ? "Sim" : "Não"}</p>
                   </div>
                   <div className="md:basis-1/5 min-w-0">
                     <label className="block text-sm font-medium mb-1">CEP</label>
@@ -166,7 +166,7 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
                     <p className="truncate" title={data.logisticsAddressState || undefined}>{data.logisticsAddressState}</p>
                   </div>
                 </div>
-                { data.logisticsAddressTypeStringMap?.flag === "#COMMERCIAL" &&
+                { data.logisticsAddressCommercial &&
                 <div className="flex flex-col md:flex-row gap-6 py-4">
                   <div className="md:basis-1/5 min-w-0">
                     <label className="block text-sm font-medium mb-1">Nome do Responsável</label>

@@ -42,6 +42,8 @@ export interface ExamCreateModel {
   hasDigitalSignature? : boolean | null;
   email? : string | null;
   emailAddress? : string | null;
+  logisticsAddressCommercial?: boolean | null;
+  addressCommercial?: boolean | null;
 }
 
 export interface IDiagnosticExamModel {
@@ -172,14 +174,14 @@ export interface IDiagnosticExamModel {
   loginMatrix?: string | null;
   passwordMatrix?: string | null;
   hasDigitalSignature? : boolean | null;
-  addressTypeStringMap?: IStringMap | null;
-  logisticsAddressTypeStringMap?: IStringMap |null; 
   logisticsLocal?: IAccountModel |null; 
   logisticsScheduleLocal?: IAccountModel |null; 
   preferredTimeStringMap?: IStringMap | null; 
   deliveryTubeContact? : string | null; 
   deliveryTubeTelephone? : string | null; 
   doctorSuggestedDate?: string | null;
+  addressCommercial?:boolean | null;
+  logisticsAddressCommercial?:boolean | null;
 }
 
 
@@ -214,6 +216,7 @@ export interface LogisticsModel {
   mutationIndex?: string | null;
   needPostingCode?: boolean | null;
   emailToSendPostCode?: string | null;
+  addressCommercial?: boolean | null;
 }
 
 export interface HealthProfessionalCreateModel {
@@ -350,7 +353,7 @@ export interface LabelPendingModel extends ExamPendingModel {
   section?: string;
   institutionTelephone?: string;
   logisticsLocal?: IAccountModel;
-  logisticsAddressTypeStringMap?: IStringMap;
+  addressCommercial?: boolean;
 }
 
 export interface IExamCancellationModel {
@@ -377,7 +380,7 @@ export interface IPickupRequestModel extends ExamPendingModel {
   section?: string;
   institutionTelephone?: string;
   logisticsScheduleLocal?: IAccountModel;
-  logisticsScheduleAddressTypeStringMap?: IStringMap;
+  addressCommercial?: boolean;
 }
 
 export interface IProblemWithSampleModel extends ExamPendingModel {

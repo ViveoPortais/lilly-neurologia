@@ -69,7 +69,7 @@ export default function TubeShippingModal({ onClose, item }: TubeShippingProps) 
           <Input value={labelItem.section ?? ""} readOnly placeholder="Nome do Responsável/Setor" />
           <Input value={labelItem.institutionTelephone ?? ""} readOnly placeholder="Telefone de contato" />
         </div>
-        {labelItem.logisticsAddressTypeStringMap?.flag === "#COMMERCIAL" && (
+        {labelItem.addressCommercial && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <Input value={labelItem.logisticsLocal?.name ?? ""} readOnly placeholder="Nome do Local" />
             <Input value={labelItem.logisticsLocal?.cnpj ?? ""} readOnly placeholder="CNPJ" />

@@ -44,7 +44,7 @@ export default function ApproveSampleDateModal({ onClose, item }: ApproveSampleD
               <Input value={labelItem.addressNumber ?? ""} readOnly placeholder="Número" />
               <Input value={labelItem.addressState ?? ""} readOnly placeholder="Estado" />
             </div>
-            {(labelItem.logisticsScheduleAddressTypeStringMap?.flag === "#COMMERCIAL" && labelItem.logisticsScheduleLocal)&& (
+            {(labelItem.addressCommercial && labelItem.logisticsScheduleLocal)&& (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <Input value={labelItem.logisticsScheduleLocal?.name ?? ""} readOnly placeholder="Nome do Local" />
                 <Input value={labelItem.logisticsScheduleLocal?.cnpj ?? ""} readOnly placeholder="CNPJ" />
