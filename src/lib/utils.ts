@@ -429,7 +429,7 @@ export const patientSchema = z
     addressState: z.string().min(1, { message: "Estado é obrigatório" }),
     sector: z.string().optional(),
     contact: z.string().optional(),
-    pickupPostalCode: z.string().min(1, { message: "CEP é obrigatório" }),
+    pickupPostalCode: z.string().optional(),
     pickupAddressName: z.string().min(1, { message: "Rua é obrigatória" }),
     pickupNumber: z.string().min(1, { message: "Número é obrigatório" }),
     pickupAddressComplement: z.string().min(1, { message: "Complemento/Sala/Consultório é obrigatório" }),
@@ -492,6 +492,12 @@ export const patientSchema = z
     }
   )
   .superRefine((data, ctx) => {
+    // Validação dos campos de pickup (sempre obrigatórios)
+    if (!data.pickupPostalCode) {
+      ctx.addIssue({ path: ["pickupPostalCode"], code: z.ZodIssueCode.custom, message: "CEP é obrigatório" });
+    }
+    
+    // Validação dos campos de endereço (apenas quando não usar o mesmo endereço)
     if (!data.useSameAddress) {
       if (!data.addressPostalCode) {
         ctx.addIssue({ path: ["addressPostalCode"], code: z.ZodIssueCode.custom, message: "CEP é obrigatório" });
