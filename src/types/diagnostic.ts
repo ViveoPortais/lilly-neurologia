@@ -268,13 +268,20 @@ export interface ExamPendingModel {
   logistcSuggestedDate1?: string;
   logistcSuggestedDate2?: string;
   logistcSuggestedDate3?: string;
+  timeSuggested1?:string;
+  timeSuggested2?:string;
+  timeSuggested3?:string;
   collectMaterial?: string;
   doctorSuggestedDate?: string;
   isPickupRequestApproved?: boolean;
   dateForCollecting?: string;
   doctorSelectedDate?: string;
   incidentStatusStringMapId?: string;
-  preferredTimeStringMap?:string;
+  preferredTimeStringMapId?:string;
+  preferredTimeStringMap?: IStringMap;
+  custom1StringMap?:IStringMap;
+  custom2StringMap?:IStringMap;
+  custom3StringMap?:IStringMap;
 }
 
 export interface ResolveExamPendency {
@@ -370,7 +377,7 @@ export interface IPickupRequestModel extends ExamPendingModel {
   section?: string;
   institutionTelephone?: string;
   logisticsScheduleLocal?: IAccountModel;
-  logisticsAddressTypeStringMap?: IStringMap;
+  logisticsScheduleAddressTypeStringMap?: IStringMap;
 }
 
 export interface IProblemWithSampleModel extends ExamPendingModel {
