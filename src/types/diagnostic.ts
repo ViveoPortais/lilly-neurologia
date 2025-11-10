@@ -182,6 +182,9 @@ export interface IDiagnosticExamModel {
   doctorSuggestedDate?: string | null;
   addressCommercial?:boolean | null;
   logisticsAddressCommercial?:boolean | null;
+  analysisEndDate?: string | null;
+  confirmWithdrawalDate?: string | null;
+  dateForCollecting?: string | null;
 }
 
 
