@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import StepIndicator from "../custom/StepIndicator";
 import { useResolveExamPendency } from "@/hooks/useExamResolvePendency";
 import { clearSelectedExamItem } from "@/store/slices/pendingsSlice";
 import { IStringMap } from "@/types";
+import { useSearchParams } from "next/navigation";
 
 interface ScheduleSampleFormProps {
   data: IPatientSampleCollectionViewModel;
@@ -26,11 +27,17 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
   const [step, setStep] = useState(1);
   const { resolve } = useResolveExamPendency();
 
+  const searchParams = useSearchParams();
+  const isEdit = searchParams.get("IsEdit") === "true";
+  const isRestrictedEdit = searchParams.get("isRestrictedEdit") === "true";
+
   const {
     register,
     handleSubmit,
     reset,
     control,
+    setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(scheduleSampeSchema(data.tubeReceptionDate!)),
@@ -38,9 +45,27 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
     defaultValues: {
       collectMaterial: "",
       doctorSuggestedDate: "",
-      preferredTimeStringMaps:"",
+      preferredTimeStringMap:"",
     },
   });
+
+  useEffect( ()=>{
+
+    if(data.collectMaterial)
+      setValue('collectMaterial', data.collectMaterial);
+
+    trigger('collectMaterial');
+
+  },[isRestrictedEdit]);
+
+  const cleanForm = async () => {
+
+    if (!isRestrictedEdit)
+      setValue('collectMaterial', '');
+
+    setValue('doctorSuggestedDate', '');
+    setValue('preferredTimeStringMap', '');
+  }
 
 
   const onSubmit = async (dataForm: any) => {
@@ -52,6 +77,7 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
         collectMaterial: dataForm.collectMaterial,
         preferredTimeStringMapId: dataForm.preferredTimeStringMap,
         id : data.examId,
+        isEdit: isEdit,
       },
       onSuccess: () => {
         clearSelectedExamItem();
@@ -85,20 +111,20 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2 }}
               >
-                <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps} />
+                <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps} isRestrictedEdit={isRestrictedEdit} />
               </motion.div>
             )
           ) : (
             <>
               <Step1 data={data} />
-              <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps}/>
+              <Step2 register={register} errors={errors} data={data} control={control} preferredTimeStringMaps={preferredTimeStringMaps} isRestrictedEdit={isRestrictedEdit}/>
             </>
           )}
         </AnimatePresence>
 
         <div className="flex justify-end gap-4 pb-4">
           {isMobile && step === 2 && (
-            <Button type="button" variant="outlineMainlilly" onClick={() => reset()}>
+            <Button type="button" variant="outlineMainlilly" onClick={() => cleanForm()}>
               Limpar Tudo
             </Button>
           )}
@@ -118,7 +144,7 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
             </>
           ) : (
             <>
-              <Button type="button" variant="outlineMainlilly" onClick={() => reset()}>
+              <Button type="button" variant="outlineMainlilly" onClick={() => cleanForm()}>
                 Limpar Tudo
               </Button>
               <Button type="submit" disabled={!isValid}>

@@ -32,7 +32,6 @@ export default function DeliverySampleModal({ onClose, item }: DeliverySampleMod
   const auth = useSession();
   
   const minDate = item.confirmWithdrawalDate ? dayjs(item.confirmWithdrawalDate).format("YYYY-MM-DD") : "";
-  console.log("MinDate:", minDate, "Item:", item.confirmWithdrawalDate);
   const schema = createSchema(minDate);
   
   const {

@@ -30,7 +30,7 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
           >
             <div className="flex items-center gap-4">
               <h1>Endereço de Entrega do Tubo </h1>
-              <FaPaperPlane size={20} className="text-mainlilly mb-4"/>
+              {/* <FaPaperPlane size={20} className="text-mainlilly mb-4"/> */}
             </div>
             {deliveryOpen ? <FaChevronUp /> : <FaChevronDown />}
           </button>
@@ -117,7 +117,7 @@ const AddressesDetails = ({ data}: AddressesDetailsProps) => {
           >
             <div className="flex items-center gap-4">
               <h1>Endereço de Retirada da Amostra </h1>
-              <FaVial size={20} className="text-mainlilly mb-4"/>
+              {/* <FaVial size={20} className="text-mainlilly mb-4"/> */}
             </div>
             {pickupOpen ? <FaChevronUp /> : <FaChevronDown />}
           </button>
