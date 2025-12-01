@@ -6,7 +6,6 @@ type SessionStore = {
   email: string;
   role: string;
   name: string;
-  token: string;
   changePassword: boolean;
   currentPassword: string;
   session?: string;
@@ -36,7 +35,6 @@ type SessionStore = {
   setName: (name: string) => void;
   setEmail: (email: string) => void;
   setRole: (role: string) => void;
-  setToken: (token: string) => void;
   setChangePassword: (changePassword: boolean) => void;
   setCurrentPassword: (currentPassword: string) => void;
   onLogin: () => void;
@@ -80,12 +78,10 @@ const useSession = create(
       setName: (name) => set({ name: name }),
       setRole: (role) => set({ role: role }),
       setEmail: (email: string) => set({ email: email }),
-      setToken: (token) => set({ token: token }),
       onLogin: () => set({ isLogged: true }),
       onLogout: () =>
         set({
           isLogged: false,
-          token: "",
           email: "",
           role: "",
           name: "",

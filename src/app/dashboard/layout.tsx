@@ -20,7 +20,7 @@ import { useNotificationModalStore } from "@/hooks/useNotificationModalStore";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { isMenuOpen } = useLateralMenu();
-  const { role, isLogged, token, obrigatorioAlterarSenha, primeiroAcesso, setProgramConsent } = useSession();
+  const { role, isLogged, obrigatorioAlterarSenha, primeiroAcesso, setProgramConsent } = useSession();
   const router = useRouter();
   const auth = useSession();
   const [loading, setLoading] = useState(true);
@@ -32,12 +32,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      //    if (!isLogged) {
-      //     router.push("/");
-      //     return;
-      //    }
-
-      if (token) api.defaults.headers.Authorization = `Bearer ${token}`;
 
       if (role) {
         setLoading(false);
@@ -46,7 +40,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     };
 
     checkAuth();
-  }, [isLogged, role, token, router, primeiroAcesso]);
+  }, [isLogged, role, router, primeiroAcesso]);
 
   useEffect(() => {
     if (isLogged && role && !hasOpenedModal) setHasOpenedModal(true);

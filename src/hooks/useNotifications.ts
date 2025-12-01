@@ -6,18 +6,16 @@ import { toast } from "react-toastify";
 import { showNotificationToast } from "@/components/custom/ToastNotification";
 
 export function useNotification() {
-  const { token, programsCode } = useSession();
+  const { programsCode } = useSession();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   useEffect(() => {
-    if (!token || !programsCode[0] || connectionRef.current) return;
+    if (!programsCode[0] || connectionRef.current) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/hubs/communication`, {
-        accessTokenFactory: () => token,
-      })
+      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/hubs/communication`)
       .withAutomaticReconnect()
       .build();
 
@@ -55,7 +53,7 @@ export function useNotification() {
     return () => {
       connection.stop();
     };
-  }, [token, programsCode[0]]);
+  }, [programsCode[0]]);
 
   const refresh = () => {
     const filter: ICommunicationFilterModel = {

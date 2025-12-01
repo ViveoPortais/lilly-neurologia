@@ -300,12 +300,12 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
 
                           <FiEdit3
                             size={20}
-                            className={`mt-1 ${isWithin24BusinessHours(data.doctorSuggestedDate)
+                            className={`mt-1 ${isWithin48BusinessHours(data.doctorSuggestedDate)
                               ? "text-mainlilly cursor-pointer"
                               : "disabled text-gray-400 cursor-not-allowed opacity-50"
                               }`}
-                            onClick={isWithin24BusinessHours(data.doctorSuggestedDate) ? () => {handleEditSampleDate(true)} : undefined}
-                            title={isWithin24BusinessHours(data.doctorSuggestedDate)
+                            onClick={isWithin48BusinessHours(data.doctorSuggestedDate) ? () => {handleEditSampleDate(true)} : undefined}
+                            title={isWithin48BusinessHours(data.doctorSuggestedDate)
                               ? "O prazo para coleta da amostra deve ser até no máximo 48 horas antes da data da retirada da amostra."
                               : "Função bloqueada devido prazo menor que 48 horas da data da retirada da amostra."}
                           />
@@ -325,12 +325,12 @@ const DiagnosticDetails = ({ data, role }: DiagnosticDetailsProps) => {
 
                             <FiEdit3
                               size={20}
-                              className={`mt-1 ${isWithin24BusinessHours(data.withdrawalDate)
+                              className={`mt-1 ${isWithin48BusinessHours(data.withdrawalDate)
                                 ? "text-mainlilly cursor-pointer"
                                 : "disabled text-gray-400 cursor-not-allowed opacity-50"
                                 }`}
-                              onClick={isWithin24BusinessHours(data.withdrawalDate) ? () => {handleEditSampleDate(true)} : undefined}
-                              title={isWithin24BusinessHours(data.withdrawalDate)
+                              onClick={isWithin48BusinessHours(data.withdrawalDate) ? () => {handleEditSampleDate(true)} : undefined}
+                              title={isWithin48BusinessHours(data.withdrawalDate)
                                 ? "O prazo para coleta da amostra deve ser até no máximo 48 horas antes da data da retirada da amostra."
                                 : "Função bloqueada devido prazo menor que 48 horas da data da retirada da amostra."}
                             />

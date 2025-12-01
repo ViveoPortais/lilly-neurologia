@@ -7,6 +7,7 @@ import { routes } from "@/helpers/routes";
 import useSession from "@/hooks/useSession";
 
 import api from "@/services/api";
+import { logout } from "@/services/auth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import NavbarMobile from "../logged/mobile/NavbarMobile";
 import NavbarDesktop from "../logged/desktop/NavbarDesktop";
@@ -40,11 +41,16 @@ export function Navbar(props: NotificationProps) {
   setIsPasswordModalOpen(true);
  };
 
- function handleLogout() {
-  clearAllConsentCaches();
-  router.push("/");
-  auth.onLogout();
-  api.defaults.headers.Authorization = "";
+ async function handleLogout() {
+  try {
+    await logout();
+  } 
+  catch (error) {} 
+  finally {
+    clearAllConsentCaches();
+    auth.onLogout();
+    router.push("/");
+  }
  }
 
  const mobileMenuVariants = {
