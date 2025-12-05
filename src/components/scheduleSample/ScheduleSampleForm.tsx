@@ -51,10 +51,10 @@ export default function ScheduleSampleForm({ data, item,preferredTimeStringMaps 
 
   useEffect( ()=>{
 
-    if(data.collectMaterial)
+    if (data.collectMaterial) {
       setValue('collectMaterial', data.collectMaterial);
-
-    trigger('collectMaterial');
+      trigger('collectMaterial');
+    }
 
   },[isRestrictedEdit]);
 

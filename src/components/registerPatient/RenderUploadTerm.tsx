@@ -106,7 +106,7 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
             modal.showModal({
                 type: "warning",
                 title: "Arquivo inválido",
-                message: "O arquivo deve ser PDF, JPG ou PNG e ter no máximo 5MB.",
+                message: "Insira apenas arquivos com tamanho máximo de 5MB / Permitido apenas arquivos PDF, JPG ou PNG.",
             });
             setValue(fieldName, null);
             event.target.value = "";
