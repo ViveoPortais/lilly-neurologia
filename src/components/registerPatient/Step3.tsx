@@ -67,6 +67,11 @@ export const Step3 = ({ examExistent }: Step3DoctorProps) => {
               inputRef={consentInputRef}
               downloadLabel="Download do documento"
             />}
+
+            <p className="text-xs text-center text-red-500 mt-2 flex items-center justify-center gap-1">
+              <AlertCircle className="w-4 h-4" />
+              Insira apenas arquivos com tamanho máximo de 5MB / Permitido apenas arquivos PDF, JPG ou PNG
+            </p>
           </>
         )}
 
@@ -77,7 +82,7 @@ export const Step3 = ({ examExistent }: Step3DoctorProps) => {
               type="email"
               placeholder={`Digite o e-mail do ${watch("hasResponsible") === 'yes' ? 'cuidador responsável' : 'paciente'}`}
               {...register("emailAddress", {
-                required: "E-mail é obrigatório",
+                required: watch("hasDigitalSignature") === true ? "E-mail é obrigatório" : false,
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "E-mail inválido",

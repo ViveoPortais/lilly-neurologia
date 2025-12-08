@@ -288,7 +288,6 @@ export interface ExamPendingModel {
   custom1StringMap?:IStringMap;
   custom2StringMap?:IStringMap;
   custom3StringMap?:IStringMap;
-  isEdit?: boolean; 
 }
 
 export interface ResolveExamPendency {
@@ -410,11 +409,10 @@ export interface IAnalysisSampleModel {
 
 export interface IPatientSampleCollectionViewModel {
   examId: string;
-  patientName?: string;
+  patientName?: string
   dateOfBirth?: string;
   examRequestDate?: string;
   tubeReceptionDate?: string;
-  collectMaterial?: string;
   attachments?: AttachmentModel[];
 }
 

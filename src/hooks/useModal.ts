@@ -82,9 +82,3 @@ export const useModalContent = create<ModalProps>((set) => ({
   openModal: (action) => set(() => ({ isModalOpen: action })),
   showOkButton: false,
 }));
-
-
-export const useModalExternalRedirect = create<ModalProps>((set) => ({
-  isModalOpen: false,
-  openModal: (action) => set(() => ({ isModalOpen: action })),
-}));

@@ -5,7 +5,6 @@ import { Input } from "../ui/input";
 import { FiCopy } from "react-icons/fi";
 import { useRef, useState } from "react";
 import { Button } from "../ui/button";
-import ExternalRedirectModal from "../modals/ExternalRedirectModal";
 
 type MatrixAccessProps = {
   data: IDiagnosticExamModel;
@@ -13,7 +12,6 @@ type MatrixAccessProps = {
 
 const AttachmentDetails = ({ data }: MatrixAccessProps) => {
   const [iconCopy, setIconCopy] = useState<any>({ email: "copy", password: "copy" });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -35,16 +33,7 @@ const AttachmentDetails = ({ data }: MatrixAccessProps) => {
   };
 
   const handleRedirect = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleConfirmRedirect = () => {
     window.open("https://matrixnet.einstein.br/apoiados/wfrmLogin.aspx", "_blank");
-    setIsModalOpen(false);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -96,11 +85,6 @@ const AttachmentDetails = ({ data }: MatrixAccessProps) => {
           </div>
         </div>
       </div>
-      <ExternalRedirectModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmRedirect}
-      />
     </>
   );
 };

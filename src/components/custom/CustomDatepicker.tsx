@@ -20,7 +20,6 @@ interface CustomDatePickerProps {
   timeFormat?: string;
   timeIntervals?: number;
   dateFormat?: string;
-  disabled?:boolean;
 }
 
 export const CustomDatePicker = ({ 
@@ -35,8 +34,7 @@ export const CustomDatePicker = ({
   showTimeSelect = false,
   timeFormat = "HH:mm",
   timeIntervals = 15,
-  dateFormat = "dd/MM/yyyy",
-  disabled = false
+  dateFormat = "dd/MM/yyyy"
 }: CustomDatePickerProps) => {
 
   const finalDateFormat = showTimeSelect ? "dd/MM/yyyy HH:mm" : dateFormat;
@@ -71,9 +69,8 @@ export const CustomDatePicker = ({
       timeFormat={timeFormat}
       timeIntervals={timeIntervals}
       timeCaption="Hora"
-      disabled={disabled}
       className={cn(
-        "block w-full rounded-md border border-[#c4b9b9] bg-white px-4 py-3 text-base text-black focus:outline-none focus:ring-1 focus:ring-red-500 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:border-[#c4b9b9] disabled:text-black disabled:font-bold",
+        "block w-full rounded-md border border-[#c4b9b9] bg-white px-4 py-3 text-base text-black focus:outline-none focus:ring-1 focus:ring-red-500",
         inputClassName
       )}
     />

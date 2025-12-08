@@ -8,10 +8,9 @@ import { Input } from "@/components/ui/input";
 import { PasswordFormData, passwordSchema } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useGenericModal } from "@/contexts/GenericModalContext";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { changePasswordSlice } from "@/store/slices/profileSlice";
 import useSession from "@/hooks/useSession";
-import { FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
 
 interface AlterPasswordModalProps {
  isOpenExternally?: boolean;
@@ -37,33 +36,6 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
   formState: { errors, isValid },
  } = methods;
 
- const newPassword = methods.watch("newPassword") ?? "";
- const confirmPassword = methods.watch("confirmPassword") ?? "";
-
- const passwordChecks = useMemo(() => {
-  const hasMin = newPassword.length >= 12;
-  const hasUpper = /[A-Z]/.test(newPassword);
-  const hasLower = /[a-z]/.test(newPassword);
-  const hasNumber = /\d/.test(newPassword);
-  const hasSpecial = /[!@#$%*?/]/.test(newPassword);
-  const matchesConfirm = confirmPassword.length > 0 && newPassword === confirmPassword;
-  
-  return { hasMin, hasUpper, hasLower, hasNumber, hasSpecial, matchesConfirm };
- }, [newPassword, confirmPassword]);
-
- const Rule = ({ isValid, children }: { isValid: boolean; children: React.ReactNode }) => (
-  <div className="flex items-center gap-1">
-   {isValid ? (
-    <FiCheckCircle size={16} className="min-w-[16px] text-green-600" />
-   ) : (
-    <AlertCircle size={16} className="min-w-[16px] text-red-500" />
-   )}
-   <span className={isValid ? "text-green-600" : "text-red-500"}>
-    {children}
-   </span>
-  </div>
- );
-
  const closeModal = () => {
   if (onCloseExternally) {
    onCloseExternally();
@@ -77,6 +49,7 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
 
    const res = await dispatch(
     changePasswordSlice({
+     oldPassword: data.oldPassword,
      newPassword: data.newPassword,
      confirmPassword: data.confirmPassword,
     })
@@ -113,6 +86,16 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
  return (
   <FormProvider {...methods}>
    <form className="space-y-4">
+    <div>
+     <div className="relative">
+      <Input
+       type="password"
+       placeholder="Digite a senha atual"
+       {...register("oldPassword")}
+       className={errors.oldPassword ? "border-red-500" : ""}
+      />
+     </div>
+    </div>
 
     <div>
      <div className="relative">
@@ -137,26 +120,30 @@ export default function AlterPasswordModal({ isOpenExternally, onCloseExternally
     </div>
 
     <div className="text-sm space-y-2 mt-2">
-     <Rule isValid={passwordChecks.hasLower}>
-      Ao menos um caracter minúsculo
-     </Rule>
-     <Rule isValid={passwordChecks.hasUpper}>
-      Ao menos um caracter maiúsculo
-     </Rule>
-     <Rule isValid={passwordChecks.hasNumber}>
-      Ao menos um número
-     </Rule>
-     <Rule isValid={passwordChecks.hasSpecial}>
-      Ao menos um caracter especial (!@#$%*?/)
-     </Rule>
-     <Rule isValid={passwordChecks.hasMin}>
-      Ao menos 12 caracteres
-     </Rule>
-     {confirmPassword.length > 0 && (
-      <Rule isValid={passwordChecks.matchesConfirm}>
-       Senhas coincidem
-      </Rule>
-     )}
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Preencha a senha atual</span>
+     </div>
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Ao menos um caracter minúsculo</span>
+     </div>
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Ao menos um caracter maiúsculo</span>
+     </div>
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Ao menos um número</span>
+     </div>
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Ao menos um caracter especial (!@#$%*?/)</span>
+     </div>
+     <div className="flex items-center gap-1">
+      <AlertCircle size={16} className="min-w-[16px] text-mainlilly" />
+      <span>Ao menos 12 caracteres</span>
+     </div>
     </div>
 
     <Button type="button" onClick={handleSubmit(onSubmit)} disabled={!isValid || isLoading} className="w-full mt-4" isLoading={isLoading}>

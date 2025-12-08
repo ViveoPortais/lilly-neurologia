@@ -533,6 +533,7 @@ export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof 
 
 export const passwordSchema = z
  .object({
+  oldPassword: z.string().min(1, "Preencha a senha atual"),
   newPassword: z
    .string()
    .min(12, "Ao menos um 12 caracteres")
@@ -552,7 +553,7 @@ export type PasswordFormData = z.infer<typeof passwordSchema>;
 export const scheduleSampeSchema = (dataRecebimento: string) =>
   z
     .object({
-      collectMaterial: z.coerce.date({ required_error: "Informe a data de coleta" }),
+      collectMaterial: z.date({ required_error: "Informe a data de coleta" }),
       doctorSuggestedDate: z.date({ required_error: "Informe a data desejada" }),
       preferredTimeStringMap : z.string().min(1,{message:"Selecione o período para retirada da amostra"})
     })
@@ -567,6 +568,12 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       }
       const hoje = new Date();
       const doisDiasDepois = addDays(hoje, 2);
+
+      console.log({
+        coleta: data.collectMaterial,
+        desejada: data.doctorSuggestedDate,
+        recebimento: dataRecebimento
+      });
 
       if (!isValid(recebimento)) return;
 

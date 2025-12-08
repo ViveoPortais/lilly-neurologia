@@ -169,52 +169,51 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   };
 
   const validateCommercialFields = () => {
+
+    if (step !== 2) return true;
+    
     const formData = methods.getValues();
-    const isPickupCommercial = formData.logisticsAddressCommercial;
-    const isScheduleCommercial = formData.addressCommercial;
     let isValid = true;
 
     methods.clearErrors(["pickupSector", "pickupContact", "pickupLocalName", "pickupCNPJ", "pickupCompanyName", "sector", "contact", "localName", "cnpj", "companyName"]);
 
-    if (isPickupCommercial) {
-      if (!formData.pickupSector?.trim()) {
-        methods.setError("pickupSector", {
-          type: "required",
-          message: "Nome do responsável/setor é obrigatório para endereços comerciais"
-        });
-        isValid = false;
-      }
-      if (!formData.pickupContact?.trim()) {
-        methods.setError("pickupContact", {
-          type: "required",
-          message: "Telefone de contato é obrigatório para endereços comerciais"
-        });
-        isValid = false;
-      }
-      if (!formData.pickupLocalName?.trim()) {
-        methods.setError("pickupLocalName", {
-          type: "required",
-          message: "Nome do local é obrigatório para endereços comerciais"
-        });
-        isValid = false;
-      }
-      if (!formData.pickupCNPJ?.trim()) {
-        methods.setError("pickupCNPJ", {
-          type: "required",
-          message: "CNPJ é obrigatório para endereços comerciais"
-        });
-        isValid = false;
-      }
-      if (!formData.pickupCompanyName?.trim()) {
-        methods.setError("pickupCompanyName", {
-          type: "required",
-          message: "Razão social é obrigatória para endereços comerciais"
-        });
-        isValid = false;
-      }
+    if (!formData.pickupSector?.trim()) {
+      methods.setError("pickupSector", {
+        type: "required",
+        message: "Nome do responsável/setor é obrigatório para endereços comerciais"
+      });
+      isValid = false;
+    }
+    if (!formData.pickupContact?.trim()) {
+      methods.setError("pickupContact", {
+        type: "required",
+        message: "Telefone de contato é obrigatório para endereços comerciais"
+      });
+      isValid = false;
+    }
+    if (!formData.pickupLocalName?.trim()) {
+      methods.setError("pickupLocalName", {
+        type: "required",
+        message: "Nome do local é obrigatório para endereços comerciais"
+      });
+      isValid = false;
+    }
+    if (!formData.pickupCNPJ?.trim()) {
+      methods.setError("pickupCNPJ", {
+        type: "required",
+        message: "CNPJ é obrigatório para endereços comerciais"
+      });
+      isValid = false;
+    }
+    if (!formData.pickupCompanyName?.trim()) {
+      methods.setError("pickupCompanyName", {
+        type: "required",
+        message: "Razão social é obrigatória para endereços comerciais"
+      });
+      isValid = false;
     }
 
-    if (isScheduleCommercial && !formData.useSameAddress) {
+    if (!formData.useSameAddress) {
       if (!formData.sector?.trim()) {
         methods.setError("sector", {
           type: "required",
@@ -349,7 +348,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
             companyName: pickupCompanyName,
             cnpj: pickupCNPJ,
           },
-          addressCommercial: logisticsAddressCommercial,
+          addressCommercial: true,
         };
 
         const commonAddressFields = {
@@ -367,7 +366,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
             companyName: data.companyName,
             cnpj: data.cnpj,
           },
-          addressCommercial: data.addressCommercial,
+          addressCommercial: true,
         }
 
         const payload: any = {

@@ -24,6 +24,8 @@ export function useNotification() {
     connection
       .start()
       .then(() => {
+        console.log("SignalR conectado");
+
         const filter: ICommunicationFilterModel = {
           page: 1,
           pageSize: 10,

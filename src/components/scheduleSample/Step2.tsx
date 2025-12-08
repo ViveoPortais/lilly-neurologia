@@ -14,10 +14,9 @@ interface Step2Props {
   control: any;
   data: IPatientSampleCollectionViewModel;
   preferredTimeStringMaps : IStringMap[];
-  isRestrictedEdit: boolean;
 }
 
-export default function Step2({ register, errors, control, data, preferredTimeStringMaps,isRestrictedEdit }: Step2Props) {
+export default function Step2({ register, errors, control, data, preferredTimeStringMaps }: Step2Props) {
   const isWeekdayAllowed = (date: Date) => {
     const day = date.getDay();
     return day !== 5 && day !== 6 && day !== 0;
@@ -68,7 +67,6 @@ export default function Step2({ register, errors, control, data, preferredTimeSt
                 dateFormat="dd/MM/yyyy HH:mm"
                 filterDate={isCollectDateAllowed}
                 name="collectMaterial"
-                disabled={isRestrictedEdit}
               />
             )}
           />
