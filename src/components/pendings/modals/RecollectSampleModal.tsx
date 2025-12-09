@@ -86,12 +86,6 @@ export default function RecollectSampleModal({ onClose, item }: RecollectSampleM
             <Input value={pickup.institutionTelephone ?? ""} readOnly placeholder="Telefone de Contato" />
           </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <Input value={pickup.logisticsScheduleLocal?.name ?? ""} readOnly placeholder="Nome do Local" />
-              <Input value={pickup.logisticsScheduleLocal?.cnpj ?? ""} readOnly placeholder="CNPJ" />
-              <Input value={pickup.logisticsScheduleLocal?.companyName ?? ""} readOnly placeholder="Razão Social" />
-            </div>
-
           {pickup.addressCommercial  && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <Input value={pickup.logisticsScheduleLocal?.name ?? ""} readOnly placeholder="Nome do Local" />
