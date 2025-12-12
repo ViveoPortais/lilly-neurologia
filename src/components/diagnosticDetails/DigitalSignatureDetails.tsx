@@ -1,11 +1,14 @@
-import {IRequestSignerModel, IRequestSignModel } from "@/types/diagnostic";
+import {IDiagnosticExamModel, IRequestSignerModel, IRequestSignModel } from "@/types/diagnostic";
 import CircleStatusCustom from "../custom/CircleStatusCustom";
+import DigitalSignatureDropdown from "../digitalSignature/DigitalSignatureDropdown";
+import useSession from "@/hooks/useSession";
 
 type DigitalSignatureDetailsProps = {
     data : IRequestSignModel | null;
+    exam : IDiagnosticExamModel;
 };
 
-const DigitalSignatureDetails = ({ data }: DigitalSignatureDetailsProps) => {
+const DigitalSignatureDetails = ({ data, exam }: DigitalSignatureDetailsProps) => {
 
     const translateStatus = (status : string | undefined) => {
 
@@ -46,11 +49,28 @@ const DigitalSignatureDetails = ({ data }: DigitalSignatureDetailsProps) => {
         }
     }
 
+    const auth = useSession();
+
+    const canShowDropDown = function(){
+        if(exam.examStatusStringMap?.flag != "EXAM_WAITING_DIGITAL_SIGNATURE" || auth.role != 'doctor')
+            return false;
+
+        return true;
+    }
+
     if(data === null){
         return(
             <>
                 <div className="attachmentDashed w-full">
-                    <h1 className="text-2xl text-left mb-10">Detalhes da Assinatura Digital</h1>
+                    <div className="flex justify-between items-center mb-10">
+                        <h1 className="text-base md:text-2xl text-left">Detalhes da Assinatura Digital</h1>
+                        { canShowDropDown() && 
+                            <div className="relative z-10">
+                                <DigitalSignatureDropdown exam={exam} showCancel={true} showResend={false}/>
+                            </div>
+                        }
+                        
+                    </div>
                     <h2 className="text-xl text-center"> Assinatura Digital em Processamento...</h2>
                 </div>
             </>
@@ -60,11 +80,18 @@ const DigitalSignatureDetails = ({ data }: DigitalSignatureDetailsProps) => {
         return (
             <>
                 <div className="attachmentDashed w-full">
-                    <h1 className="text-2xl text-left mb-8">Detalhes da Assinatura Digital</h1>
+                    <div className="flex justify-between items-center mb-10">
+                        <h1 className="text-base md:text-2xl text-left">Detalhes da Assinatura Digital</h1>
+                        {canShowDropDown() &&
+                            <div className="relative z-10">
+                                <DigitalSignatureDropdown exam={exam} showCancel={true} showResend={true}/>
+                            </div>
+                        }
+                    </div>
                     <div className="flex flex-col md:flex-row gap-6 text-base">
                         {data.signers?.map((item: IRequestSignerModel) => (
                             <>
-                                <div className="flex flex-col w-[50%] text-left border border-gray-400 rounded-xl p-3 gap-3 bg-white">
+                                <div className="flex flex-col w-full md:w-[50%] text-left border border-gray-400 rounded-xl p-3 gap-3 bg-white min-w-0">
                                     <div className="flex flex-row gap-1">
                                         Nome : {item.name} ({item.role == "Doctor" ? "Médico" : "Paciente"})
                                     </div>

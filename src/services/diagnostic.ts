@@ -1,4 +1,4 @@
-import { ExamCreateModel, IDiagnosticFilterModel, IExamCancellationModel } from "@/types/diagnostic";
+import { ExamCreateModel, ICancelDigitalSignatureRequest, IDiagnosticFilterModel, IExamCancellationModel, IResendDigitalSignatureRequest } from "@/types/diagnostic";
 import { api } from "./api";
 import { DiagnosticData, TreatmentData } from "@/types";
 
@@ -179,4 +179,21 @@ export const getDigitalSignatureDetails= async (id: string) => {
     },
   });
   return response.data.value;
+};
+
+
+export const cancelDigitalSignature = async (data: ICancelDigitalSignatureRequest) => {
+  const response = await api.post('/DocuSign/cancel-signature', {
+    ...data,
+    programCode: programCode
+  });
+  return response.data;
+};
+
+export const resendDigitalSignature = async (data: IResendDigitalSignatureRequest) => {
+  const response = await api.post('/DocuSign/resend-signature', {
+    ...data,
+    programCode: programCode
+  });
+  return response.data;
 };

@@ -634,6 +634,31 @@ export const examCancellationModelSchema = z
 
 export type ExamCancellationModelSchema = z.infer<typeof examCancellationModelSchema>;
 
+export const cancelDigitalSignatureSchema = z
+  .object({
+    reasonCancelDigitalSignature: z.string().min(1, "Selecione uma opção de cancelamento"),
+    attachment: z.any().optional()
+  })
+  .refine(
+    (data) => {
+        return data.attachment instanceof File && data.attachment.name !== "";
+    },
+    {
+      message: "Para cancelar a assinatura digital, é preciso anexar o Termo assinado",
+      path: ["attachment"],
+    }
+  )
+
+export type CancelDigitalSignatureSchema = z.infer<typeof cancelDigitalSignatureSchema>;
+
+
+export const resendDigitalSignatureSchema = z
+  .object({
+    email: z.string().email("E-mail inválido")
+  });
+
+export type ResendDigitalSignatureSchema = z.infer<typeof resendDigitalSignatureSchema>;
+
 
 
 

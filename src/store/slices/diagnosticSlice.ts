@@ -1,8 +1,8 @@
 import { IAnnotationModel, IPaginationResult, IReturnMessage} from "@/types/general";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IChangePassword, IUserData } from "@/types/user";
-import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel, IDocumentFilledRequestModel } from "@/types/diagnostic";
-import { getAnnotations, getDiagnosticById, getDigitalSignatureDetails, historyDiagnostics, informexamcancellation } from "@/services/diagnostic";
+import { IExamCancellationModel, IDiagnosticExamModel, IDiagnosticFilterModel, ExamCreateModel, IDocumentFilledRequestModel, ICancelDigitalSignatureRequest, IRequestSignerModel, IResendDigitalSignatureRequest, IRequestSignModel } from "@/types/diagnostic";
+import { cancelDigitalSignature, getAnnotations, getDiagnosticById, getDigitalSignatureDetails, historyDiagnostics, informexamcancellation, resendDigitalSignature } from "@/services/diagnostic";
 import { downloadDocumentFilled } from "@/services/annotation";
 
 interface DiagnosticSliceState {
@@ -12,6 +12,7 @@ interface DiagnosticSliceState {
         myExams : IDiagnosticExamModel[];
         exam : IDiagnosticExamModel | undefined;
         annotations : IAnnotationModel[];
+        digitalSignatureDetails : IRequestSignModel | null;
     };
 }
 const initialState: DiagnosticSliceState = {
@@ -20,7 +21,8 @@ const initialState: DiagnosticSliceState = {
     data: {
         myExams : [],
         exam : undefined,
-        annotations : []
+        annotations : [],
+        digitalSignatureDetails : null
     },
 };
 
@@ -76,6 +78,24 @@ export const fetchDigitalSignatureDetails = createAsyncThunk("/DocuSign/Get", as
         return result;
     } catch (error) {
         return thunkAPI.rejectWithValue("Erro ao carregar dados");
+    }
+});
+
+export const postCancelDigitalSignatureDetails = createAsyncThunk("exam/cancel-signature", async (data: ICancelDigitalSignatureRequest, thunkAPI) => {
+    try {
+        const result = await cancelDigitalSignature(data);
+        return result;
+    } catch (error) {
+        return thunkAPI.rejectWithValue("Erro ao carregar dados");
+    }
+});
+
+export const postResendDigitalSignature = createAsyncThunk("exam/resend-digital-signature", async (data: IResendDigitalSignatureRequest, thunkAPI) => {
+    try {
+        const result = await resendDigitalSignature(data);
+        return result;
+    } catch (error) {
+        return thunkAPI.rejectWithValue("Erro ao reenviar assinatura digital");
     }
 });
 
@@ -156,6 +176,7 @@ const diagnosticSlice = createSlice({
             })
             .addCase(fetchDigitalSignatureDetails.fulfilled, (state, action) => {
                 state.loading = false;
+                state.data.digitalSignatureDetails = action.payload as IRequestSignModel;
             })
             .addCase(fetchDigitalSignatureDetails.rejected, (state, action) => {
                 state.loading = false;

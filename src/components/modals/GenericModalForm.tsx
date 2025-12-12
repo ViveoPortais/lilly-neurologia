@@ -29,7 +29,7 @@ export default function GenericModalForm({ title, isOpen, onClose, children, siz
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.5, opacity: 0 }}
       transition={{ duration: 0.4 }}
-      className={`bg-white rounded-2xl pt-8 pb-4 px-5 shadow-lg w-full text-center ${sizeClasses[size]}`}
+      className={`bg-white rounded-2xl pt-8 pb-4 px-5 shadow-lg w-full max-w-full overflow-x-hidden ${sizeClasses[size]}`}
      >
       {title && (
        <div className="flex justify-between border-b border-b-gray-400 pb-2 mb-4">
@@ -44,7 +44,7 @@ export default function GenericModalForm({ title, isOpen, onClose, children, siz
        </div>
       )}
 
-      {children && <div>{children && typeof children === "function" ? children(onClose) : children}</div>}
+      {children && <div className="w-full max-w-full">{children && typeof children === "function" ? children(onClose) : children}</div>}
      </motion.div>
     </div>
    )}

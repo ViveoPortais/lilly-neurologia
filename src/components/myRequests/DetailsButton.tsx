@@ -15,9 +15,9 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
   const loading = useAppSelector((state) => state.diagnostic.loading);
   const exam = useAppSelector((state) => state.diagnostic.data.exam);
   const annotations = useAppSelector((state) => state.diagnostic.data.annotations);
+  const digitalSignatureDetails = useAppSelector((state) => state.diagnostic.data.digitalSignatureDetails);
   const [optionsCancellation, setOptionsCancellation] = useState<IStringMap[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [digitalSignatureDetails, setDigitalSignatureDetails] = useState<IRequestSignModel | null>(null);
   const { show, hide } = useLoading();
 
   useEffect(() => {
@@ -38,9 +38,8 @@ const DetailsButton = ({ id }: DetailsButtonProps) => {
         (item) => item.optionName !== "Médico Recusou Nova Coleta" && item.optionName !== "Paciente Recusou Nova Coleta"
       );
 
-      if(examResult.hasDigitalSignature){
-          const digitalSignatureDetails = await dispatch(fetchDigitalSignatureDetails({id:id})).unwrap();
-          setDigitalSignatureDetails(digitalSignatureDetails)
+      if (examResult.hasDigitalSignature) {
+        await dispatch(fetchDigitalSignatureDetails({ id: id }));
       }
       
       setOptionsCancellation(filteredOptions);

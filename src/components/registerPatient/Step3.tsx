@@ -66,6 +66,7 @@ export const Step3 = ({ examExistent }: Step3DoctorProps) => {
               label="Upload do documento assinado"
               inputRef={consentInputRef}
               downloadLabel="Download do documento"
+              fieldOnForm="termConsentAttach"
             />}
 
             <p className="text-xs text-center text-red-500 mt-2 flex items-center justify-center gap-1">

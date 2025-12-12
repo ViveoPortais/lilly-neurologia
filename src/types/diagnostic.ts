@@ -441,3 +441,20 @@ export interface IAccountModel {
   companyName?: string | null;
   cnpj?: string | null;
 }
+
+export interface ICancelDigitalSignatureRequest {
+  examId?: string;
+  attachment?: AttachmentModel;
+  reasonCancelDigitalSignature? : string;
+}
+
+export interface IResendDigitalSignatureRequest {
+  examId?: string;
+  signers? : ISigner[];
+}
+
+export interface ISigner {
+  name?: string;
+  email?: string;
+  role? : string;
+}

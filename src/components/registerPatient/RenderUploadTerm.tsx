@@ -13,19 +13,21 @@ type RenderUploadTermProps = {
     label: string,
     inputRef: React.RefObject<HTMLInputElement>,
     downloadLabel: string,
+    fieldOnForm:string
 }
 
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"];
 
-export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploadTermProps) {
+export function RenderUploadTerm({ label, inputRef, downloadLabel, fieldOnForm }: RenderUploadTermProps) {
 
     const {
         register,
         setValue,
         formState: { errors },
         watch,
-        getValues
+        getValues,
+        trigger
     } = useFormContext();
 
     const modal = useGenericModal();
@@ -92,6 +94,8 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
 
     }
 
+
+
     const handleFileValidation = (event: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -110,12 +114,15 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
             });
             setValue(fieldName, null);
             event.target.value = "";
-            if (fieldName === "termConsentAttach") setConsentFileName("");
+            if (fieldName === fieldOnForm) setConsentFileName("");
             return;
         }
 
         setValue(fieldName, file);
-        if (fieldName === "termConsentAttach") setConsentFileName(file.name);
+
+        trigger();
+        
+        if (fieldName === fieldOnForm) setConsentFileName(file.name);
     };
 
     return (
@@ -133,7 +140,7 @@ export function RenderUploadTerm({ label, inputRef, downloadLabel }: RenderUploa
                     {downloadLabel}
                 </Button>
 
-                <input type="file" accept={ACCEPTED_FORMATS.join(",")} onChange={(e) => handleFileValidation(e, "termConsentAttach")} ref={inputRef} className="hidden" />
+                <input type="file" accept={ACCEPTED_FORMATS.join(",")} onChange={(e) => handleFileValidation(e, fieldOnForm)} ref={inputRef} className="hidden" />
 
                 <Button
                     type="button"
