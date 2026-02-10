@@ -37,7 +37,7 @@ useEffect(() => {
     <div className="flex-1 text-center">
      <div className="mb-2 px-2">
       <span>
-       Copyright © 2025 Eli Lilly and Company. / Todos os direitos reservados. / PP-AD-BR-0168 – Junho/2025 / Site destinado a profissionais
+       Copyright © 2026 Eli Lilly and Company. / Todos os direitos reservados. / PP-AD-BR-0268 – Janeiro/2026 / Site destinado a profissionais
        de saúde prescritores de medicamentos
       </span>
      </div>

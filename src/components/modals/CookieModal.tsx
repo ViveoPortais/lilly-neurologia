@@ -191,7 +191,7 @@ const CookieModal = ({ onClose }: { onClose: () => void }) => {
      </div>
 
      <div className="border-t border-neutral-200 pt-6 mt-8">
-      <p className="text-xs text-[#666666] font-medium mb-4">PP-AD-BR-0150 – Abril/2025</p>
+      <p className="text-xs text-[#666666] font-medium mb-4">PP-AD-BR-0268 – Janeiro/2026</p>
       <div className="flex justify-center">
        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Button onClick={acceptOnlyNecessary} className="py-3 px-6 text-xs font-bold">
