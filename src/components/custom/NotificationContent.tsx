@@ -4,7 +4,7 @@ import { HiX, HiCheck } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import dayjs from "dayjs";
-import { routes } from "@/helpers/routes";
+import { routesByProgram, buildDashboardHref, ProgramSlug, AppRole } from "@/helpers/routes";
 import { IStringMap } from "@/types";
 import useSession from "@/hooks/useSession";
 import "dayjs/locale/pt-br";
@@ -32,16 +32,22 @@ interface NotificationContentProps {
 
 export default function NotificationContent({ notifications, onMarkAsRead, onRemove, onClose }: NotificationContentProps) {
   const router = useRouter();
-  const { role } = useSession();
+  const { role, programSlug } = useSession();
+
+  const currentProgramSlug = programSlug as ProgramSlug;
+  const currentRole = role as AppRole;
+  const profileRoutes = routesByProgram[currentProgramSlug]?.[currentRole] ?? [];
+  const mappedRoutes = profileRoutes.map((item) => ({
+    ...item,
+    route: buildDashboardHref(currentProgramSlug, item.path),
+  }));
 
   const renderContent = useCallback(
     (notification: Notification) => {
-      const profileRoutes = role ? routes[role] : [];
-
-      if (!profileRoutes || profileRoutes.length === 0) return notification.description;
+      if (!mappedRoutes || mappedRoutes.length === 0) return notification.description;
       let matchedText: string | undefined;
 
-      for (const route of profileRoutes) {
+      for (const route of mappedRoutes) {
         if (notification.description.toLowerCase().includes(route.text.toLowerCase())) {
           matchedText = route.text;
           break;
@@ -64,12 +70,11 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
         </>
       );
     },
-    [router, role, onClose]
+    [router, mappedRoutes, onClose]
   );
 
   const routerPush = (notification: Notification) => {
-    const profileRoutes = role ? routes[role] : [];
-    if (!profileRoutes?.length) return;
+    if (!mappedRoutes?.length) return;
 
     const routeConfig: Record<string,{ route: string; useResolveId: boolean }> = {
       Exam: {
@@ -86,7 +91,7 @@ export default function NotificationContent({ notifications, onMarkAsRead, onRem
     const config = entityName ? routeConfig[entityName] : null;
     if (!config) return;
 
-    const matched = profileRoutes.find((x: any) =>
+    const matched = mappedRoutes.find((x: any) =>
       x.route.includes(config.route)
     );
     if (!matched) return;

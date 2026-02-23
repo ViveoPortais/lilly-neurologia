@@ -3,7 +3,7 @@
 import useSession from "@/hooks/useSession";
 import { usePathname, useRouter } from "next/navigation";
 import { useKeenSlider } from "keen-slider/react";
-import { routes } from "@/helpers/routes";
+import { routesByProgram, buildDashboardHref, ProgramSlug, AppRole } from "@/helpers/routes";
 import { useState } from "react";
 import GenericModalForm from "@/components/modals/GenericModalForm";
 import OperationPasswordModal from "@/components/manageFiles/OperationPasswordModal";
@@ -15,7 +15,14 @@ export default function FooterMobile() {
  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
 
- const currentRoutes = routes[auth.role] || [];
+ const programSlug = auth.programSlug as ProgramSlug;
+ const role = auth.role as AppRole;
+
+ const currentRoutesRaw = routesByProgram[programSlug]?.[role] ?? [];
+ const currentRoutes = currentRoutesRaw.map((item) => ({
+  ...item,
+  route: buildDashboardHref(programSlug, item.path),
+ }));
 
  const handleFooterClick = (route: string, openModal?: boolean) => {
   if (openModal) {

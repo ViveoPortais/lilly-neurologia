@@ -1,5 +1,6 @@
 import { MenuIcon } from "@/components/custom/Icon";
 import { Separator } from "@/components/ui/separator";
+import { buildDashboardHref } from "@/helpers/routes";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
@@ -22,6 +23,7 @@ export interface NavbarDesktopProps {
   handleProtectedRoute: (route: string) => void;
   onOpenNotificationModal: () => void;
   unreadCount: number;
+  programSlug: "neurologia" | "oncologia";
 }
 
 export default function NavbarDesktop({
@@ -35,6 +37,7 @@ export default function NavbarDesktop({
   handleProtectedRoute,
   onOpenNotificationModal,
   unreadCount,
+  programSlug,
 }: NavbarDesktopProps) {
   const router = useRouter();
   const isShortScreen = useMediaQuery("(max-height: 600px)");
@@ -129,7 +132,7 @@ export default function NavbarDesktop({
 
             <DropdownMenuContent side="right" align="end" className="z-[50] bg-white rounded-lg p-2 w-48 shadow-lg border border-zinc-200">
               <DropdownMenuItem
-                onClick={() => router.push("/dashboard/profile")}
+                onClick={() => router.push(buildDashboardHref(programSlug, "profile"))}
                 className="cursor-pointer px-3 py-2 rounded-md hover:bg-zinc-100 flex items-center gap-2 text-sm text-zinc-800"
               >
                 <LuPencil className="text-lg" /> Editar Cadastro

@@ -32,7 +32,7 @@ export const UploadButton = ({ fieldName, label, onFileValid, onError, errorMess
 
   if (!isValidExtension || !isValidSize) {
    setFileName("");
-   onError?.("O arquivo deve ser PDF, JPG ou PNG e ter no máximo 5MB.");
+   onError?.("Insira apenas arquivos com tamanho máximo de 5MB / Permitido apenas arquivos PDF, JPG ou PNG.");
    event.target.value = "";
    return;
   }

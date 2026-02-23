@@ -20,6 +20,10 @@ type SessionStore = {
   primeiroAcesso: boolean;
   obrigatorioAlterarSenha: boolean;
   programConsent: boolean;
+  programSlug: "neurologia" | "oncologia" | "";
+  accessProfiles: { name: string; programCode: string }[];
+  setAccessProfiles: (accessProfiles: { name: string; programCode: string }[]) => void;
+  setProgramSlug: (programSlug: "neurologia" | "oncologia" | "") => void;
   setProgramConsent: (programConsent: boolean) => void;
   setPrimeiroAcesso: (primeiroAcesso: boolean) => void;
   setObrigatorioAlterarSenha: (obrigatorioAlterarSenha: boolean) => void;
@@ -61,6 +65,10 @@ const useSession = create(
       primeiroAcesso: false,
       obrigatorioAlterarSenha: false,
       programConsent: false,
+      programSlug: "",
+      accessProfiles: [],
+      setAccessProfiles: (accessProfiles) => set({ accessProfiles }),
+      setProgramSlug: (programSlug) => set({ programSlug }),
       setProgramConsent: (programConsent) => set({ programConsent: programConsent }),
       setPrimeiroAcesso: (primeiroAcesso) => set({ primeiroAcesso: primeiroAcesso }),
       setObrigatorioAlterarSenha: (obrigatorioAlterarSenha) => set({ obrigatorioAlterarSenha: obrigatorioAlterarSenha }),
@@ -73,8 +81,7 @@ const useSession = create(
       setInactiveType: (inactiveType) => set({ inactiveType: inactiveType }),
       setTicket: (ticket) => set({ ticket: ticket }),
       setSession: (session) => set({ session: session }),
-      setCurrentPassword: (currentPassword) =>
-        set({ currentPassword: currentPassword }),
+      setCurrentPassword: (currentPassword) => set({ currentPassword: currentPassword }),
       setName: (name) => set({ name: name }),
       setRole: (role) => set({ role: role }),
       setEmail: (email: string) => set({ email: email }),
@@ -89,16 +96,17 @@ const useSession = create(
           currentPassword: "",
           inactiveType: "",
           programCode: "",
-          programsCode: []
+          programsCode: [],
+          programSlug: "",
+          accessProfiles: [],
         }),
-      setChangePassword: (changePassword) =>
-        set({ changePassword: changePassword }),
+      setChangePassword: (changePassword) => set({ changePassword: changePassword }),
     }),
     {
       name: "session-storage",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useSession;

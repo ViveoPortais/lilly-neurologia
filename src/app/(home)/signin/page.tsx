@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { clearAllConsentCaches } from "@/lib/consentCache";
+import { AccessProfile, buildDashboardRedirect, shouldGoToSelectProgram } from "@/helpers/auth";
 
 
 const signInValidationSchema = z.object({
@@ -74,26 +75,26 @@ export default function SignIn() {
     router.push("/forget/password");
   };
 
-  function handleUserRole(roles: string[]): string {
-    const roleString = roles.join(' ').toLowerCase();
+  // function handleUserRole(roles: string[]): string {
+  //   const roleString = roles.join(' ').toLowerCase();
 
-    if (roleString.includes("doctor")) {
-      return "doctor";
-    }
-    if (roleString.includes("professional")) {
-      return "professional";
-    }
-    if (roleString.includes("operation")) {
-      return "operation";
-    }
-    if (roleString.includes("logistics")) {
-      return "logistics";
-    }
-    if (roleString.includes("client")) {
-      return "client";
-    }
-    return "";
-  }
+  //   if (roleString.includes("doctor")) {
+  //     return "doctor";
+  //   }
+  //   if (roleString.includes("professional")) {
+  //     return "professional";
+  //   }
+  //   if (roleString.includes("operation")) {
+  //     return "operation";
+  //   }
+  //   if (roleString.includes("logistics")) {
+  //     return "logistics";
+  //   }
+  //   if (roleString.includes("client")) {
+  //     return "client";
+  //   }
+  //   return "";
+  // }
 
   async function handleLogin(data: SignInValidationProps) {
     setIsLoading(true);
@@ -150,16 +151,41 @@ export default function SignIn() {
   }
 
   const authenticate = (response: any) => {
-    
+    const accessProfiles: AccessProfile[] = response.value.accessProfiles ?? [];
+    const programsCode: string[] = response.value.programsCode ?? [];
+
     auth.setProgramsCode(response.value.programsCode);
-    auth.setRole(handleUserRole(response.value.roles));
     auth.setName(response.value.name);
     auth.setEmail(response.value.email);
     auth.setSession(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     auth.setPrimeiroAcesso(response.value.firstLogin);
     auth.setObrigatorioAlterarSenha(response.value.forceChangePassword);
+
+    auth.setAccessProfiles(accessProfiles);
+
+    if (shouldGoToSelectProgram(accessProfiles)) {
+      auth.onLogin();
+      router.push("/select-program");
+      return;
+    }
+
+    const redirect = buildDashboardRedirect({
+      accessProfiles,
+      programsCode,
+      enforceProfessionalSelect: true,
+    });
+
+    if (!redirect) {
+      toast.error("Não foi possível identificar o programa/perfil do usuário.");
+      return;
+    }
+
+    auth.setProgramCode(redirect.programCode);
+    auth.setProgramSlug(redirect.programSlug);
+    auth.setRole(redirect.role);
+
     auth.onLogin();
-    router.push("/dashboard/starts");
+    router.push(redirect.url);
   };
 
   const handleResendToken = (data: SignInValidationProps) => {

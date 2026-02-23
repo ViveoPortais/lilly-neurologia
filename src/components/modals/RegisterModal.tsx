@@ -252,8 +252,6 @@ export default function MedicalSignUpModal({ role, onClose }: { role: string; on
   useEffect(() => {
     if (!isValid) {
       const currentValues = getValues();
-      console.log("Formulário inválido. Estado atual dos campos:", currentValues);
-      console.log("Erros de validação:", errors);
     }
   }, [isValid, errors, getValues]);
 

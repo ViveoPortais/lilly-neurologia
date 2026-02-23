@@ -3,7 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 
 import { useLateralMenu, useMobilelMenu } from "@/hooks/useMenus";
-import { routes } from "@/helpers/routes";
+import { buildDashboardHref, routesByProgram } from "@/helpers/routes";
+import type { AppRole, ProgramSlug } from "@/helpers/routes";
 import useSession from "@/hooks/useSession";
 
 import api from "@/services/api";
@@ -28,13 +29,21 @@ export function Navbar(props: NotificationProps) {
  const { isMenuOpen, changeMenu } = useLateralMenu();
  const { isMobileMenuOpen, changeMobileMenu } = useMobilelMenu();
  const auth = useSession();
- const role = auth.role;
+ const role = auth.role as AppRole;
  const router = useRouter();
- const generalRoutes = routes[role] || [];
  const isMobile = useMediaQuery("(max-width: 768px)");
  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
  const modal = useGenericModal();
+
+const programSlug = auth.programSlug as ProgramSlug;
+
+const generalRoutesRaw = routesByProgram[programSlug]?.[role] ?? [];
+
+const generalRoutes = generalRoutesRaw.map((item) => ({
+  ...item,
+  route: buildDashboardHref(programSlug, item.path),
+}));
 
  const handleProtectedRoute = (route: string) => {
   setPendingRoute(route);
@@ -77,6 +86,7 @@ export function Navbar(props: NotificationProps) {
            handleProtectedRoute={handleProtectedRoute}
            onOpenNotificationModal={props.onOpenNotificationModal}
            unreadCount={props.unreadCount}
+           programSlug={programSlug}
          />
        </motion.div>
      ) : (
@@ -91,6 +101,7 @@ export function Navbar(props: NotificationProps) {
          handleProtectedRoute={handleProtectedRoute}
          onOpenNotificationModal={props.onOpenNotificationModal}
          unreadCount={props.unreadCount}
+         programSlug={programSlug}
        />
      )}
 
