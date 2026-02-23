@@ -3,7 +3,7 @@
 import ContentCard from "@/components/ContentCard";
 import OperationPasswordModal from "@/components/manageFiles/OperationPasswordModal";
 import GenericModalForm from "@/components/modals/GenericModalForm";
-import { routes } from "@/helpers/routes";
+import { routesByProgram, type AppRole } from "@/helpers/routes";
 import { useModalContent } from "@/hooks/useModal";
 import useSession from "@/hooks/useSession";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -24,7 +24,8 @@ const Page = () => {
  const auth = useSession();
  const modal = useModalContent();
  const countMessage = useAppSelector(selectMessageCount);
- const userRoutes = routes[auth.role] || [];
+ const programSlug = auth.programsCode?.[0] === "ONCO" ? "oncologia" : "neurologia";
+ const userRoutes = routesByProgram[programSlug]?.[auth.role as AppRole] || [];
  const dispatch = useAppDispatch();
  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
@@ -163,7 +164,7 @@ const requestConsentIfNeeded = async (): Promise<boolean> => {
       hasIcon={true}
       svgIcon={item.icon}
       buttonText="Acessar"
-      onButtonClick={() => handleCardClick(item.route, item.openModal)}
+      onButtonClick={() => handleCardClick(item.path, item.openModal)}
       customIconText={item.text === "Minhas Pendências" ? " " : undefined}
       customBottomText={item.text === "Minhas Pendências" ? `${countMessage ?? 0} pendentes` : undefined}
       hideButton={item.text === "Minhas Pendências" ? false : undefined}
