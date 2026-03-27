@@ -7,38 +7,40 @@ import { GenericModalProvider } from "@/contexts/GenericModalContext";
 import { PdfModalProvider } from "@/contexts/PdfModalContext";
 import { CookieModalProvider } from "@/contexts/CookieModalContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
+import AnalyticsProvider from "@/components/analytics-provider";
 
 const lato = Lato({
- subsets: ["latin"],
- weight: ["400", "700", "900"],
- display: "swap",
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
- title: "Programa  Lilly",
- description: "Programa Lilly",
+  title: "Programa Lilly",
+  description: "Programa Lilly",
 };
 
 export default function RootLayout({
- children,
+  children,
 }: Readonly<{
- children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
- return (
-  <html lang="en">
-   <body className={lato.className}>
-    <ReduxProvider>
-     <PdfModalProvider>
-      <GenericModalProvider>
-       <LoadingProvider>
-        <CookieModalProvider>
-         <ToastProvider>{children}</ToastProvider>
-        </CookieModalProvider>
-       </LoadingProvider>
-      </GenericModalProvider>
-     </PdfModalProvider>
-    </ReduxProvider>
-   </body>
-  </html>
- );
+  return (
+    <html lang="en">
+      <body className={lato.className}>
+        <AnalyticsProvider />
+        <ReduxProvider>
+          <PdfModalProvider>
+            <GenericModalProvider>
+              <LoadingProvider>
+                <CookieModalProvider>
+                  <ToastProvider>{children}</ToastProvider>
+                </CookieModalProvider>
+              </LoadingProvider>
+            </GenericModalProvider>
+          </PdfModalProvider>
+        </ReduxProvider>
+      </body>
+    </html>
+  );
 }

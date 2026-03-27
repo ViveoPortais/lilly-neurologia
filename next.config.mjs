@@ -5,6 +5,10 @@ const nextConfig = {
  env: {
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_PROGRAM_CODE: process.env.NEXT_PUBLIC_PROGRAM_CODE,
+
+    HOTJAR_SITE_ID: process.env.HOTJAR_SITE_ID,
+    HOTJAR_VERSION: process.env.HOTJAR_VERSION,
+    LOGROCKET_ID: process.env.LOGROCKET_ID,
  },
  output: "standalone",
  async redirects() {

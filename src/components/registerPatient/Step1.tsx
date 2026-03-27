@@ -8,11 +8,10 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { searchPatientByCpf } from "@/store/slices/registerPatientSlice";
 import { useGenericModal } from "@/contexts/GenericModalContext";
 import { useRouter } from "next/navigation";
-import { today, validateBirthDate, validateNoFutureDate } from "@/helpers/helpers";
+import { today } from "@/helpers/helpers";
 import { useLoading } from "@/contexts/LoadingContext";
 import { cclChecks, dlChecks } from "@/helpers/select-filters";
 import { Checkbox } from "../ui/checkbox";
-import { fetchDiagnosticDetailsById } from "@/store/slices/diagnosticSlice";
 import dayjs from "dayjs";
 import { IDiagnosticExamModel } from "@/types/diagnostic";
 
@@ -31,6 +30,8 @@ export const Step1 = ({
   setCheckItems,
   clinicalProfile,
   setExamExistent,
+  fieldsSerProLocked,
+  setFieldsSerProLocked,
 }: {
   setStep: (step: number) => void;
   control: any;
@@ -46,6 +47,8 @@ export const Step1 = ({
   setCheckItems: any;
   clinicalProfile: IStringMap[];
   setExamExistent: (arg0: IDiagnosticExamModel | null) => void;
+  fieldsSerProLocked: boolean;
+  setFieldsSerProLocked: (arg0: boolean) => void;
 }) => {
   const { register, watch } = useFormContext();
   const hasResponsible = watch("hasResponsible");
@@ -56,6 +59,7 @@ export const Step1 = ({
   const loading = useAppSelector((state) => state.registerPatient.loadingSearchPatient);
   const [selectedProfileLabel, setSelectedProfileLabel] = useState("");
   const eighteenYearsAgo = dayjs().subtract(18, "years").format("YYYY-MM-DD");
+
 
   const profileCheckMap: Record<string, string[]> = {
     "Demência Leve": dlChecks,
@@ -87,30 +91,40 @@ export const Step1 = ({
               type: "warning",
               message: res.additionalMessage,
             },
-            () => {}
+            () => { }
           );
         } else {
-          if (res.value != "") await fillForm(res.value);
+          await fillForm(res.value);
         }
-      } catch (error) {
-        console.error("CPF não encontrado ou erro ao buscar:", error);
+      } catch (error: any) {
+        modal.showModal(
+          {
+            type: "warning",
+            message: error.additionalMessage,
+          },
+          () => { }
+        );
+
+        setValue("name", "");
+        setValue("birthDate", "");
+        setFieldsSerProLocked(true);
       }
     }
   };
 
-  const fillForm = async (id: string) => {
-    const exam = await dispatch(fetchDiagnosticDetailsById({ id: id })).unwrap();
+  const fillForm = async (exam: any) => {
 
     if (exam) {
       setValue("name", exam.namePatient);
-      setValue("birthDate", dayjs(exam.patientBirthDate).format("YYYY-MM-DD"));
-      setValue("genderId", exam.genderId);
+      const formattedBirthDate = dayjs(exam.patientBirthDate).format("YYYY-MM-DD");
+      setValue("birthDate", formattedBirthDate ?? "", { shouldValidate: true });
+      setValue("genderId", exam.genderId ?? "");
 
       if (exam.nameCaregiver) {
         setValue("hasResponsible", "yes");
-        setValue("nameCaregiver", exam.nameCaregiver);
-        setValue("cpfCaregiver", exam.cpfCarefiver);
-        setValue("birthDateCaregiver", dayjs(exam.birthdateCaregiver).format("YYYY-MM-DD"));
+        setValue("nameCaregiver", exam.nameCaregiver ?? "");
+        setValue("cpfCaregiver", exam.cpfCarefiver ?? "");
+        setValue("birthDateCaregiver", dayjs(exam.birthdateCaregiver).format("YYYY-MM-DD") ?? "");
       } else {
         setValue("hasResponsible", "no");
         setValue("nameCaregiver", "");
@@ -132,21 +146,23 @@ export const Step1 = ({
 
       setCheckItems(filledCheckItems);
 
-      setValue("disease", exam.diseaseId);
-      setValue("examDefinition", exam.examDefinitionId);
-      setValue("laboratoryAnalysis", exam.localId);
-      setValue("addressPostalCode", exam.logisticsAddressPostalCode);
-      setValue("addressName", exam.logisticsAddressName);
-      setValue("addressNumber", exam.logisticsAddressNumber);
-      setValue("sector", exam.section);
-      setValue("responsibleName", exam.mainContact);
-      setValue("contact", exam.institutionTelephone);
+      setValue("disease", exam.diseaseId ?? "");
+      setValue("examDefinition", exam.examDefinitionId ?? "");
+      setValue("laboratoryAnalysis", exam.localId ?? "");
+      setValue("addressPostalCode", exam.logisticsAddressPostalCode ?? "");
+      setValue("addressName", exam.logisticsAddressName ?? "");
+      setValue("addressNumber", exam.logisticsAddressNumber ?? "");
+      setValue("sector", exam.section ?? "");
+      setValue("responsibleName", exam.mainContact ?? "");
+      setValue("contact", exam.institutionTelephone ?? "");
 
       setExamExistent(exam);
       setValue("isSecondSolicitation", true);
+      setFieldsSerProLocked(true);
     } else {
       setExamExistent(null);
       setValue("isSecondSolicitation", false);
+      setFieldsSerProLocked(false);
     }
   };
 
@@ -164,6 +180,7 @@ export const Step1 = ({
         <Controller
           name="cpf"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <div className="w-full">
               {maskedField(
@@ -186,7 +203,7 @@ export const Step1 = ({
           )}
         />
         <div className="w-full">
-          <Input {...register("name")} placeholder="Nome Completo" inputPlaceholder="Digite aqui..." />
+          <Input {...register("name")} placeholder="Nome Completo" inputPlaceholder="Digite aqui..." disabled={fieldsSerProLocked} />
           {errors?.name && <span className="text-sm text-red-500 mt-1 block">{errors.name.message as string}</span>}
         </div>
         <div className="w-full">
@@ -195,7 +212,7 @@ export const Step1 = ({
             type="date"
             placeholder="Data de Nascimento"
             max={today}
-            onBlur={(e) => validateBirthDate(e.target.value, "birthDate", setValue)}
+            disabled={fieldsSerProLocked}
           />
           {errors?.birthDate && <span className="text-sm text-red-500 mt-1 block">{errors.birthDate.message as string}</span>}
         </div>
@@ -203,6 +220,7 @@ export const Step1 = ({
         <Controller
           name="genderId"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <div className="w-full">
               <CustomFilterSelect options={genders} value={field.value} onChange={field.onChange} name="genderId" label="Gênero biológico" />
@@ -266,7 +284,6 @@ export const Step1 = ({
               type="date"
               placeholder="Nascimento do Cuidador"
               max={eighteenYearsAgo}
-              onChange={(e) => validateNoFutureDate(e.target.value, "birthDateCaregiver", setValue, "Não é permitido cadastrar data futura")}
             />
             {errors?.birthDateCaregiver && <span className="text-sm text-red-500 mt-1 block">{errors.birthDateCaregiver.message as string}</span>}
           </div>
@@ -285,6 +302,7 @@ export const Step1 = ({
         <Controller
           name="disease"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <div className="w-full">
               <CustomFilterSelect options={diseases} value={field.value} onChange={field.onChange} name="disease" label="Patologia" />
@@ -295,6 +313,7 @@ export const Step1 = ({
         <Controller
           name="examDefinition"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <div className="w-full">
               <CustomFilterSelect options={exams} value={field.value} onChange={field.onChange} name="examDefinition" label="Exame" />
@@ -305,6 +324,7 @@ export const Step1 = ({
         <Controller
           name="laboratoryAnalysis"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <div className="w-full">
               <CustomFilterSelect options={labs} value={field.value} onChange={field.onChange} name="laboratoryAnalysis" label="Laboratório de Análise" />

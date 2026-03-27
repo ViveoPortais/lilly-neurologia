@@ -48,7 +48,7 @@ mobilenumber: z.string()
  addressPostalCode: z.string(),
  addressCity: z.string(),
  addressState: z.string(),
- emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+ emailAddress: z.string().trim().email("Insira um e-mail válido").optional().or(z.literal("")),
 });
 
 export const professionalProfileSchema = z.object({
@@ -65,14 +65,14 @@ export const professionalProfileSchema = z.object({
  addressPostalCode: z.string(),
  addressCity: z.string(),
  addressState: z.string(),
- emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+ emailAddress: z.string().trim().email("Insira um e-mail válido").optional().or(z.literal("")),
 });
 
 export const generalProfileSchema = z.object({
  name: z.string(),
  mobilenumber: z.string()
   .regex(mobilephoneRegex, "Número inválido").min(2, 'Insira o número de celular'),
- emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+ emailAddress: z.string().trim().email("Insira um e-mail válido").optional().or(z.literal("")),
 });
 
 export type GeneralProfileValidationProps = z.infer<typeof generalProfileSchema>;
@@ -379,7 +379,26 @@ export const patientSchema = z
       .regex(cpfRegex, { message: "CPF inválido" })
       .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
     name: z.string().min(1, "Nome é obrigatório").regex(nameRegex, { message: "Nome deve conter apenas letras" }),
-    birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
+    birthDate: z
+      .string()
+      .min(1, { message: "Data de nascimento é obrigatória" })
+      .refine((val) => {
+        return dayjs(val).isValid()
+      }, { message: "Data inválida", })
+      .refine((val) => {
+        const age = dayjs().diff(dayjs(val), "year");
+        return age >= 18;
+      }, { message: "O paciente deve ter 18 anos ou mais" })
+      .refine((val) => {
+        const today = dayjs();
+        const birthDate = dayjs(val);
+        const age = today.diff(birthDate, "year");
+
+        if (age < 55 || age > 85) {
+          return false;
+        }
+        return true;
+      }, { message: "O paciente deve ter entre 55 e 85 anos" }),
     hasResponsible: z.enum(["yes", "no"]).optional().nullable(),
     nameCaregiver: z
       .string()
@@ -446,7 +465,7 @@ export const patientSchema = z
     termConsentAttach: z.any().optional(),
     saveAddress: z.boolean().default(false),
     hasDigitalSignature: z.boolean().default(false),
-    emailAddress: z.string().email({ message: `Insira um e-mail válido` }).optional(),
+    emailAddress: z.string().trim().email("Insira um e-mail válido").optional().or(z.literal("")),
     logisticsAddressCommercial: z.boolean().default(false),
     addressCommercial: z.boolean().default(false),
     localName : z.string().optional(),
@@ -533,7 +552,6 @@ export type HealthProfessionalByProgramDoctorByProgramFormData = z.infer<typeof 
 
 export const passwordSchema = z
  .object({
-  oldPassword: z.string().min(1, "Preencha a senha atual"),
   newPassword: z
    .string()
    .min(12, "Ao menos um 12 caracteres")
@@ -553,7 +571,7 @@ export type PasswordFormData = z.infer<typeof passwordSchema>;
 export const scheduleSampeSchema = (dataRecebimento: string) =>
   z
     .object({
-      collectMaterial: z.date({ required_error: "Informe a data de coleta" }),
+      collectMaterial: z.coerce.date({ required_error: "Informe a data de coleta" }),
       doctorSuggestedDate: z.date({ required_error: "Informe a data desejada" }),
       preferredTimeStringMap : z.string().min(1,{message:"Selecione o período para retirada da amostra"})
     })
@@ -568,12 +586,6 @@ export const scheduleSampeSchema = (dataRecebimento: string) =>
       }
       const hoje = new Date();
       const doisDiasDepois = addDays(hoje, 2);
-
-      console.log({
-        coleta: data.collectMaterial,
-        desejada: data.doctorSuggestedDate,
-        recebimento: dataRecebimento
-      });
 
       if (!isValid(recebimento)) return;
 

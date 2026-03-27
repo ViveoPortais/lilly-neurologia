@@ -110,7 +110,16 @@ export default function SignIn() {
       };
 
       if (step === 1) {
-        setStep(2);
+        const response = await login(loginData);
+
+          if (!response.isValidData) {
+            toast.error(response.additionalMessage);
+            return;
+          }
+          else
+          {
+            setStep(2);
+          }
         return;
       }
 

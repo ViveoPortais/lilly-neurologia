@@ -29,7 +29,7 @@ export const isValidPhoneNumber = (phone: string): boolean => {
 };
 
 export const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$/;
-export const mobilephoneRegex = /^(?:\(\d{2}\) 9\d{4}-\d{4}|\d{2}9\d{8})$/;
+export const mobilephoneRegex = /^\d{2}(?:9\d{8}|\d{8})$/;
 export const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ]+([ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/;
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -66,25 +66,5 @@ export function validateNoFutureDate<T>(value: string, fieldName: keyof T, setVa
   }
 }
 
-export function validateBirthDateRange(value: string, fieldName: string, setValue: any) {
-  const birthDate = dayjs(value);
-  const today = dayjs();
-  const age = today.diff(birthDate, "year");
-
-  if (age < 55 || age > 85) {
-    toast.warning("Paciente deve ter entre 55 e 85 anos.");
-    setValue(fieldName, "");
-    return false;
-  }
-  return true;
-}
-
-export function validateBirthDate(value: string, fieldName: string, setValue: any) {
-  const isValidDate = validateNoFutureDate(value, fieldName, setValue, "Não é permitido cadastrar data futura");
-  if (!isValidDate) return;
-
-  const isValidAge = validateBirthDateRange(value, fieldName, setValue);
-  if (!isValidAge) return;
-}
 
 export const allowedSpecialties = ["NEUROLOGIA", "PSIQUIATRIA", "GERIATRIA"];

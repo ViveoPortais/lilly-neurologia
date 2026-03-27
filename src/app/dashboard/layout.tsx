@@ -17,10 +17,11 @@ import { ReactNode, useEffect, useState } from "react";
 import { useNotification } from "@/hooks/useNotifications";
 import NotificationContent from "@/components/custom/NotificationContent";
 import { useNotificationModalStore } from "@/hooks/useNotificationModalStore";
+import { toast } from "react-toastify";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { isMenuOpen } = useLateralMenu();
-  const { role, isLogged, obrigatorioAlterarSenha, primeiroAcesso, setProgramConsent } = useSession();
+  const { role, isLogged, obrigatorioAlterarSenha, primeiroAcesso, setProgramConsent, onLogout } = useSession();
   const router = useRouter();
   const auth = useSession();
   const [loading, setLoading] = useState(true);
@@ -53,6 +54,33 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }, [obrigatorioAlterarSenha, primeiroAcesso, hasOpenedModal]);
 
+  useEffect(() => {
+    if (!isLogged) return;
+
+    let timeout: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        localStorage.setItem("logoutReason", "inactivity");
+        onLogout();
+        router.push("/");
+        toast.warning("Sessão expirada, faça login novamente");
+      }, 10 * 60 * 1000);
+    };
+
+    const events = ["mousemove", "keydown", "scroll", "click"];
+
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeout);
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
+    };
+  }, [isLogged, onLogout, router]);
+
   if (loading) {
     return (
       <div
@@ -81,9 +109,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       />
 
       <div
-        className={`lg:absolute lg:right-0 lg:top-0 h-screen overflow-auto ${
-          isMenuOpen ? "w-full lg:w-5/6" : "w-full lg:w-[calc(100%-100px)]"
-        } transition-all flex flex-col items-center justify-center bg-zinc-100`}
+        className={`lg:absolute lg:right-0 lg:top-0 h-screen overflow-auto ${isMenuOpen ? "w-full lg:w-5/6" : "w-full lg:w-[calc(100%-100px)]"
+          } transition-all flex flex-col items-center justify-center bg-zinc-100`}
       >
         <ScrollArea className="w-full flex-1">
           <div className="bg-white rounded-2xl shadow-md p-4 min-h-[calc(100vh-5rem)]">

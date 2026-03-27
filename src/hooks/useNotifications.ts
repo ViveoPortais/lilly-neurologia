@@ -15,7 +15,7 @@ export function useNotification() {
     if (!programsCode[0] || connectionRef.current) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/hubs/communication`)
+      .withUrl(`${process.env.NEXT_PUBLIC_API_URL}hubs/communication`)
       .withAutomaticReconnect()
       .build();
 
@@ -24,8 +24,6 @@ export function useNotification() {
     connection
       .start()
       .then(() => {
-        console.log("SignalR conectado");
-
         const filter: ICommunicationFilterModel = {
           page: 1,
           pageSize: 10,

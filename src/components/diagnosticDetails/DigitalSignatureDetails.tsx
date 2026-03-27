@@ -52,7 +52,10 @@ const DigitalSignatureDetails = ({ data, exam }: DigitalSignatureDetailsProps) =
     const auth = useSession();
 
     const canShowDropDown = function(){
-        if(exam.examStatusStringMap?.flag != "EXAM_WAITING_DIGITAL_SIGNATURE" || auth.role != 'doctor')
+        if(exam.examStatusStringMap?.flag != "EXAM_WAITING_DIGITAL_SIGNATURE")
+            return false;
+
+        if(!(auth.role == 'doctor' || auth.role == 'operation'))
             return false;
 
         return true;

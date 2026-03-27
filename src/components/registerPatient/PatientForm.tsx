@@ -40,6 +40,7 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
   const router = useRouter();
   const [examExistent, setExamExistent] = useState<IDiagnosticExamModel | null>(null);
   const [clinicalProfileOptions, setClinicalProfileOptions] = useState<any[]>([]);
+  const [fieldsSerProLocked, setFieldsSerProLocked] = useState(false);
 
   const methods = useForm({
     resolver: zodResolver(patientSchema),
@@ -475,6 +476,8 @@ export default function PatientForm({ role, isMobile, doctor }: Props) {
               setCheckItems={setCheckItems}
               clinicalProfile={clinicalProfile}
               setExamExistent={setExamExistent}
+              fieldsSerProLocked={fieldsSerProLocked}
+              setFieldsSerProLocked={setFieldsSerProLocked}
             />
           </motion.div>
         )}

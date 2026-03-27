@@ -68,11 +68,6 @@ export const Step3 = ({ examExistent }: Step3DoctorProps) => {
               downloadLabel="Download do documento"
               fieldOnForm="termConsentAttach"
             />}
-
-            <p className="text-xs text-center text-red-500 mt-2 flex items-center justify-center gap-1">
-              <AlertCircle className="w-4 h-4" />
-              Insira apenas arquivos com tamanho máximo de 5MB / Permitido apenas arquivos PDF, JPG ou PNG
-            </p>
           </>
         )}
 

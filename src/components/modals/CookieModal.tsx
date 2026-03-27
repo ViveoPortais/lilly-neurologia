@@ -69,6 +69,7 @@ const CookieModal = ({ onClose }: { onClose: () => void }) => {
   Cookies.set("NecessaryCookies", "true", { expires: EXPIRATION_DAYS });
   Cookies.set("AnalyticalCookies", consent.AnalyticalCookies.toString(), { expires: EXPIRATION_DAYS });
   Cookies.set("AdvertisingAndMarketingCookies", consent.AdvertisingAndMarketingCookies.toString(), { expires: EXPIRATION_DAYS });
+  if (consent.AnalyticalCookies) window.location.reload();
   onClose();
  };
 
@@ -84,7 +85,7 @@ const CookieModal = ({ onClose }: { onClose: () => void }) => {
    AnalyticalCookies: true,
    AdvertisingAndMarketingCookies: true,
   };
-
+  window.location.reload();
   setConsent(newConsent);
 
   Cookies.set("NecessaryCookies", "true", { expires: EXPIRATION_DAYS });
